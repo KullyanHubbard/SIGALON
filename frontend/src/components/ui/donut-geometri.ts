@@ -50,7 +50,10 @@ export function titik(
   r: number,
   sudut: number,
 ): [number, number] {
-  return [cx + r * Math.cos(sudut * DERAJAT), cy - r * Math.sin(sudut * DERAJAT)];
+  return [
+    cx + r * Math.cos(sudut * DERAJAT),
+    cy - r * Math.sin(sudut * DERAJAT),
+  ];
 }
 
 /**

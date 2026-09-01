@@ -123,8 +123,7 @@ export function DistribusiPieChart({
   const sisi = sempit ? Math.min(height, 320) : height;
   const pusat = sisi / 2;
   const rLuar = pusat * RADIUS_LUAR;
-  const rDalam =
-    pusat * (labelIrisan ? RADIUS_DALAM_BERLABEL : RADIUS_DALAM);
+  const rDalam = pusat * (labelIrisan ? RADIUS_DALAM_BERLABEL : RADIUS_DALAM);
   const rLabel = (rDalam + rLuar) / 2;
 
   const irisan = irisanDonut(data.map((d) => d.value));

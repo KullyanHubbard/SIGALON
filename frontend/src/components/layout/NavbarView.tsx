@@ -5,15 +5,11 @@ import ikonUserCircle from '@/assets/icons/nav/user-circle.svg';
 import ikonKeyRound from '@/assets/icons/nav/key-round.svg';
 import ikonLogOut from '@/assets/icons/nav/log-out.svg';
 import { paths } from '@/routes/paths';
-import { Badge } from '@/components/ui/Badge';
 
 interface NavbarViewProps {
   nama: string;
   /** Teks jabatan di bawah nama, mis. "Ketua RT 03" atau "Dukuh". */
   peran: string;
-  /** Label ringkas pada badge di dalam dropdown. */
-  peranBadge: string;
-  peranBadgeTone: 'brand' | 'green';
   onOpenSidebar: () => void;
   menuOpen: boolean;
   onToggleMenu: () => void;
@@ -26,8 +22,6 @@ interface NavbarViewProps {
 export function NavbarView({
   nama,
   peran,
-  peranBadge,
-  peranBadgeTone,
   onOpenSidebar,
   menuOpen,
   onToggleMenu,
@@ -36,7 +30,6 @@ export function NavbarView({
   onLogout,
 }: NavbarViewProps) {
   const samaPeran = nama.trim().toLowerCase() === peran.trim().toLowerCase();
-  const samaBadge = nama.trim().toLowerCase() === peranBadge.trim().toLowerCase();
 
   return (
     <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-slate-200 bg-surface/80 px-4 backdrop-blur lg:px-6">
@@ -83,12 +76,14 @@ export function NavbarView({
             <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-surface p-1.5 shadow-lg">
               <div className="px-3 py-2">
                 <p className="text-sm font-medium text-slate-800">{nama}</p>
-                {!samaBadge && (
-                  <Badge tone={peranBadgeTone} className="mt-1">
-                    {peranBadge}
-                  </Badge>
+                {/* Satu-satunya tempat jabatan pasti terlihat: baris nama+peran
+                    di header dipakai `hidden sm:block`, jadi di mobile ini
+                    satu-satunya tempat orang tahu jabatannya sendiri. */}
+                {!samaPeran && (
+                  <p className="text-xs text-slate-500">{peran}</p>
                 )}
               </div>
+              <div className="my-1 h-px bg-slate-200" />
               {/* Satu-satunya jalan ke halaman ganti password bagi orang yang
                   tidak sedang dipaksa menggantinya. Tanpa ini, akun yang
                   passwordnya sudah pernah diganti tidak punya cara mengubahnya

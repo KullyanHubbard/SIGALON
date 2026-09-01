@@ -29,11 +29,15 @@
      dipakai sebagai latar & garis, jadi tetap gelap. Membalik angkanya
      mentah-mentah (500 → 500) menghasilkan teks abu di atas kartu abu.
 
-     ponytail: chip bernuansa (`bg-brand-50 text-brand-700`, Badge/Alert)
-     sengaja dibiarkan terang — brand-700 dipakai ganda sebagai teks DAN
-     `hover:bg-brand-700`, jadi membaliknya merusak tombol. Kalau chip terang
-     di atas kartu gelap terasa mengganggu, ganti pasangannya per komponen
-     pakai `dark:`, bukan dengan membalik ramp brand. */
+     Ramp warna literal (brand/green/amber/red) TIDAK ikut dibalik: brand-700
+     dipakai ganda sebagai teks DAN `hover:bg-brand-700`, jadi membaliknya
+     merusak tombol. Chip bernuansa menyiasatinya dengan tint transparan
+     (`bg-brand-600/20`) yang menumpang latar apa pun. `Badge` berhenti di
+     situ — teksnya mewarisi warna sekitarnya, jadi nol `dark:`. Yang teksnya
+     memang harus berwarna (`Alert`, `SOROT_BRAND` di `lib/colors.ts`)
+     menambah `dark:` di teks saja.
+     `bg-*-50` untuk chip selalu salah di mode gelap: hasilnya tambalan
+     hampir putih di atas kartu gelap. */
   :root.dark {
     color-scheme: dark;
 

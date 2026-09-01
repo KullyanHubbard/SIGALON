@@ -22,7 +22,10 @@ export function Th({
   return (
     <th
       className={cn(
-        'whitespace-nowrap border-b border-slate-200 bg-slate-50/80 px-6 py-3.5 text-left text-sm font-bold uppercase tracking-wider text-slate-700',
+        // `border-b-1`, bukan `border-b`: `borderWidth.DEFAULT` di
+        // tailwind.config di-setel 4px, dan garis 4px di tiap baris membuat
+        // tabel terbaca sebagai kotak-kotak, bukan daftar.
+        'whitespace-nowrap border-b-1 border-slate-200 bg-slate-50/80 px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-slate-500',
         className,
       )}
       {...props}
@@ -37,7 +40,7 @@ export function Td({
   return (
     <td
       className={cn(
-        'whitespace-nowrap border-b border-slate-100 px-6 py-4 text-sm text-slate-700',
+        'whitespace-nowrap border-b-1 border-slate-100 px-6 py-3.5 text-sm text-slate-700',
         className,
       )}
       {...props}

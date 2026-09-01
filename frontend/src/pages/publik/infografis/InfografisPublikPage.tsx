@@ -122,7 +122,7 @@ export default function InfografisPublikPage() {
                 kaki: angka bansos di halaman ini belum berasal dari pendataan
                 mana pun, dan angka yang salah dikira resmi lebih berbahaya
                 daripada halaman yang kosong. */}
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+            <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-5 py-4 text-sm text-amber-900 dark:text-amber-200">
               <p className="font-semibold">Data contoh</p>
               <p className="mt-1">
                 Status penerima bantuan sosial belum termasuk yang didata pada

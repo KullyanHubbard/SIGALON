@@ -213,10 +213,16 @@ netral yang sudah ada. Dua aturan yang mengikat:
   terang di mode gelap dan tirainya berubah putih.
 
 Ramp gelapnya dibalik menurut PERAN, bukan angka: 400/500 (teks redup) jadi
-terang, 100–300 (latar & garis) tetap gelap. Chip bernuansa
-(`bg-brand-50 text-brand-700` di `Badge`/`Alert`) sengaja dibiarkan terang —
-brand-700 dipakai ganda sebagai teks DAN `hover:bg-brand-700`, jadi membalik
-ramp brand merusak tombol. Tombolnya `components/layout/TombolTema.tsx`
+terang, 100–300 (latar & garis) tetap gelap. Ramp warna literal
+(brand/green/amber/red) TIDAK ikut dibalik — brand-700 dipakai ganda sebagai
+teks DAN `hover:bg-brand-700`, jadi membaliknya merusak tombol. Konsekuensinya
+**`bg-*-50` untuk chip selalu salah di mode gelap** (jadi tambalan hampir
+putih di atas kartu gelap): pakai tint transparan `bg-*-600/20` yang menumpang
+latar apa pun. `Badge` cukup sampai situ — teksnya mewarisi warna sekitarnya
+(nada = latar saja), jadi tidak ada `dark:` sama sekali. Yang teksnya memang
+harus berwarna, `Alert` dan `SOROT_BRAND` (`lib/colors.ts`), menambah `dark:`
+di teksnya saja.
+Tombol temanya `components/layout/TombolTema.tsx`
 (pojok kanan-bawah `PublicShell`, setelah ukuran teks); kelas awal dipasang
 skrip kecil di `index.html` supaya tidak berkedip putih saat muat. Halaman
 `/statistik` memakai kerangka lain, jadi tidak punya tombol itu — temanya tetap
@@ -665,4 +671,25 @@ akun — cuma nomor wilayah + nama, karena endpoint ini terbuka tanpa auth.
 
 **Utang yang masih terbuka** — tercatat di spec 2026-08-26, jangan dianggap
 kondisi final:
+
+<!-- antislop:start -->
+## antislop
+
+Untuk kerja UI, copy, aksesibilitas, layout mobile, atau komentar kode: muat
+skill `antislop` (core) lewat tool Skill, lalu skill yang relevan dengan
+tugasnya:
+
+- UI / visual: `antislop-ui`
+- Copy & teks: `antislop-copywriting`
+- Aksesibilitas (people): `antislop-human`
+- Mobile / responsive: `antislop-layoutmobile`
+- Komentar kode: `antislop-code`
+
+Skill-skill ini terpasang global (bukan file di repo ini), dipanggil lewat
+namanya. **Mode: SELAMA proses kerja** — diterapkan sambil menulis kode, tanpa
+perlu tanya ulang di tiap sesi baru, bukan audit setelah selesai.
+
+Arahan desain (`DESIGN.md`, dibutuhkan R-37) belum ada — lihat status
+terbarunya di `DESIGN.md` bila sudah dibuat.
+<!-- antislop:end -->
 

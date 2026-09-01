@@ -40,12 +40,7 @@ export function DaftarPengajuanView({
           data={pengajuan}
           isEmpty={(d) => d.length === 0}
           errorMessage="Gagal memuat daftar pengajuan."
-          empty={
-            <EmptyState
-              icon={FileClock}
-              title="Belum ada pengajuan"
-            />
-          }
+          empty={<EmptyState icon={FileClock} title="Belum ada pengajuan" />}
         >
           {(daftar) => (
             <ul className="divide-y divide-slate-100">

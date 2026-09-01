@@ -4,18 +4,21 @@ import { cn } from '@/lib/utils';
 
 type Tone = 'info' | 'success' | 'error';
 
+/** Tint transparan + `dark:` di teks, alasannya sama dengan `Badge`. */
 const config: Record<Tone, { icon: typeof Info; className: string }> = {
   info: {
     icon: Info,
-    className: 'bg-brand-50 text-brand-800 border-brand-200',
+    className:
+      'bg-brand-600/10 text-brand-800 border-brand-600/20 dark:text-brand-200',
   },
   success: {
     icon: CheckCircle2,
-    className: 'bg-green-50 text-green-800 border-green-200',
+    className:
+      'bg-green-600/10 text-green-800 border-green-600/20 dark:text-green-200',
   },
   error: {
     icon: AlertCircle,
-    className: 'bg-red-50 text-red-800 border-red-200',
+    className: 'bg-red-600/10 text-red-800 border-red-600/20 dark:text-red-200',
   },
 };
 

@@ -57,7 +57,11 @@ export function AjukanPergantianDialog({
     <Modal
       open={Boolean(jabatan)}
       onClose={tutup}
-      title={jabatan?.label ? `Ajukan Pergantian ${jabatan.label}` : 'Ajukan Pergantian'}
+      title={
+        jabatan?.label
+          ? `Ajukan Pergantian ${jabatan.label}`
+          : 'Ajukan Pergantian'
+      }
     >
       <div className="space-y-4">
         <p className="text-sm text-slate-600">

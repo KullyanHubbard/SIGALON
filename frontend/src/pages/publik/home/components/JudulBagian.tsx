@@ -15,7 +15,9 @@ export function JudulBagian({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h2 className={`text-2xl font-bold text-slate-900 sm:text-3xl ${className ?? ''}`}>
+        <h2
+          className={`text-2xl font-bold text-slate-900 sm:text-3xl ${className ?? ''}`}
+        >
           {judul}
         </h2>
         {deskripsi && (

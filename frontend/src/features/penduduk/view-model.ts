@@ -1,5 +1,5 @@
 import { formatTanggal, hitungUmur } from '@/lib/tanggal';
-import type { Penduduk } from './types';
+import type { Penduduk, StatusKependudukan } from './types';
 import {
   agamaLabel,
   golonganDarahLabel,
@@ -15,28 +15,50 @@ import {
  *
  * Semua penerjemahan enum, perhitungan umur, dan perangkaian alamat berhenti
  * di file ini. Komponen tampilan cukup mencetak string yang sudah jadi, jadi
- * aturan seperti "laki-laki diberi warna brand" hanya ada di satu tempat.
+ * aturan seperti "yang pindah/meninggal ditandai" hanya ada di satu tempat.
  */
+
+type KeteranganTone = 'amber' | 'slate' | null;
+
+/**
+ * Warna Keterangan menjawab "masih ada urusan atau tidak", bukan sekadar
+ * "bukan menetap".
+ *
+ * Pindah amber: warganya masih hidup dan datanya kemungkinan masih perlu
+ * diurus. Meninggal abu: keadaan final, tidak ada tindak lanjut — sekaligus
+ * karena mengecat kematian warga dengan warna peringatan itu nada yang salah.
+ * Satu warna untuk keduanya membuat warnanya tidak menjelaskan apa pun; yang
+ * membedakan cuma teksnya.
+ */
+const KETERANGAN_TONE: Record<StatusKependudukan, KeteranganTone> = {
+  AKTIF: null,
+  PINDAH: 'amber',
+  MENINGGAL: 'slate',
+};
 
 /** Satu baris pada tabel daftar penduduk / anggota keluarga. */
 export interface PendudukRow {
   id: string;
   nama: string;
   jenisKelamin: string;
-  /** Nada Badge untuk kolom L/P. */
-  jenisKelaminTone: 'brand' | 'amber';
-  hubungan: string;
   umur: string;
   agama: string;
+  /** "004/019" — RT dulu, karena itu yang dipakai pengurus tiap hari. */
+  rtRw: string;
+  /** Kolom Keterangan: "Menetap", "Pindah", atau "Meninggal". */
+  keterangan: string;
   /**
-   * Diisi hanya untuk warga yang sudah pindah atau meninggal.
+   * Nada badge kolom Keterangan; `null` untuk yang menetap.
    *
-   * Mereka masih tampil di daftar supaya penandaan yang keliru bisa
+   * Yang sudah pindah/meninggal diberi badge, yang menetap cukup teksnya saja.
+   * Warna teks tidak ikut berubah — semua kolom sewarna, latar badge yang
+   * membedakan. Mereka masih tampil di daftar supaya penandaan yang keliru bisa
    * dibatalkan, tapi TIDAK ikut dihitung di statistik — tanpa penanda ini, dua
    * baris yang kelihatan sama menghasilkan angka yang berbeda dan tidak ada
-   * yang tahu kenapa.
+   * yang tahu kenapa. Kalau semua baris diberi badge, yang menonjol justru
+   * mayoritas yang biasa saja.
    */
-  statusTidakAktif: string | null;
+  keteranganTone: KeteranganTone;
 }
 
 export function toPendudukRow(p: Penduduk): PendudukRow {
@@ -44,14 +66,11 @@ export function toPendudukRow(p: Penduduk): PendudukRow {
     id: p.id,
     nama: p.nama,
     jenisKelamin: jenisKelaminLabel[p.jenisKelamin],
-    jenisKelaminTone: p.jenisKelamin === 'LAKI_LAKI' ? 'brand' : 'amber',
-    hubungan: statusHubunganLabel[p.statusHubunganKeluarga],
     umur: `${hitungUmur(p.tanggalLahir)} th`,
     agama: agamaLabel[p.agama],
-    statusTidakAktif:
-      p.statusKependudukan === 'AKTIF'
-        ? null
-        : statusKependudukanLabel[p.statusKependudukan],
+    rtRw: `${p.alamat.rt}/${p.alamat.rw}`,
+    keterangan: statusKependudukanLabel[p.statusKependudukan],
+    keteranganTone: KETERANGAN_TONE[p.statusKependudukan],
   };
 }
 

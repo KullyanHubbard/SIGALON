@@ -45,7 +45,8 @@ export function HeroBeranda() {
               to={paths.profil}
               className={buttonClass({
                 size: 'lg',
-                className: 'w-full bg-white text-brand-800 hover:bg-brand-50 sm:w-auto',
+                className:
+                  'w-full bg-white text-brand-800 hover:bg-brand-50 sm:w-auto',
               })}
             >
               Jelajahi Padukuhan

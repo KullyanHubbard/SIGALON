@@ -34,7 +34,10 @@ benar(
 
 // Total nol: tidak ada yang bisa dibagi. Tanpa penjaga ini hasilnya NaN yang
 // lolos sampai atribut `d` dan bikin seluruh SVG hilang tanpa error.
-benar(irisanDonut([0, 0]).length === 0, 'total nol mengembalikan daftar kosong');
+benar(
+  irisanDonut([0, 0]).length === 0,
+  'total nol mengembalikan daftar kosong',
+);
 benar(irisanDonut([]).length === 0, 'daftar kosong tetap kosong');
 
 // Sumbu-y layar terbalik: 90° itu ATAS, bukan bawah.

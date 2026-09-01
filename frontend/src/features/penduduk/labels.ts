@@ -1,5 +1,6 @@
 import type {
   Agama,
+  FilterPenduduk,
   GolonganDarah,
   StatusKependudukan,
   JenisKelamin,
@@ -62,8 +63,14 @@ export const statusHubunganLabel: Record<StatusHubunganKeluarga, string> = {
   LAINNYA: 'Lainnya',
 };
 
+/**
+ * `AKTIF` dibaca orang sebagai "Menetap" — lawan katanya Pindah & Meninggal,
+ * dan "aktif/tidak aktif" itu bahasa sistem, bukan bahasa kependudukan.
+ * Nilai yang disimpan tetap `AKTIF`: tabel `mutasi` riwayat permanen yang
+ * kolom `dari`/`ke`-nya sudah berisi string itu.
+ */
 export const statusKependudukanLabel: Record<StatusKependudukan, string> = {
-  AKTIF: 'Aktif',
+  AKTIF: 'Menetap',
   PINDAH: 'Pindah',
   MENINGGAL: 'Meninggal',
 };
@@ -78,6 +85,69 @@ export const kelompokUmurOpsi: readonly KelompokUmur[] = [
   '41-60',
   '60+',
 ];
+
+/**
+ * Nama tiap filter yang dibaca orang — dipakai label di panel filter DAN teks
+ * chip filter aktif, jadi keduanya tidak bisa menyebut hal yang sama dengan dua
+ * nama berbeda.
+ *
+ * Urutan deklarasi = urutan chip tampil. Kalau chip diurutkan mengikuti isi
+ * objek filter, urutannya jadi urutan klik: satu filter dihapus lalu dipasang
+ * lagi memindahkan chip ke ujung, dan barisnya melompat di depan mata.
+ */
+export const filterLabel: Record<keyof FilterPenduduk, string> = {
+  rw: 'RW',
+  rt: 'RT',
+  jenisKelamin: 'Jenis Kelamin',
+  kelompokUmur: 'Kelompok Umur',
+  agama: 'Agama',
+  pendidikan: 'Pendidikan',
+  statusPerkawinan: 'Status Perkawinan',
+  statusHubunganKeluarga: 'Status dalam Keluarga',
+  golonganDarah: 'Gol. Darah',
+  pekerjaan: 'Pekerjaan',
+};
+
+/** Filter yang nilainya enum; sisanya (RT/RW/pekerjaan) sudah teks apa adanya. */
+const nilaiFilterLabel: Partial<
+  Record<keyof FilterPenduduk, Record<string, string>>
+> = {
+  jenisKelamin: jenisKelaminLabel,
+  agama: agamaLabel,
+  golonganDarah: golonganDarahLabel,
+  pendidikan: pendidikanLabel,
+  statusPerkawinan: statusPerkawinanLabel,
+  statusHubunganKeluarga: statusHubunganLabel,
+};
+
+/** Satu filter aktif dalam bentuk siap dicetak jadi chip. */
+export interface FilterChip {
+  field: keyof FilterPenduduk;
+  label: string;
+  nilai: string;
+}
+
+/**
+ * Filter aktif -> daftar chip. Yang bernilai kosong dilewati: `''` tidak pernah
+ * disimpan (lihat `ToolbarPenduduk`), tapi chip untuk filter kosong akan jadi
+ * tombol hapus yang tidak menghapus apa pun.
+ */
+export function toFilterChips(filter: FilterPenduduk): FilterChip[] {
+  const urutan = Object.keys(filterLabel) as (keyof FilterPenduduk)[];
+  return urutan.flatMap((field) => {
+    const nilai = filter[field];
+    if (!nilai) return [];
+    return [
+      {
+        field,
+        label: filterLabel[field],
+        nilai:
+          nilaiFilterLabel[field]?.[nilai] ??
+          (field === 'kelompokUmur' ? `${nilai} th` : nilai),
+      },
+    ];
+  });
+}
 
 /**
  * Terjemahkan label enum mentah pada distribusi menjadi label manusiawi.

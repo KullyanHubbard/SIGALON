@@ -5,7 +5,7 @@ import { NavbarView } from './NavbarView';
 
 /** Sesi + perilaku dropdown. Tampilannya ada di `NavbarView`. */
 export function Navbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const logout = useLogout();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -17,8 +17,6 @@ export function Navbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
     <NavbarView
       nama={user?.nama ?? ''}
       peran={user?.jabatan ?? 'Perangkat Desa'}
-      peranBadge={isAdmin ? 'Admin' : 'Pengurus'}
-      peranBadgeTone={isAdmin ? 'brand' : 'green'}
       onOpenSidebar={onOpenSidebar}
       menuOpen={menuOpen}
       onToggleMenu={() => setMenuOpen((v) => !v)}

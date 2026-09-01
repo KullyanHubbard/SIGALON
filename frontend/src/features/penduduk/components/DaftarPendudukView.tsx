@@ -1,8 +1,6 @@
 import { Search } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import type { FilterOpsi, FilterPenduduk } from '../types';
@@ -10,10 +8,10 @@ import type {
   PendudukDetailView as PendudukDetailData,
   PendudukRow,
 } from '../view-model';
-import { FilterPendudukBar } from './FilterPendudukBar';
 import { PaginasiPenduduk, type PaginasiView } from './PaginasiPenduduk';
 import { PendudukDetailView } from './PendudukDetailView';
 import { TabelPenduduk } from './TabelPenduduk';
+import { ToolbarPenduduk } from './ToolbarPenduduk';
 
 export type { PaginasiView };
 
@@ -58,27 +56,15 @@ export function DaftarPendudukView({
   return (
     <>
       <Card>
-        <CardContent className="space-y-4 border-b border-slate-100">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              className="pl-9"
-              placeholder="Cari nama warga…"
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
-          </div>
-          <FilterPendudukBar
+        <CardContent className="border-b-1 border-slate-100">
+          <ToolbarPenduduk
+            search={search}
+            onSearchChange={onSearchChange}
             value={filter}
             opsi={filterOpsi}
             onChange={onFilterChange}
+            onTambah={onTambah}
           />
-
-          <div className="flex justify-end">
-            <Button size="sm" onClick={onTambah}>
-              + Tambah Warga
-            </Button>
-          </div>
         </CardContent>
 
         <CardContent className="p-0">

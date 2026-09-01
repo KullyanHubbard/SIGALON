@@ -1,4 +1,3 @@
-import { Badge } from '@/components/ui/Badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import type { PendudukDetailView as PendudukDetailData } from '../view-model';
 
@@ -22,10 +21,7 @@ function Field({ label, value }: { label: string; value: string }) {
 export function PendudukDetailView({ detail }: { detail: PendudukDetailData }) {
   return (
     <Card>
-      <CardHeader
-        title={detail.nama}
-        action={<Badge tone="brand">{detail.hubungan}</Badge>}
-      />
+      <CardHeader title={detail.nama} description={detail.hubungan} />
       <CardContent>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
           {detail.fields.map((f) => (

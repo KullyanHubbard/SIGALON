@@ -52,10 +52,10 @@ export function PublicLandingLayout({
       {/* Bar & main dibungkus satu sel grid: keduanya menumpuk di kolom kanan,
           bukan dua baris grid yang bisa bergeser dari sidebar. */}
       <div className="flex flex-1 flex-col lg:col-start-2 lg:row-start-1 lg:min-h-0">
-        <div className="flex h-16 sm:h-20 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-surface px-4 sm:px-6 lg:px-12">
+        <div className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-surface px-4 sm:h-20 sm:px-6 lg:px-12">
           {breadcrumb}
           {/* Pintu masuk di sudut kanan bar atas — disembunyikan di bawah lg karena PublicTopbar sudah membawanya */}
-          <AccountButton className="shrink-0 hidden lg:flex" />
+          <AccountButton className="hidden shrink-0 lg:flex" />
         </div>
 
         {/* Penengah vertikalnya `my-auto` di anak, bukan `justify-center` di
