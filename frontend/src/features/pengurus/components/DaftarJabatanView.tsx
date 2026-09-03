@@ -155,9 +155,28 @@ export function DaftarJabatanView({
                   <Td className="text-sm text-slate-400">—</Td>
                   <Td className="text-sm text-slate-400">—</Td>
                   <Td>
-                    <Button size="sm" variant="secondary" onClick={onUbahLpm}>
-                      Ubah Nama
-                    </Button>
+                    {lpmNama ? (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        disabled={sedangMengubah}
+                        onClick={() =>
+                          onAjukanPergantian({
+                            kode: 'LPM',
+                            role: 'LPM' as any,
+                            label: 'Ketua LPM',
+                            pemegang: { nama: lpmNama } as any,
+                            calon: null,
+                          })
+                        }
+                      >
+                        Ajukan Pergantian
+                      </Button>
+                    ) : (
+                      <Button size="sm" variant="secondary" onClick={onUbahLpm}>
+                        + Pilih Warga
+                      </Button>
+                    )}
                   </Td>
                 </tr>
               </tbody>

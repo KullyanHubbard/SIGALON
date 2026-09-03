@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 
 from app.core.config import settings
 from app.data import db
+from app.data import lpm as data_lpm
 from app.data import pengurus as pg
 from app.data import sesi
 
@@ -91,6 +92,8 @@ def penyetuju_untuk(role: str, rw: str | None, rt: str | None) -> list[pg.Pengur
     if role == pg.ROLE_RT:
         ketua_rw = [p for p in aktif if p.role == pg.ROLE_RW and p.rw == rw]
         return ketua_rw + dukuh
+    if role == pg.ROLE_LPM:
+        return dukuh
     raise TidakBoleh(f"Jabatan {role} tidak bisa diganti lewat pengajuan.")
 
 
@@ -153,10 +156,47 @@ def _kadaluarsa(p: Pengajuan) -> bool:
 
 
 def _kandidat_masih_sah(kandidat_id: str) -> bool:
+    if not kandidat_id:
+        return True
     from app.data.store import semua_penduduk
 
     warga = next((w for w in semua_penduduk() if w.id == kandidat_id), None)
     return warga is not None and warga.statusKependudukan == "AKTIF"
+
+
+def _kandidat_sudah_menjabat(kandidat_id: str) -> pg.Pengurus | None:
+    """Apakah warga ini sudah memegang jabatan aktif?
+
+    Mengembalikan `Pengurus`-nya kalau ya, `None` kalau belum. Dipakai dua
+    kali: saat pengajuan dibuat (menolak langsung) dan saat akan diterapkan
+    (menggugurkan kalau keadaannya berubah di antara dua momen itu).
+
+    Juga memeriksa tabel LPM: satu orang tidak boleh merangkap LPM dan
+    jabatan pengurus lainnya.
+    """
+    if not kandidat_id:
+        return None
+    pemegang = next(
+        (p for p in pg.daftar() if p.aktif and p.warga_id == kandidat_id),
+        None,
+    )
+    if pemegang is not None:
+        return pemegang
+    # Cek LPM — bukan Pengurus, tapi tetap satu jabatan.
+    lpm_wid = data_lpm.warga_id()
+    if lpm_wid == kandidat_id:
+        # Kembalikan Pengurus sintetis supaya pesan error konsisten.
+        return pg.Pengurus(
+            id="__lpm__",
+            username="",
+            nama=data_lpm.nama(),
+            role=pg.ROLE_LPM,
+            rw=None,
+            rt=None,
+            aktif=True,
+            warga_id=lpm_wid,
+        )
+    return None
 
 
 def _evaluasi(conn, p: Pengajuan) -> Pengajuan:
@@ -174,6 +214,18 @@ def _evaluasi(conn, p: Pengajuan) -> Pengajuan:
         return _ambil(conn, p.id) or p
     if not _kandidat_masih_sah(p.kandidat_id):
         _selesaikan(conn, p.id, STATUS_GUGUR, "Kandidat sudah tidak aktif di data warga")
+        return _ambil(conn, p.id) or p
+    # Kandidat bisa saja sudah diangkat di jabatan lain sejak pengajuan ini
+    # dibuat — lewat "Buatkan Akun" untuk jabatan kosong, atau lewat
+    # pengajuan pergantian lain yang lebih dulu disetujui. Kalau itu terjadi,
+    # membiarkan pengajuan ini sampai disetujui berarti rangkap jabatan.
+    pemegang_lain = _kandidat_sudah_menjabat(p.kandidat_id)
+    if pemegang_lain is not None and pemegang_lain.kode_jabatan != p.jabatan_kode:
+        _selesaikan(
+            conn, p.id, STATUS_GUGUR,
+            f"Kandidat {p.kandidat_nama} sudah memegang jabatan "
+            f"{pemegang_lain.jabatan} — tidak boleh rangkap jabatan",
+        )
         return _ambil(conn, p.id) or p
 
     menolak = next((s for s in p.suara if not s.setuju), None)
@@ -193,77 +245,103 @@ def _evaluasi(conn, p: Pengajuan) -> Pengajuan:
 
 
 def _terapkan(conn, p: Pengajuan) -> None:
-    """Pindahkan jabatan: pemegang lama dinonaktifkan, jabatannya jadi kosong.
+    """Pindahkan atau kosongkan jabatan.
 
-    Kredensial pemegang baru dibuatkan Admin sesudahnya (jalur Tahap 1) — warga
-    tidak punya akun, jadi tidak ada apa pun yang bisa diaktifkan di sini.
+    Untuk jabatan berakun (Dukuh/RW/RT): pemegang lama dinonaktifkan.
+    Untuk LPM: langsung ubah tabel `lpm`. Jika kandidat kosong, dikosongkan.
     """
-    lama = next(
-        (x for x in pg.daftar() if x.aktif and x.kode_jabatan == p.jabatan_kode),
-        None,
-    )
-    if lama is not None:
-        pg.ubah(lama.id, aktif=False)
-        # Sesinya ikut dicabut. Pemeriksaan `aktif` tiap request sudah cukup
-        # menolaknya, tapi menyisakan baris sesi milik orang yang sudah tidak
-        # menjabat cuma menyimpan barang yang tidak ada gunanya lagi.
-        sesi.akhiri_semua(lama.id)
-    _selesaikan(
-        conn,
-        p.id,
-        STATUS_DISETUJUI,
-        f"Disetujui seluruh penyetuju; {p.kandidat_nama} menggantikan "
-        + (lama.nama if lama else "jabatan kosong"),
-    )
+    nama_lama: str | None = None
+
+    if p.jabatan_kode == "LPM":
+        nama_lama = data_lpm.nama() or None
+        if p.kandidat_id:
+            data_lpm.ubah(p.kandidat_nama, p.kandidat_id)
+            sebab = f"Disetujui seluruh penyetuju; {p.kandidat_nama} menggantikan {nama_lama or 'jabatan kosong'}"
+        else:
+            data_lpm.ubah("", None)
+            sebab = f"Disetujui seluruh penyetuju; Ketua LPM dikosongkan (sebelumnya {nama_lama or 'tanpa nama'})"
+    else:
+        lama = next(
+            (x for x in pg.daftar() if x.aktif and x.kode_jabatan == p.jabatan_kode),
+            None,
+        )
+        if lama is not None:
+            nama_lama = lama.nama
+            pg.ubah(lama.id, aktif=False)
+            sesi.akhiri_semua(lama.id)
+        sebab = f"Disetujui seluruh penyetuju; {p.kandidat_nama} menggantikan {nama_lama or 'jabatan kosong'}"
+
+    _selesaikan(conn, p.id, STATUS_DISETUJUI, sebab)
 
 
 def ajukan(*, jabatan_kode: str, kandidat_id: str, oleh: str) -> Pengajuan:
-    """Usulkan pergantian pemegang sebuah jabatan. Raise `TidakBoleh` kalau
+    """Usulkan pergantian atau pengosongan pemegang sebuah jabatan. Raise `TidakBoleh` kalau
     melanggar salah satu aturan di spec Tahap 2."""
     from app.data.store import semua_penduduk
 
-    semua = {j.kode: j for j in pg.daftar_jabatan()}
-    target = semua.get(jabatan_kode)
-    if target is None:
-        raise TidakBoleh("Jabatan tidak dikenal.")
-    if target.pemegang is None:
-        raise TidakBoleh(
-            f"Jabatan {target.label} sedang kosong — isi langsung lewat "
-            "Buatkan Akun, tidak perlu persetujuan."
-        )
+    # --- Resolve target jabatan ---
+    if jabatan_kode == "LPM":
+        target_role = pg.ROLE_LPM
+        target_rw: str | None = None
+        target_rt: str | None = None
+        target_label = "Ketua LPM"
+        lpm_wid = data_lpm.warga_id()
+        if lpm_wid is None and not data_lpm.nama():
+            raise TidakBoleh(
+                "Jabatan Ketua LPM sedang kosong — isi langsung lewat "
+                "Pilih Warga, tidak perlu persetujuan."
+            )
+    else:
+        semua = {j.kode: j for j in pg.daftar_jabatan()}
+        target = semua.get(jabatan_kode)
+        if target is None:
+            raise TidakBoleh("Jabatan tidak dikenal.")
+        if target.pemegang is None:
+            raise TidakBoleh(
+                f"Jabatan {target.label} sedang kosong — isi langsung lewat "
+                "Buatkan Akun, tidak perlu persetujuan."
+            )
+        target_role = target.role
+        target_rw = target.rw
+        target_rt = target.rt
+        target_label = target.label
 
-    warga = next((w for w in semua_penduduk() if w.id == kandidat_id), None)
-    if warga is None or warga.statusKependudukan != "AKTIF":
-        raise TidakBoleh("Warga yang diusulkan tidak ada atau sudah tidak aktif.")
+    # --- Validasi kandidat / pengosongan ---
+    if not kandidat_id:
+        if jabatan_kode != "LPM":
+            raise TidakBoleh("Mengosongkan jabatan hanya didukung untuk LPM.")
+        cand_id = ""
+        cand_nama = "(Dikosongkan)"
+        cand_rt = ""
+        cand_rw = ""
+    else:
+        warga = next((w for w in semua_penduduk() if w.id == kandidat_id), None)
+        if warga is None or warga.statusKependudukan != "AKTIF":
+            raise TidakBoleh("Warga yang diusulkan tidak ada atau sudah tidak aktif.")
 
-    if not pg.cocok_wilayah(
-        target.role, target.rw, target.rt, warga.alamat.rw, warga.alamat.rt
-    ):
-        raise TidakBoleh(
-            f"{warga.nama} warga RT {warga.alamat.rt}/RW {warga.alamat.rw}, "
-            f"tidak bisa memegang jabatan {target.label}."
-        )
+        if not pg.cocok_wilayah(
+            target_role, target_rw, target_rt, warga.alamat.rw, warga.alamat.rt
+        ):
+            raise TidakBoleh(
+                f"{warga.nama} warga RT {warga.alamat.rt}/RW {warga.alamat.rw}, "
+                f"tidak bisa memegang jabatan {target_label}."
+            )
 
-    # Dibandingkan lewat Kode Warga, bukan nama: dua orang yang benar-benar
-    # senama akan saling menghalangi kalau namanya yang dipakai.
-    lain = next(
-        (
-            j
-            for j in semua.values()
-            if j.pemegang and j.pemegang.warga_id == warga.id
-        ),
-        None,
-    )
-    if lain is not None:
-        raise TidakBoleh(
-            f"{warga.nama} sedang memegang jabatan {lain.label}. "
-            "Satu orang satu jabatan."
-        )
+        sudah = _kandidat_sudah_menjabat(warga.id)
+        if sudah is not None:
+            raise TidakBoleh(
+                f"{warga.nama} sedang memegang jabatan {sudah.jabatan}. "
+                "Satu orang satu jabatan."
+            )
+        cand_id = warga.id
+        cand_nama = warga.nama
+        cand_rt = warga.alamat.rt
+        cand_rw = warga.alamat.rw
 
-    penyetuju = penyetuju_untuk(target.role, target.rw, target.rt)
+    penyetuju = penyetuju_untuk(target_role, target_rw, target_rt)
     if not penyetuju:
         raise TidakBoleh(
-            f"Belum ada yang bisa menyetujui pergantian {target.label}. "
+            f"Belum ada yang bisa menyetujui pergantian {target_label}. "
             "Isi dulu jabatan penyetujunya."
         )
 
@@ -274,18 +352,29 @@ def ajukan(*, jabatan_kode: str, kandidat_id: str, oleh: str) -> Pengajuan:
         ).fetchone()
         if berjalan:
             raise TidakBoleh(
-                f"Jabatan {target.label} sudah punya pengajuan yang berjalan."
+                f"Jabatan {target_label} sudah punya pengajuan yang berjalan."
             )
+        if cand_id:
+            dicalonkan = conn.execute(
+                "SELECT jabatan_kode FROM pengajuan"
+                " WHERE kandidat_id = ? AND status = ?",
+                (cand_id, STATUS_MENUNGGU),
+            ).fetchone()
+            if dicalonkan:
+                raise TidakBoleh(
+                    f"{cand_nama} sudah dicalonkan di pengajuan pergantian lain "
+                    f"yang masih berjalan. Satu orang satu jabatan."
+                )
         baru = Pengajuan(
             id=str(uuid.uuid4()),
             jabatan_kode=jabatan_kode,
-            role=target.role,
-            rw=target.rw,
-            rt=target.rt,
-            kandidat_id=warga.id,
-            kandidat_nama=warga.nama,
-            kandidat_rt=warga.alamat.rt,
-            kandidat_rw=warga.alamat.rw,
+            role=target_role,
+            rw=target_rw,
+            rt=target_rt,
+            kandidat_id=cand_id,
+            kandidat_nama=cand_nama,
+            kandidat_rt=cand_rt,
+            kandidat_rw=cand_rw,
             status=STATUS_MENUNGGU,
             diajukan_oleh=oleh,
             diajukan_pada=_sekarang(),
@@ -373,6 +462,11 @@ def demo() -> None:
 
         DATABASE_PATH=/tmp/uji-pergantian.db .venv/bin/python -m app.data.pergantian
     """
+    import os
+    db_path = str(settings.DATABASE_FILE)
+    if "/tmp/" in db_path and os.path.exists(db_path):
+        os.remove(db_path)
+
     dukuh = pg.tambah("d", "rahasia1", "Pak Dukuh", pg.ROLE_DUKUH)
     rw19 = pg.tambah("rw19", "rahasia1", "Pak RW 19", pg.ROLE_RW, rw="019")
     rw20 = pg.tambah("rw20", "rahasia1", "Pak RW 20", pg.ROLE_RW, rw="020")
@@ -387,6 +481,8 @@ def demo() -> None:
     assert {x.id for x in penyetuju_untuk(pg.ROLE_DUKUH, None, None)} == {
         rw19.id, rw20.id
     }
+    # Ganti LPM: Dukuh saja.
+    assert {x.id for x in penyetuju_untuk(pg.ROLE_LPM, None, None)} == {dukuh.id}
 
     # Jabatan kosong DILEWATI, bukan ditunggu — inti dari tiga kebuntuan.
     pg.ubah(rw19.id, aktif=False)

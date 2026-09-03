@@ -43,6 +43,7 @@ BARIS_HEADER = 2  # baris 1 = judul
 # bentuk file dan pembacanya tidak mungkin melenceng sendiri-sendiri.
 KOLOM: list[tuple[str, str, int]] = [
     ("id", "Kode Warga", 14),
+    ("kodeKeluarga", "Kode Keluarga", 14),
     ("nama", "Nama Lengkap", 24),
     ("jenisKelamin", "Jenis Kelamin", 14),
     ("tempatLahir", "Tempat Lahir", 16),
@@ -114,7 +115,7 @@ def baris_ke_penduduk(nilai: dict[str, str]) -> Penduduk:
     # `id` = kolom "Kode Warga", kunci yang dijaga pengurus. Bukan dibangkitkan
     # acak: jabatan pengurus menunjuk ke warga tertentu, dan impor menimpa
     # seluruh tabel — id acak akan memutus tautan itu tiap kali impor.
-    return Penduduk(alamat=Alamat(**alamat), **inti)
+    return Penduduk(alamat=Alamat(**alamat), **inti)  # type: ignore[arg-type]
 
 
 def baca_xlsx(path: str) -> list[Penduduk]:

@@ -40,7 +40,7 @@ class PengajuanOut(BaseModel):
 
 class PengajuanBaru(BaseModel):
     jabatanKode: str
-    kandidatId: str
+    kandidatId: str = ""
 
 
 class Jawaban(BaseModel):

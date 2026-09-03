@@ -20,7 +20,8 @@ BARIS_KOSONG = 300
 
 CONTOH = [
     {
-        "id": "W0001",
+        "id": "W0001-1",
+        "kodeKeluarga": "K0001",
         "nama": "Contoh Nama Kepala Keluarga", "jenisKelamin": "LAKI_LAKI",
         "tempatLahir": "Bandung", "tanggalLahir": "1990-01-01", "agama": "ISLAM",
         "statusPerkawinan": "KAWIN", "pendidikan": "SMA", "pekerjaan": "Wiraswasta",
@@ -31,7 +32,8 @@ CONTOH = [
         "kabupaten": "Bandung", "provinsi": "Jawa Barat", "kodePos": "40615",
     },
     {
-        "id": "W0002",
+        "id": "W0001-2",
+        "kodeKeluarga": "K0001",
         "nama": "Contoh Nama Istri", "jenisKelamin": "PEREMPUAN",
         "tempatLahir": "Bandung", "tanggalLahir": "1992-05-02", "agama": "ISLAM",
         "statusPerkawinan": "KAWIN", "pendidikan": "SMA",
@@ -52,7 +54,8 @@ PETUNJUK = [
     "3. NIK dan No. KK TIDAK didata. Jangan menambahkan kolomnya sendiri —",
     "   sistem tidak menyimpannya, dan desa tidak mengizinkannya.",
     "",
-    "   KODE WARGA — kolom paling penting:",
+    "   KODE WARGA — format urut per keluarga (KodeKeluarga-SubUrutan):",
+    "   - Contoh: W0001-1 (Kepala KK), W0001-2 (Istri), W0001-3 (Anak 1).",
     "   - Wajib diisi, tidak boleh kosong, tidak boleh sama dengan warga lain.",
     "   - Sekali diberikan, JANGAN PERNAH diubah. Kode inilah yang dipakai",
     "     sistem untuk mengenali orang yang sama pada pendataan berikutnya.",

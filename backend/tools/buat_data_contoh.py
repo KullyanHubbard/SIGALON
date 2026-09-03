@@ -113,9 +113,9 @@ def pekerjaan_utk(u: int, perempuan: bool, pendidikan: str) -> str:
 
 
 baris_semua = []
-urut_kode = 1
 
 for i in range(JUMLAH_KK):
+    kode_kk = f"W{i + 1:04d}"
     rw = list(RW_RT)[i % 3]
     rt = random.choice(RW_RT[rw])
     alamat_jalan = f"{random.choice(JALAN)} No. {random.randint(1, 90)}"
@@ -173,9 +173,10 @@ for i in range(JUMLAH_KK):
             "statusHubunganKeluarga": "ANAK",
         })
 
-    for a in anggota:
+    for sub_idx, a in enumerate(anggota, start=1):
         baris_semua.append({
-            "id": f"W{urut_kode:04d}",
+            "id": f"{kode_kk}-{sub_idx}",
+            "kodeKeluarga": f"K{i + 1:04d}",
             "nama": a["nama"],
             "jenisKelamin": "PEREMPUAN" if a["perempuan"] else "LAKI_LAKI",
             "tempatLahir": random.choice(
@@ -194,7 +195,6 @@ for i in range(JUMLAH_KK):
             "desa": DESA, "kecamatan": KECAMATAN, "kabupaten": KABUPATEN,
             "provinsi": PROVINSI, "kodePos": KODE_POS,
         })
-        urut_kode += 1
 
 assert baris_semua, "tidak ada baris terbangkitkan"
 assert len({b["id"] for b in baris_semua}) == len(baris_semua), "Kode Warga dobel"
@@ -260,6 +260,7 @@ ws.auto_filter.ref = f"A{BARIS_HEADER}:{get_column_letter(len(KOLOM))}{len(baris
 
 wb.save("../docs/data-penduduk-contoh.xlsx")
 
-jml_kk = len({b["noKK"] for b in baris_semua})
-per_kk = [sum(1 for b in baris_semua if b["noKK"] == kk) for kk in {b["noKK"] for b in baris_semua}]
+daftar_kk = {b["id"].split("-")[0] for b in baris_semua}
+jml_kk = len(daftar_kk)
+per_kk = [sum(1 for b in baris_semua if b["id"].startswith(kk + "-")) for kk in daftar_kk]
 print(f"OK: {len(baris_semua)} jiwa, {jml_kk} KK, anggota per KK {min(per_kk)}-{max(per_kk)}")

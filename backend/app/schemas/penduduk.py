@@ -59,6 +59,7 @@ class Penduduk(BaseModel):
     disimpan sama sekali, jadi tidak ada kunci turunan data."""
 
     id: str
+    kodeKeluarga: Optional[str] = None
     nama: str
     jenisKelamin: JenisKelamin
     tempatLahir: str

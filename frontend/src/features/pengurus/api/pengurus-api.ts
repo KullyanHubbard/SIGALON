@@ -12,8 +12,8 @@ export interface PengurusApi {
   daftarJabatan(): Promise<Jabatan[]>;
   tambah(payload: PengurusBaru): Promise<Pengurus>;
   resetPassword(id: string, password: string): Promise<void>;
-  /** Ketua LPM bukan jabatan berakun — tidak ada `id`, hanya nama. */
-  ubahLpm(nama: string): Promise<{ nama: string }>;
+  /** Ketua LPM bukan jabatan berakun — diisi dari Kode Warga. */
+  isiLpm(wargaId: string): Promise<{ nama: string; wargaId: string }>;
 }
 
 export const pengurusApi: PengurusApi = {
@@ -28,10 +28,11 @@ export const pengurusApi: PengurusApi = {
   async resetPassword(id, password) {
     await apiClient.post(`/pengurus/${id}/reset-password`, { password });
   },
-  async ubahLpm(nama) {
-    const { data } = await apiClient.patch<{ nama: string }>('/pengurus/lpm', {
-      nama,
-    });
+  async isiLpm(wargaId) {
+    const { data } = await apiClient.patch<{ nama: string; wargaId: string }>(
+      '/pengurus/lpm',
+      { wargaId },
+    );
     return data;
   },
 };

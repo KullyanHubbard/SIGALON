@@ -18,6 +18,7 @@ ROLE_ADMIN = "ADMIN"
 ROLE_DUKUH = "DUKUH"
 ROLE_RW = "RW"
 ROLE_RT = "RT"
+ROLE_LPM = "LPM"
 
 # Penanda "argumen tidak dikirim" untuk `ubah()`, supaya `rw=None` yang berarti
 # "kosongkan" bisa dibedakan dari "jangan sentuh". Bagian dari kontrak modul
@@ -64,6 +65,8 @@ def jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
         return f"Ketua RW {rw}" if rw else "Ketua RW"
     if role == ROLE_RT:
         return f"Ketua RT {rt}" if rt else "Ketua RT"
+    if role == ROLE_LPM:
+        return "Ketua LPM"
     return role
 
 
@@ -82,6 +85,8 @@ def kode_jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
         return f"RW:{rw or ''}"
     if role == ROLE_RT:
         return f"RT:{rw or ''}/{rt or ''}"
+    if role == ROLE_LPM:
+        return "LPM"
     return role
 
 
@@ -99,6 +104,7 @@ def cocok_wilayah(
         return warga_rw == rw and warga_rt == rt
     if role == ROLE_RW:
         return warga_rw == rw
+    # Dukuh dan LPM boleh dari wilayah mana pun di padukuhan.
     return True
 
 
@@ -157,6 +163,11 @@ def tambah(
     akun aktif, atau orangnya sedang memegang jabatan lain. Akun baru selalu
     lahir dengan `harus_ganti_password` menyala: password dari Admin sekali
     pakai."""
+    if role == ROLE_LPM:
+        raise ValueError(
+            "Ketua LPM tidak punya akun — isi lewat endpoint LPM, "
+            "bukan lewat pembuatan akun."
+        )
     baru = Pengurus(
         id=str(uuid.uuid4()),
         username=username,

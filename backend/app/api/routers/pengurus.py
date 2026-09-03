@@ -28,7 +28,7 @@ from app.schemas.auth import AuthUser
 from app.schemas.pengurus import (
     CalonOut,
     JabatanOut,
-    LpmUbah,
+    LpmIsi,
     WargaPilihan,
     PasswordBaru,
     PengurusBaru,
@@ -118,11 +118,21 @@ def cari_warga(
     target = next(
         (j for j in data.daftar_jabatan() if j.kode == jabatanKode), None
     )
+    # Warga yang sudah memegang jabatan aktif TIDAK boleh muncul di dropdown:
+    # satu orang satu jabatan. Backend tetap menolak di `tambah()` dan
+    # `ajukan()`, tapi menyaringnya di sini mencegah Admin memilih orang yang
+    # pasti ditolak — dan memperkecil data warga yang terbuka.
+    sudah_menjabat = {
+        p.warga_id for p in data.daftar() if p.aktif and p.warga_id
+    }
+    if lpm_wid := data_lpm.warga_id():
+        sudah_menjabat.add(lpm_wid)
     cocok = [
         w
         for w in semua_penduduk()
         if kata in w.nama.lower()
         and w.statusKependudukan == "AKTIF"
+        and w.id not in sudah_menjabat
         and (
             target is None
             or data.cocok_wilayah(
@@ -165,22 +175,41 @@ def tambah_pengurus(
 
 
 @router.patch("/lpm")
-def ubah_lpm(
-    payload: LpmUbah, admin: AuthUser = Depends(current_admin)
+def isi_lpm(
+    payload: LpmIsi, admin: AuthUser = Depends(current_admin)
 ) -> dict[str, str]:
-    """Ganti nama Ketua LPM. Bukan jabatan berakun — tanpa login, tanpa
-    persetujuan siapa pun, beda dari seluruh jabatan lain di router ini.
-    Path statis (`lpm`), tidak pernah tertangkap oleh `/{id}/...` di bawahnya.
+    """Isi Ketua LPM yang sedang kosong dari data warga.
+
+    Jika LPM sudah terisi, endpoint ini menolak (409) — pergantian harus lewat
+    pengajuan pergantian yang disetujui Dukuh (`/pergantian`).
     """
+    if data_lpm.warga_id() is not None:
+        raise HTTPException(
+            409,
+            "Jabatan Ketua LPM sudah terisi — gunakan pengajuan pergantian "
+            "untuk menggantinya.",
+        )
+    warga = next((w for w in semua_penduduk() if w.id == payload.wargaId), None)
+    if warga is None or warga.statusKependudukan != "AKTIF":
+        raise HTTPException(400, "Warga yang dipilih tidak ada atau tidak aktif.")
+
+    sudah_menjabat = {
+        p.warga_id for p in data.daftar() if p.aktif and p.warga_id
+    }
+    if warga.id in sudah_menjabat:
+        raise HTTPException(
+            409, f"{warga.nama} sedang memegang jabatan lain."
+        )
+
     lama = data_lpm.nama()
-    baru = data_lpm.ubah(payload.nama.strip())
+    baru = data_lpm.ubah(warga.nama, warga.id)
     catat_audit(
         aktor=admin.username,
-        aksi="ubah-lpm",
+        aksi="isi-lpm",
         sasaran="Ketua LPM",
-        perubahan=f"{lama or '(kosong)'} → {baru or '(kosong)'}",
+        perubahan=f"{lama or '(kosong)'} → {baru}",
     )
-    return {"nama": baru}
+    return {"nama": baru, "wargaId": warga.id}
 
 
 @router.post("/{id}/reset-password", status_code=204)

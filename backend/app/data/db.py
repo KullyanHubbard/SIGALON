@@ -41,6 +41,7 @@ _PREFIKS_ALAMAT = "alamat_"
 SKEMA = """
 CREATE TABLE IF NOT EXISTS penduduk (
     id                     TEXT PRIMARY KEY,
+    kodeKeluarga           TEXT,
     nama                   TEXT NOT NULL,
     jenisKelamin           TEXT NOT NULL,
     tempatLahir            TEXT NOT NULL,
@@ -276,6 +277,8 @@ def buka(path: Path) -> sqlite3.Connection:
 _TAMBALAN: list[tuple[str, str, str]] = [
     ("pengurus", "warga_id", "TEXT"),
     ("audit_log", "sasaran_id", "TEXT"),
+    ("lpm", "warga_id", "TEXT"),
+    ("penduduk", "kodeKeluarga", "TEXT"),
 ]
 
 

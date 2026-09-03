@@ -53,6 +53,14 @@ export function AjukanPergantianDialog({
     );
   }
 
+  function kirimKosongkan() {
+    if (!jabatan) return;
+    ajukan.mutate(
+      { jabatanKode: jabatan.kode, kandidatId: '' },
+      { onSuccess: tutup },
+    );
+  }
+
   return (
     <Modal
       open={Boolean(jabatan)}
@@ -77,6 +85,21 @@ export function AjukanPergantianDialog({
           terpilih={terpilih}
           onPilih={setTerpilih}
         />
+
+        {jabatan?.kode === 'LPM' && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700 flex items-center justify-between gap-2">
+            <span>Ingin mencopot Ketua LPM tanpa memilih pengganti?</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              isLoading={ajukan.isPending}
+              onClick={kirimKosongkan}
+            >
+              Ajukan Pengosongan
+            </Button>
+          </div>
+        )}
 
         {ajukan.error && (
           <Alert tone="error">

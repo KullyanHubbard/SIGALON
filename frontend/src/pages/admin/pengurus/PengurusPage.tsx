@@ -57,7 +57,6 @@ export default function PengurusPage() {
       />
       <UbahLpmDialog
         open={lpmDialogOpen}
-        namaSaatIni={struktur.data?.lpm ?? null}
         onClose={() => setLpmDialogOpen(false)}
       />
       <AjukanPergantianDialog

@@ -1,73 +1,78 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
+import { PilihWarga } from '@/components/ui/PilihWarga';
+import { useCariWarga } from '@/hooks/use-cari-warga';
+import { useDebounce } from '@/hooks/use-debounce';
 import { pesanError } from '@/lib/utils';
-import { useUbahLpm } from '../hooks/use-pengurus';
-import { namaLpmSchema, type NamaLpmFormValues } from '../schemas';
+import type { WargaPilihan } from '@/lib/warga-api';
+import { useIsiLpm } from '../hooks/use-pengurus';
 
 interface UbahLpmDialogProps {
   open: boolean;
-  /** Nama saat ini, buat prefill. `null`/kosong berarti belum diisi. */
-  namaSaatIni: string | null;
   onClose: () => void;
 }
 
 /**
- * Ganti nama Ketua LPM. Beda dari dialog jabatan lain di fitur ini: tanpa
- * pencarian warga, tanpa username/password — LPM tidak terhubung ke data
- * warga maupun tabel `pengurus` sama sekali (CLAUDE.md §11).
+ * Isi Ketua LPM yang sedang kosong dengan memilih dari data warga.
+ *
+ * Ketua LPM tidak punya akun login (bukan `pengurus`), tetapi orangnya
+ * dipilih dari data penduduk dan tidak boleh merangkap jabatan lain.
  */
-export function UbahLpmDialog({
-  open,
-  namaSaatIni,
-  onClose,
-}: UbahLpmDialogProps) {
-  const ubah = useUbahLpm();
+export function UbahLpmDialog({ open, onClose }: UbahLpmDialogProps) {
+  const [cari, setCari] = useState('');
+  const [terpilih, setTerpilih] = useState<WargaPilihan | null>(null);
+  const debounced = useDebounce(cari);
+  const { data: hasil, isFetching } = useCariWarga(debounced, 'LPM');
+  const isiLpm = useIsiLpm();
 
-  const {
-    register,
-    handleSubmit,
-    reset: resetForm,
-    formState: { errors },
-  } = useForm<NamaLpmFormValues>({
-    resolver: zodResolver(namaLpmSchema),
-    defaultValues: { nama: namaSaatIni ?? '' },
-  });
+  function tutup() {
+    setCari('');
+    setTerpilih(null);
+    isiLpm.reset();
+    onClose();
+  }
 
-  useEffect(() => {
-    if (open) resetForm({ nama: namaSaatIni ?? '' });
-  }, [open, namaSaatIni, resetForm]);
-
-  const onSubmit = handleSubmit((values) => {
-    ubah.mutate(values.nama, { onSuccess: onClose });
-  });
+  function kirim() {
+    if (!terpilih) return;
+    isiLpm.mutate(terpilih.id, { onSuccess: tutup });
+  }
 
   return (
-    <Modal open={open} onClose={onClose} title="Ubah Nama Ketua LPM">
-      <form onSubmit={onSubmit} className="space-y-4">
-        <Input
-          label="Nama"
-          error={errors.nama?.message}
-          {...register('nama')}
+    <Modal open={open} onClose={tutup} title="Pilih Ketua LPM">
+      <div className="space-y-4">
+        <PilihWarga
+          label="Siapa yang menjadi Ketua LPM"
+          cari={cari}
+          onCariChange={setCari}
+          hasil={hasil}
+          sedangMencari={isFetching}
+          terpilih={terpilih}
+          onPilih={setTerpilih}
+          hint="Ketua LPM boleh berasal dari RW mana saja."
         />
-        {ubah.error && (
+
+        {isiLpm.error && (
           <Alert tone="error">
-            {pesanError(ubah.error, 'Gagal mengubah nama Ketua LPM.')}
+            {pesanError(isiLpm.error, 'Gagal memilih Ketua LPM.')}
           </Alert>
         )}
+
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button type="button" variant="outline" onClick={tutup}>
             Batal
           </Button>
-          <Button type="submit" isLoading={ubah.isPending}>
-            Simpan
+          <Button
+            type="button"
+            disabled={!terpilih}
+            isLoading={isiLpm.isPending}
+            onClick={kirim}
+          >
+            Pilih Warga
           </Button>
         </div>
-      </form>
+      </div>
     </Modal>
   );
 }

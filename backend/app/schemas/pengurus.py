@@ -111,9 +111,11 @@ class StrukturOrganisasiPublik(BaseModel):
     lpm: Optional[str] = None
 
 
-class LpmUbah(BaseModel):
-    """Ganti nama Ketua LPM. Tanpa Kode Warga: berbeda dari `PengurusBaru`,
-    LPM tidak terhubung ke data warga sama sekali, jadi tidak ada yang bisa
-    diperiksa selain panjangnya."""
+class LpmIsi(BaseModel):
+    """Mengisi jabatan Ketua LPM yang sedang kosong.
 
-    nama: str = Field(max_length=100)
+    Menggunakan `wargaId` yang dipilih dari data warga (bukan diketik).
+    Jika LPM sudah terisi, pergantian harus lewat pengajuan yang disetujui.
+    """
+
+    wargaId: str = Field(min_length=1)

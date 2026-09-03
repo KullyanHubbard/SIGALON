@@ -43,12 +43,13 @@ export function useResetPassword() {
  * `strukturOrganisasiKeys` yang diekspor `features/struktur-organisasi`:
  * fitur ini tidak boleh mengimpor internal fitur lain (CLAUDE.md §4).
  */
-export function useUbahLpm() {
+export function useIsiLpm() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (nama: string) => pengurusApi.ubahLpm(nama),
+    mutationFn: (wargaId: string) => pengurusApi.isiLpm(wargaId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['struktur-organisasi'] });
+      queryClient.invalidateQueries({ queryKey: pengurusKeys.all });
     },
   });
 }
