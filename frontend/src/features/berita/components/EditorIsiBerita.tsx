@@ -1,0 +1,244 @@
+import { useEffect, useRef, useState } from 'react';
+import { EditorContent, useEditor } from '@tiptap/react';
+import Image from '@tiptap/extension-image';
+import StarterKit from '@tiptap/starter-kit';
+import {
+  Bold,
+  Heading2,
+  Heading3,
+  ImagePlus,
+  Italic,
+  List,
+  ListOrdered,
+  Quote,
+  Underline as GarisBawah,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { bacaFoto } from '../foto';
+
+interface EditorIsiBeritaProps {
+  /** HTML isi artikel. */
+  value: string;
+  onChange: (html: string) => void;
+  error?: string;
+}
+
+/**
+ * Penyunting isi berita: tebal, miring, judul, daftar, kutipan, dan foto yang
+ * bisa diletakkan di tengah tulisan.
+ *
+ * Keluarannya HTML, dan HTML dari klien tidak dipercaya siapa pun: yang
+ * menentukan tag mana boleh terbit adalah `bersihkan_html` di
+ * `backend/app/schemas/berita.py`, saat menyimpan. Daftar tombol di sini
+ * sengaja tidak melampaui daftar putih di sana — tombol yang menghasilkan tag
+ * terlarang cuma akan menghilangkan tulisan orang tanpa penjelasan.
+ *
+ * Tanpa tombol tautan, sengaja: mengizinkan `<a>` berarti melonggarkan skema
+ * URL yang boleh lewat, sementara `data:` harus tetap terbuka untuk foto
+ * sisipan. Berita padukuhan belum membutuhkannya.
+ */
+export function EditorIsiBerita({
+  value,
+  onChange,
+  error,
+}: EditorIsiBeritaProps) {
+  const [galatFoto, setGalatFoto] = useState<string | null>(null);
+  const berkasRef = useRef<HTMLInputElement>(null);
+
+  const editor = useEditor({
+    extensions: [
+      // `link: false` — lihat catatan di atas. Judul dibatasi dua tingkat:
+      // judul beritanya sendiri sudah h1 di halaman publik.
+      StarterKit.configure({ heading: { levels: [2, 3] }, link: false }),
+      Image.configure({ inline: false }),
+    ],
+    content: value,
+    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+    editorProps: {
+      attributes: {
+        class:
+          'isi-berita min-h-64 w-full rounded-b-lg bg-surface px-4 py-3 text-sm text-slate-900 focus:outline-none',
+      },
+    },
+  });
+
+  // Dialognya satu instance untuk semua berita, jadi isi editor harus diganti
+  // saat berita yang dibuka berganti. Perbandingan dengan `getHTML()` menahan
+  // putaran balik: tiap ketikan memperbarui `value`, dan tanpa penjagaan ini
+  // kursor akan dilempar ke awal setiap huruf.
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value, { emitUpdate: false });
+    }
+  }, [editor, value]);
+
+  const sisipkanFoto = async (berkas: File | undefined) => {
+    if (!berkas || !editor) return;
+    const hasil = await bacaFoto(berkas);
+    if ('galat' in hasil) {
+      setGalatFoto(hasil.galat);
+      return;
+    }
+    setGalatFoto(null);
+    // Keterangan foto ditanyakan, bukan diambil dari nama berkas: pembaca layar
+    // membacakan `alt`, dan "IMG_20260903_112034.jpg" tidak memberitahu apa pun
+    // kepada yang tidak bisa melihat fotonya. Batal = foto tanpa keterangan,
+    // yang tetap boleh — memaksanya cuma akan diisi asal-asalan.
+    const keterangan = window.prompt(
+      'Keterangan foto untuk pembaca layar (boleh dikosongkan):',
+      '',
+    );
+    editor
+      .chain()
+      .focus()
+      .setImage({ src: hasil.dataUrl, alt: keterangan?.trim() || '' })
+      .run();
+  };
+
+  return (
+    <div className="w-full">
+      <label className="mb-1.5 block text-sm font-medium text-slate-700">
+        Isi Berita
+      </label>
+
+      <div
+        className={cn(
+          'overflow-hidden rounded-lg border-1 border-slate-300 focus-within:border-brand-600',
+          error && 'border-red-400',
+        )}
+      >
+        <div
+          role="toolbar"
+          aria-label="Format tulisan"
+          aria-controls="isi-berita-editor"
+          className="flex flex-wrap items-center gap-0.5 border-b border-slate-200 bg-slate-50 px-2 py-1.5"
+        >
+          <TombolAlat
+            label="Tebal"
+            aktif={editor?.isActive('bold')}
+            onClick={() => editor?.chain().focus().toggleBold().run()}
+          >
+            <Bold className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <TombolAlat
+            label="Miring"
+            aktif={editor?.isActive('italic')}
+            onClick={() => editor?.chain().focus().toggleItalic().run()}
+          >
+            <Italic className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <TombolAlat
+            label="Garis bawah"
+            aktif={editor?.isActive('underline')}
+            onClick={() => editor?.chain().focus().toggleUnderline().run()}
+          >
+            <GarisBawah className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+
+          <span className="mx-1 h-5 w-px bg-slate-300" aria-hidden />
+
+          <TombolAlat
+            label="Judul bagian"
+            aktif={editor?.isActive('heading', { level: 2 })}
+            onClick={() =>
+              editor?.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+          >
+            <Heading2 className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <TombolAlat
+            label="Subjudul"
+            aktif={editor?.isActive('heading', { level: 3 })}
+            onClick={() =>
+              editor?.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+          >
+            <Heading3 className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <TombolAlat
+            label="Daftar berpoin"
+            aktif={editor?.isActive('bulletList')}
+            onClick={() => editor?.chain().focus().toggleBulletList().run()}
+          >
+            <List className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <TombolAlat
+            label="Daftar bernomor"
+            aktif={editor?.isActive('orderedList')}
+            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+          >
+            <ListOrdered className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <TombolAlat
+            label="Kutipan"
+            aktif={editor?.isActive('blockquote')}
+            onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+          >
+            <Quote className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+
+          <span className="mx-1 h-5 w-px bg-slate-300" aria-hidden />
+
+          <TombolAlat
+            label="Sisipkan foto di sini"
+            onClick={() => berkasRef.current?.click()}
+          >
+            <ImagePlus className="h-4 w-4" aria-hidden />
+          </TombolAlat>
+          <input
+            ref={berkasRef}
+            type="file"
+            accept="image/*"
+            className="sr-only"
+            onChange={(e) => {
+              void sisipkanFoto(e.target.files?.[0]);
+              // Dikosongkan supaya memilih berkas yang sama dua kali tetap
+              // memicu `change` — kalau tidak, foto kedua diam saja.
+              e.target.value = '';
+            }}
+          />
+        </div>
+
+        <EditorContent id="isi-berita-editor" editor={editor} />
+      </div>
+
+      {(error ?? galatFoto) ? (
+        <p className="mt-1 text-xs text-red-600">{error ?? galatFoto}</p>
+      ) : (
+        <p className="mt-1 text-xs text-slate-500">
+          Enter memulai paragraf baru. Foto disisipkan di posisi kursor,
+          otomatis diperkecil, dan metadata lokasinya dibuang sebelum terbit.
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Satu tombol format. `aria-pressed` supaya keadaan aktifnya tidak cuma warna. */
+function TombolAlat({
+  label,
+  aktif,
+  onClick,
+  children,
+}: {
+  label: string;
+  aktif?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={aktif}
+      aria-label={label}
+      title={label}
+      className={cn(
+        'focus-ring rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-200 dark:hover:bg-white/10',
+        aktif && 'bg-brand-600/20 text-brand-700 dark:text-brand-300',
+      )}
+    >
+      {children}
+    </button>
+  );
+}

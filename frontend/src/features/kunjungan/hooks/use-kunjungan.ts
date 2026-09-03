@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { bacaLokal, tulisLokal } from '@/lib/utils';
 import { kunjunganApi } from '../api/kunjungan-api';
 
 const KUNCI = 'siduk.kunjunganTerhitung';
@@ -14,7 +15,7 @@ function hariIni(): string {
 }
 
 function sudahDihitungHariIni(): boolean {
-  return localStorage.getItem(KUNCI) === hariIni();
+  return bacaLokal(KUNCI) === hariIni();
 }
 
 const kunciQuery = () => ['kunjungan', hariIni()] as const;
@@ -50,10 +51,18 @@ export function useKunjunganHariIni(): number | undefined {
   useEffect(() => {
     if (dipicu.current || sudahDihitungHariIni()) return;
     dipicu.current = true;
-    kunjunganApi.tambah().then((jumlah) => {
-      localStorage.setItem(KUNCI, hariIni());
-      queryClient.setQueryData(kunciQuery(), jumlah);
-    });
+    kunjunganApi
+      .tambah()
+      .then((jumlah) => {
+        tulisLokal(KUNCI, hariIni());
+        queryClient.setQueryData(kunciQuery(), jumlah);
+      })
+      // 7. Backend mati tidak boleh meninggalkan rejection tak tertangani.
+      // Penanda dilepas lagi supaya kunjungan terhitung pada percobaan
+      // berikutnya, bukan hilang untuk hari itu.
+      .catch(() => {
+        dipicu.current = false;
+      });
   }, [queryClient]);
 
   return query.data;

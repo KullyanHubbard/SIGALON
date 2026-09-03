@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { PADUKUHAN } from '@/lib/padukuhan';
+import { usePadukuhan } from '@/hooks/use-padukuhan';
+import { PETA } from '@/lib/padukuhan';
 import { cn } from '@/lib/utils';
 
-const { koordinat, radiusPeta, namaLengkap } = PADUKUHAN;
+const { koordinat, radiusPeta } = PETA;
 
 const bbox = [
   koordinat.lon - radiusPeta,
@@ -37,6 +38,7 @@ const SUMBER = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&lay
  * ukuran, dan pemuatannya tetap ditunda sampai perlu.
  */
 export function PetaPadukuhan({ className }: { className?: string }) {
+  const { namaLengkap } = usePadukuhan();
   const kotak = useRef<HTMLDivElement>(null);
   const [tampil, setTampil] = useState(false);
 

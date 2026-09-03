@@ -10,12 +10,12 @@ interface LogoProps {
 }
 
 /**
- * Lambang SIDUK — SATU-SATUNYA tempat berkasnya ditentukan. Dipakai di kepala
+ * Lambang SIGALON — SATU-SATUNYA tempat berkasnya ditentukan. Dipakai di kepala
  * `Sidebar`, `PublicSidebar`, `PublicNavbar`, `PublicTopbar`, dan `AuthLayout`.
  *
- * Berkasnya wordmark (tulisan "SIDUK", rasio ±6,2:1), bukan lambang persegi.
+ * Berkasnya wordmark (tulisan "SIGALON", rasio ±6,2:1), bukan lambang persegi.
  * Karena itu tidak ada label teks `env.appName` lagi di sebelahnya — dulu ada,
- * dan menyandingkannya dengan wordmark cuma menghasilkan "SIDUK SIDUK". Nama
+ * dan menyandingkannya dengan wordmark cuma menghasilkan "SIGALON SIGALON". Nama
  * aplikasinya sekarang hidup di `alt`, jadi pembaca layar tetap mendengarnya.
  *
  * Lebarnya `w-auto`: kotak persegi (`w-6`) akan memampatkan tulisannya.

@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { PetaPadukuhan } from '@/components/ui/PetaPadukuhan';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
-import { BATAS_WILAYAH, PADUKUHAN, SEJARAH_PADUKUHAN } from '@/lib/padukuhan';
+import { usePadukuhan } from '@/hooks/use-padukuhan';
+import { batasWilayah, paragrafSejarah } from '@/lib/padukuhan';
 import { formatAngka } from '@/lib/utils';
 import { BaganOrganisasi } from './components/BaganOrganisasi';
 import { BarisKeterangan } from './components/BarisKeterangan';
@@ -11,6 +12,7 @@ import { BarisKeterangan } from './components/BarisKeterangan';
 /** Profil padukuhan: sejarah, bagan pengurus, peta, batas & luas wilayah. */
 export default function ProfilPage() {
   const statistik = useStatistikPublik();
+  const padukuhan = usePadukuhan();
 
   return (
     <div className="flex flex-col">
@@ -20,7 +22,7 @@ export default function ProfilPage() {
             Profil
           </p>
           <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
-            {PADUKUHAN.namaLengkap}
+            {padukuhan.namaLengkap}
           </h1>
         </div>
       </section>
@@ -32,7 +34,7 @@ export default function ProfilPage() {
               Sejarah & Gambaran Umum
             </h2>
             <div className="mt-4 space-y-4 text-slate-700">
-              {SEJARAH_PADUKUHAN.map((paragraf) => (
+              {paragrafSejarah(padukuhan.sejarah).map((paragraf) => (
                 <p key={paragraf.slice(0, 24)}>{paragraf}</p>
               ))}
             </div>
@@ -44,7 +46,7 @@ export default function ProfilPage() {
               <dl>
                 <BarisKeterangan
                   label="Luas wilayah"
-                  nilai={PADUKUHAN.luasWilayah}
+                  nilai={padukuhan.luasWilayah}
                 />
                 {/* Populasi dari `/publik/statistik`, bukan angka tetap: kalau
                     ditulis manual ia langsung basi pada impor data berikutnya. */}
@@ -72,10 +74,10 @@ export default function ProfilPage() {
                     </>
                   )}
                 </QueryBoundary>
-                <BarisKeterangan label="Kalurahan" nilai={PADUKUHAN.desa} />
+                <BarisKeterangan label="Kalurahan" nilai={padukuhan.desa} />
                 <BarisKeterangan
                   label="Kapanewon"
-                  nilai={PADUKUHAN.kapanewon}
+                  nilai={padukuhan.kapanewon}
                 />
               </dl>
             </CardContent>
@@ -110,7 +112,7 @@ export default function ProfilPage() {
             />
             <CardContent>
               <dl>
-                {BATAS_WILAYAH.map((b) => (
+                {batasWilayah(padukuhan).map((b) => (
                   <BarisKeterangan
                     key={b.arah}
                     label={`Sebelah ${b.arah}`}

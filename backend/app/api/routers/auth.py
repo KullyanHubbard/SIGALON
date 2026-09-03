@@ -146,7 +146,11 @@ async def ganti_password_sendiri(
         raise HTTPException(401, "Sesi tidak valid atau sudah kedaluwarsa.")
     _, hash_lama = hasil
     if not cocok_rahasia(payload.passwordLama, hash_lama):
-        raise HTTPException(401, "Password lama salah.")
+        # 400, bukan 401: sesinya SAH — yang salah isian formulirnya. Klien
+        # memperlakukan 401 sebagai "sesi mati" dan langsung mencabutnya, jadi
+        # memakai 401 di sini berarti salah ketik password lama satu kali
+        # melempar orangnya keluar ke halaman masuk.
+        raise HTTPException(400, "Password lama salah.")
     # Kalau boleh sama, tuntutan mengganti password bisa dipenuhi tanpa
     # mengganti apa pun.
     if cocok_rahasia(payload.passwordBaru, hash_lama):

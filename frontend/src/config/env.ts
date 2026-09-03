@@ -9,5 +9,5 @@ function readString(value: string | undefined, fallback: string): string {
 
 export const env = {
   apiBaseUrl: readString(import.meta.env.VITE_API_BASE_URL, '/api'),
-  appName: readString(import.meta.env.VITE_APP_NAME, 'SIDUK'),
+  appName: readString(import.meta.env.VITE_APP_NAME, 'SIGALON'),
 } as const;

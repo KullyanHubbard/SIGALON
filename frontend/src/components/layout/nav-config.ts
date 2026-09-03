@@ -40,6 +40,9 @@ const riwayat: NavItem = {
  * Admin TIDAK melihat Dashboard, Data Penduduk, maupun Infografis: ketiganya
  * memang ditolak backend untuknya. Menampilkannya cuma menyediakan tiga pintu
  * buntu di sidebar.
+ *
+ * Kelola Berita ada di sisi Admin, bukan Dukuh: berita adalah isi portal, dan
+ * yang mengurus isi portal sekarang Admin (keputusan 3 September 2026).
  */
 export function navItemsForRole(role: Role | undefined): NavItem[] {
   if (role === 'ADMIN') {
@@ -48,6 +51,16 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
         label: 'Kelola Akun',
         to: paths.admin.pengurus,
         aksen: CHART_KATEGORI_COLORS[2],
+      },
+      {
+        label: 'Kelola Berita',
+        to: paths.admin.berita,
+        aksen: CHART_KATEGORI_COLORS[6],
+      },
+      {
+        label: 'Profil Padukuhan',
+        to: paths.admin.profil,
+        aksen: CHART_KATEGORI_COLORS[7],
       },
       riwayat,
     ];
@@ -73,16 +86,5 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
     },
     riwayat,
     statistikDesa,
-    // Isi portal publik: Dukuh saja. Ketua RW/RT membaca data warga, tapi tidak
-    // menerbitkan apa pun atas nama padukuhan.
-    ...(role === 'DUKUH'
-      ? [
-          {
-            label: 'Kelola Berita',
-            to: paths.admin.berita,
-            aksen: CHART_KATEGORI_COLORS[6],
-          },
-        ]
-      : []),
   ];
 }

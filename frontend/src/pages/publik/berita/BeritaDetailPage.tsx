@@ -8,7 +8,7 @@ import {
   FotoBerita,
 } from '@/features/berita/components/BeritaCard';
 import { useBerita, useBeritaList } from '@/features/berita/hooks/use-berita';
-import { formatTanggal, keParagraf } from '@/features/berita/utils';
+import { formatTanggal } from '@/features/berita/utils';
 import { paths } from '@/routes/paths';
 import { WADAH } from '@/components/layout/wadah';
 
@@ -67,32 +67,34 @@ export default function BeritaDetailPage() {
                   className="mt-6 h-64 w-full rounded-xl sm:h-96"
                 />
 
-                {/* `max-w-none` tidak dipakai lewat plugin typography — plugin
-                    itu tidak terpasang. Jarak antar-paragraf disetel `space-y`. */}
-                <div className="mt-8 space-y-4 text-base leading-relaxed text-slate-700">
-                  {keParagraf(berita.isi).map((paragraf) => (
-                    <p key={paragraf.slice(0, 32)}>{paragraf}</p>
-                  ))}
-                </div>
-
-                <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
-                  <Link
-                    to={paths.berita}
-                    className={buttonClass({ variant: 'outline' })}
-                  >
-                    <ArrowLeft className="h-4 w-4" aria-hidden />
-                    Kembali ke Berita
-                  </Link>
-                  <Link
-                    to={paths.landing}
-                    className={buttonClass({ variant: 'ghost' })}
-                  >
-                    Ke Beranda
-                  </Link>
-                </div>
+                {/* HTML dari editor, dipasang apa adanya — dan itu aman
+                    HANYA karena disaring daftar putih saat DISIMPAN
+                    (`backend/app/schemas/berita.py`), bukan di sini. Menyaring
+                    ulang saat menampilkan berarti dua daftar putih yang bisa
+                    berbeda diam-diam; yang di server tidak bisa dilewati.
+                    Kelas `isi-berita` sama persis dengan yang dipakai kotak
+                    editornya, jadi yang ditulis penulis itu yang dilihat
+                    pembaca. */}
+                <div
+                  className="isi-berita mt-8 text-base text-slate-700"
+                  dangerouslySetInnerHTML={{ __html: berita.isi }}
+                />
               </>
             )}
           </QueryBoundary>
+
+          {/* Di LUAR QueryBoundary: dulu tautan ini ikut cabang sukses, jadi
+              pembaca yang membuka tautan lama (judulnya sudah disunting, slug
+              ikut berganti) mendarat di halaman tanpa satu pun jalan lanjut. */}
+          <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
+            <Link
+              to={paths.berita}
+              className={buttonClass({ variant: 'outline' })}
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+              Kembali ke Berita
+            </Link>
+          </div>
         </article>
 
         {/* Sidebar hanya dicetak kalau memang ada berita lain: kartu "Berita

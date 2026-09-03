@@ -20,7 +20,7 @@ backend, jadi kerangkanya lengkap.
 | Variabel | Wajib | Bawaan | Guna |
 | -------- | ----- | ------ | ---- |
 | `VITE_API_BASE_URL` | — | `/api` | Base URL API backend. `/api` melewati proxy Vite ke `localhost:8000` (satu origin, tanpa CORS). Isi URL penuh hanya kalau mau memanggil backend langsung. |
-| `VITE_APP_NAME` | — | `SIDUK` | Nama aplikasi, dipakai di title & header. |
+| `VITE_APP_NAME` | — | `SIGALON` | Nama aplikasi, dipakai di title & header. |
 
 Semua variabel yang diakses di client **wajib** berprefix `VITE_`.
 

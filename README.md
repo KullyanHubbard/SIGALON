@@ -1,6 +1,6 @@
-# SIDUK — Portal Data Kependudukan & Informasi Desa
+# SIGALON — Portal Data Kependudukan & Informasi Desa
 
-**SIDUK** adalah aplikasi web manajemen data kependudukan dan portal informasi publik desa. Didesain khusus untuk **Perangkat Desa** (Admin, Dukuh, Ketua RW, Ketua RT) dengan mengutamakan **privasi data warga**, **otorisasi berbasis wilayah**, serta **transparansi informasi publik**.
+**SIGALON** adalah aplikasi web manajemen data kependudukan dan portal informasi publik desa. Didesain khusus untuk **Perangkat Desa** (Admin, Dukuh, Ketua RW, Ketua RT) dengan mengutamakan **privasi data warga**, **otorisasi berbasis wilayah**, serta **transparansi informasi publik**.
 
 ---
 
@@ -100,7 +100,7 @@ NIA-WEB/
 3. **Isi Data Penduduk Awal:**
    Impor data awal dari file Excel pendataan ke database SQLite:
    ```bash
-   backend/.venv/bin/python -m app.data.impor_excel docs/data-penduduk.xlsx
+   backend/.venv/bin/python -m app.data.impor_excel docs/data-penduduk-contoh.xlsx
    ```
 4. **Jalankan Seluruh Aplikasi:**
    Kembali ke root direktori, lalu jalankan skrip gabungan:
@@ -150,10 +150,10 @@ npm run dev
 Database SQLite tidak di-seed otomatis. Data penduduk diisi dari file Excel pendataan:
 ```bash
 # Impor pertama kali
-backend/.venv/bin/python -m app.data.impor_excel docs/data-penduduk.xlsx
+backend/.venv/bin/python -m app.data.impor_excel docs/data-penduduk-contoh.xlsx
 
 # Menimpa seluruh data penduduk (HATI-HATI: Hanya gunakan jika ingin reset data warga)
-backend/.venv/bin/python -m app.data.impor_excel docs/data-penduduk.xlsx --timpa-semua
+backend/.venv/bin/python -m app.data.impor_excel docs/data-penduduk-contoh.xlsx --timpa-semua
 ```
 
 * **Penting:** Kolom **Kode Warga** wajib diisi, unik, dan tidak boleh kosong.

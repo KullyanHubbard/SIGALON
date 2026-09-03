@@ -1,55 +1,26 @@
-import type { Berita } from './types';
+const ENTITAS: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&nbsp;': ' ',
+};
 
 /**
- * Judul -> slug URL. Huruf kecil, hanya a-z/0-9, spasi jadi tanda hubung.
+ * Isi artikel (HTML) -> teks polos untuk kutipan pembuka di kartu berita.
  *
- * Tanpa normalisasi diakritik: judul berita padukuhan berbahasa Indonesia,
- * yang tidak punya huruf beraksen. Karakter di luar pola dibuang, bukan
- * ditranslasi.
+ * Regex, bukan parser: yang dibaca di sini sudah disaring daftar putih di
+ * server (`backend/app/schemas/berita.py`), jadi ini urusan tampilan, bukan
+ * penjagaan keamanan. Tag diganti spasi, bukan dibuang, supaya
+ * `<p>Satu</p><p>Dua</p>` tidak terbaca "SatuDua".
  */
-export function keSlug(judul: string): string {
-  return judul
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-/**
- * Slug yang belum dipakai berita lain. Bentrok diberi akhiran angka, bukan
- * ditolak: dua kegiatan tahunan bernama sama itu wajar ("Kerja Bakti Bulanan"),
- * dan menolaknya memaksa penulis mengarang judul yang tidak dia inginkan.
- */
-export function slugUnik(
-  judul: string,
-  lain: Berita[],
-  kecualiId?: string,
-): string {
-  const dasar = keSlug(judul) || 'berita';
-  const terpakai = new Set(
-    lain.filter((b) => b.id !== kecualiId).map((b) => b.slug),
-  );
-  if (!terpakai.has(dasar)) return dasar;
-
-  let n = 2;
-  while (terpakai.has(`${dasar}-${n}`)) n += 1;
-  return `${dasar}-${n}`;
-}
-
-/** Terbaru dulu. Tanggal sama diurutkan menurut `id`, agar hasilnya stabil. */
-export function urutTerbaru(daftar: Berita[]): Berita[] {
-  return [...daftar].sort(
-    (a, b) =>
-      b.tanggalTerbit.localeCompare(a.tanggalTerbit) ||
-      b.id.localeCompare(a.id),
-  );
-}
-
-/** Paragraf isi artikel: dipisah baris kosong, yang kosong dibuang. */
-export function keParagraf(isi: string): string[] {
+export function keRingkasan(isi: string): string {
   return isi
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&amp;|&lt;|&gt;|&quot;|&#39;|&nbsp;/g, (e) => ENTITAS[e])
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 const formatterTanggal = new Intl.DateTimeFormat('id-ID', {

@@ -1,11 +1,14 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.routers import (
     audit,
     auth,
+    berita,
     infografis,
+    padukuhan,
     penduduk,
     pergantian,
     pengurus,
@@ -16,7 +19,7 @@ from app.data.pengurus import bootstrap
 from app.data.pengurus import daftar as daftar_pengurus
 from app.data.store import semua_penduduk
 
-app = FastAPI(title="SIDUK API", description="Data penduduk dari pendataan Excel — lihat CLAUDE.md §11")
+app = FastAPI(title="SIGALON API", description="Data penduduk dari pendataan Excel — lihat CLAUDE.md §11")
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,6 +44,25 @@ async def http_exception_handler(request, exc: HTTPException) -> JSONResponse:
     )
 
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc: RequestValidationError) -> JSONResponse:
+    """Payload yang tidak lolos skema juga dijawab `{"message": ...}`.
+
+    Tanpa ini FastAPI menjawab `{"detail": [...]}`, yang tidak dibaca
+    interceptor axios — yang sampai ke layar cuma "Request failed with status
+    code 422", kalimat yang tidak menolong siapa pun. Yang dikirim galat
+    PERTAMA saja: form menampilkannya di satu baris Alert, bukan daftar.
+    """
+    galat = exc.errors()[0]
+    # `loc` berbentuk ("body", "judul"); yang berguna bagi pembaca kolomnya.
+    kolom = ".".join(str(bagian) for bagian in galat["loc"][1:])
+    pesan = galat.get("msg", "Data yang dikirim tidak sah")
+    return JSONResponse(
+        status_code=422,
+        content={"message": f"{kolom}: {pesan}" if kolom else pesan},
+    )
+
+
 app.include_router(penduduk.router)
 app.include_router(publik.router)
 app.include_router(auth.router)
@@ -48,6 +70,8 @@ app.include_router(infografis.router)
 app.include_router(pengurus.router)
 app.include_router(pergantian.router)
 app.include_router(audit.router)
+app.include_router(berita.router)
+app.include_router(padukuhan.router)
 
 
 @app.get("/health")
@@ -63,12 +87,12 @@ def _startup() -> None:
     sungguhan, log server jadi tempat bocornya.
     """
     bootstrap()
-    print("=== SIDUK backend ===")
+    print("=== SIGALON backend ===")
     print(f"  Akun pengurus: {len(daftar_pengurus())} akun terdaftar")
     jumlah = len(semua_penduduk())
     if jumlah:
         print(f"  Data penduduk: {jumlah} jiwa terbaca dari DB")
     else:
         print("  Data penduduk: KOSONG — impor dulu:")
-        print("    .venv/bin/python -m app.data.impor_excel ../docs/data-penduduk.xlsx")
+        print("    .venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx")
     print("=====================")

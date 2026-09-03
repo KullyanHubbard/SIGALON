@@ -24,6 +24,10 @@ const AKSI_LABEL: Record<string, string> = {
   'tambah-pengurus': 'Membuatkan akun',
   'reset-password': 'Mereset password',
   'ubah-lpm': 'Mengubah nama Ketua LPM',
+  'tambah-berita': 'Menerbitkan berita',
+  'ubah-berita': 'Menyunting berita',
+  'hapus-berita': 'Menghapus berita',
+  'ubah-padukuhan': 'Mengubah profil padukuhan',
 };
 
 /** Satu perubahan kolom, sudah dipecah supaya bisa ditata di layar. */

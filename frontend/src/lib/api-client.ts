@@ -4,7 +4,9 @@ import axios, {
 } from 'axios';
 import { env } from '@/config/env';
 import { ApiError } from '@/types/api';
-import { getStoredToken, clearSession } from '@/features/auth/token-storage';
+import { useAuthStore } from '@/features/auth/auth-store';
+import { queryClient } from '@/lib/query-client';
+import { getStoredToken } from '@/features/auth/token-storage';
 
 /** Instance HTTP tunggal untuk memanggil FastAPI. */
 export const apiClient: AxiosInstance = axios.create({
@@ -36,7 +38,17 @@ apiClient.interceptors.response.use(
         data?.message ?? error.message ?? 'Terjadi kesalahan jaringan';
 
       if (status === 401) {
-        clearSession();
+        // Lewat store, bukan `clearSession()` langsung: menghapus localStorage
+        // saja meninggalkan `isAuthenticated: true` di memori, jadi guard tidak
+        // melempar ke /login dan pemakainya terdampar di halaman yang semua
+        // query-nya gagal sampai ia menekan muat ulang sendiri.
+        // Aman dari impor melingkar: `auth-store` tidak mengimpor berkas ini.
+        useAuthStore.getState().clear();
+        // Cache ikut dibuang, bukan cuma sesinya. `staleTime` 60 detik berarti
+        // data pengurus sebelumnya masih disajikan tanpa refetch — di komputer
+        // balai desa yang dipakai bergantian, orang berikutnya yang masuk bisa
+        // melihat daftar warga milik peran sebelumnya selama semenit itu.
+        queryClient.clear();
       }
       return Promise.reject(
         new ApiError(status, message, error.response?.data),

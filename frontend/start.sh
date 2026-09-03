@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 # bisa jalan apa adanya (frontend tidak punya rahasia wajib seperti backend).
 if [ ! -f .env ]; then
   cat > .env <<'ISI'
-# SIDUK Frontend — environment variables. Berkas ini TIDAK ikut repo.
+# SIGALON Frontend — environment variables. Berkas ini TIDAK ikut repo.
 # Daftar lengkap beserta penjelasannya ada di frontend/README.md.
 
 # Base URL API backend. `/api` = lewat proxy dev server (vite.config.ts) ke
@@ -15,7 +15,7 @@ if [ ! -f .env ]; then
 VITE_API_BASE_URL=/api
 
 # Nama aplikasi (dipakai di title & header).
-VITE_APP_NAME=SIDUK
+VITE_APP_NAME=SIGALON
 ISI
   echo "frontend/.env dibuatkan dengan nilai bawaan — langsung bisa jalan."
   echo "Kalau perlu menyesuaikan, buka frontend/.env lalu ubah seperlunya."

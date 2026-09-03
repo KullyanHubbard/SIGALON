@@ -24,7 +24,7 @@ langsung kelihatan di API tanpa restart.
 
 Pakai:
     .venv/bin/pip install openpyxl   # sekali, alat ini saja yang butuh
-    .venv/bin/python -m app.data.impor_excel ../docs/data-penduduk.xlsx
+    .venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx
 """
 
 import sys

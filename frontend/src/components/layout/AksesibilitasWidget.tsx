@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Accessibility } from 'lucide-react';
 import { useDismissOnOutside } from '@/hooks/use-dismiss-on-outside';
-import { cn } from '@/lib/utils';
+import { bacaLokal, cn, tulisLokal } from '@/lib/utils';
 
 const KUNCI = 'siduk.skalaTeks';
 
@@ -16,7 +16,7 @@ function terapkan(persen: number): void {
 }
 
 function skalaTersimpan(): number {
-  const angka = Number(localStorage.getItem(KUNCI));
+  const angka = Number(bacaLokal(KUNCI));
   return SKALA.some((s) => s.persen === angka) ? angka : 100;
 }
 
@@ -43,7 +43,7 @@ export function AksesibilitasWidget() {
   const pilih = (nilai: number) => {
     setPersen(nilai);
     terapkan(nilai);
-    localStorage.setItem(KUNCI, String(nilai));
+    tulisLokal(KUNCI, String(nilai));
   };
 
   const ref = useDismissOnOutside<HTMLDivElement>(open, () => setOpen(false));

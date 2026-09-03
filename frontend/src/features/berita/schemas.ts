@@ -1,4 +1,14 @@
 import { z } from 'zod';
+import { keRingkasan } from './utils';
+
+/**
+ * Batas ukuran isi artikel, kembar dengan `MAKS_ISI` di
+ * `backend/app/schemas/berita.py`. Foto sisipan tinggal di dalam `isi` sebagai
+ * data URL, jadi inilah yang benar-benar membatasi berapa foto boleh masuk satu
+ * berita — kira-kira lima. Dijaga di sini juga supaya penulisnya tahu SEBELUM
+ * menekan Simpan, bukan lewat penolakan server atas tulisan yang sudah jadi.
+ */
+export const MAKS_ISI = 4_000_000;
 
 /**
  * Form berita.
@@ -14,8 +24,20 @@ export const beritaSchema = z.object({
   tanggalTerbit: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Pilih tanggal terbit'),
-  isi: z.string().trim().min(20, 'Isi berita minimal 20 huruf'),
-  /** Data URL foto utama; kosong berarti berita tanpa foto. */
+  // Panjangnya diukur dari teksnya, bukan dari HTML-nya: satu foto sisipan
+  // berukuran ratusan ribu karakter akan meloloskan berita tanpa satu kata pun.
+  // Batas yang sama dijaga ulang di server.
+  isi: z
+    .string()
+    .refine(
+      (html) => keRingkasan(html).length >= 20,
+      'Isi berita minimal 20 huruf',
+    )
+    .refine(
+      (html) => html.length <= MAKS_ISI,
+      'Isi berita terlalu besar. Kurangi jumlah foto, atau perkecil ukurannya sebelum diunggah.',
+    ),
+  /** Data URL foto sampul; kosong berarti berita tanpa foto. */
   foto: z.string(),
 });
 

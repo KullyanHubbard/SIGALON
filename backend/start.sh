@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 # berhenti jadi contoh dan berubah jadi password Admin yang sungguhan.
 if [ ! -f .env ]; then
   cat > .env <<'ISI'
-# SIDUK Backend — environment variables. Berkas ini TIDAK ikut repo.
+# SIGALON Backend — environment variables. Berkas ini TIDAK ikut repo.
 # Daftar lengkap beserta penjelasannya ada di backend/README.md.
 
 # Akun Admin pertama. WAJIB diisi sebelum backend pertama kali dijalankan:

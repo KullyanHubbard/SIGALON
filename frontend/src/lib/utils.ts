@@ -26,3 +26,28 @@ export function pesanError(error: unknown, fallback: string): string | null {
   if (!error) return null;
   return error instanceof ApiError ? error.message : fallback;
 }
+
+/**
+ * `localStorage` yang tidak pernah melempar.
+ *
+ * Peramban yang memblokir site data (mode privat, setelan "blokir cookie
+ * pihak ketiga" yang ketat) melempar pada AKSES, bukan mengembalikan null.
+ * Terjadi di dalam efek, itu menjatuhkan seluruh pohon React — halaman publik
+ * jadi putih gara-gara pilihan ukuran teks yang tidak bisa dibaca.
+ */
+export function bacaLokal(kunci: string): string | null {
+  try {
+    return localStorage.getItem(kunci);
+  } catch {
+    return null;
+  }
+}
+
+/** Pasangan `bacaLokal`. Gagal menyimpan = pilihannya tidak bertahan, bukan halaman mati. */
+export function tulisLokal(kunci: string, nilai: string): void {
+  try {
+    localStorage.setItem(kunci, nilai);
+  } catch {
+    return;
+  }
+}

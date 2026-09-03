@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -8,11 +8,58 @@ interface ModalProps {
   children: ReactNode;
 }
 
+/** Apa saja yang bisa menerima fokus keyboard di dalam dialog. */
+const BISA_FOKUS =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
+
 /** Modal dasar dengan overlay + tutup via ESC / klik luar. */
 export function Modal({ open, onClose, title, children }: ModalProps) {
+  const kotak = useRef<HTMLDivElement>(null);
+
+  // Perpindahan fokus dipisah dari pemasangan listener, dan itu WAJIB:
+  // `onClose` selalu fungsi baru tiap render pemanggilnya, jadi efek yang
+  // bergantung padanya berjalan ulang berkali-kali selagi dialog terbuka.
+  // Digabung, tiap putaran itu mengembalikan fokus ke tombol pembuka — kursor
+  // orang melompat keluar dari kolom yang sedang diketiknya.
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+
+    const sebelumnya = document.activeElement;
+    kotak.current?.focus();
+
+    return () => {
+      // Kembalikan fokus ke tombol yang membuka dialog, bukan ke awal halaman.
+      if (sebelumnya instanceof HTMLElement) sebelumnya.focus();
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    // Fokus dikurung di dalam dialog selama terbuka. Tanpa ini Tab berjalan
+    // terus ke halaman di belakangnya — yang bagi pemakai keyboard berarti
+    // mengisi formulir yang tidak terlihat, di balik tirai gelap.
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab' || !kotak.current) return;
+
+      const isi = kotak.current.querySelectorAll<HTMLElement>(BISA_FOKUS);
+      if (isi.length === 0) return;
+      const pertama = isi[0];
+      const terakhir = isi[isi.length - 1];
+
+      if (e.shiftKey && document.activeElement === pertama) {
+        e.preventDefault();
+        terakhir.focus();
+      } else if (!e.shiftKey && document.activeElement === terakhir) {
+        e.preventDefault();
+        pertama.focus();
+      }
+    };
+
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
@@ -27,6 +74,8 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         aria-hidden
       />
       <div
+        ref={kotak}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         className="relative z-10 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-surface shadow-xl"

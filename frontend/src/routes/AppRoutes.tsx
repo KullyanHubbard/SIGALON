@@ -42,6 +42,9 @@ const RiwayatPage = lazy(() => import('@/pages/admin/riwayat/RiwayatPage'));
 const KelolaBeritaPage = lazy(
   () => import('@/pages/admin/berita/KelolaBeritaPage'),
 );
+const ProfilPadukuhanPage = lazy(
+  () => import('@/pages/admin/profil/ProfilPadukuhanPage'),
+);
 const NotFoundPage = lazy(() => import('@/pages/not-found/NotFoundPage'));
 
 export function AppRoutes() {
@@ -75,17 +78,18 @@ export function AppRoutes() {
               {/* Riwayat: dua peran, isi berbeda — backend yang memilah. */}
               <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
 
-              {/* Kelola akun: Admin saja, dan ia tidak punya halaman lain. */}
+              {/* Admin saja: kelola akun, dan isi portal publik. Data warga
+                  tetap tertutup untuknya — backend yang menolaknya, bukan
+                  guard ini. */}
               <Route element={<RequireRole roles={['ADMIN']} />}>
                 <Route path={paths.admin.pengurus} element={<PengurusPage />} />
-              </Route>
-
-              {/* Isi portal publik — bukan data warga, bukan akun. Dukuh saja:
-                  Admin sengaja tidak punya kewenangan atas isi situs. */}
-              <Route element={<RequireRole roles={['DUKUH']} />}>
                 <Route
                   path={paths.admin.berita}
                   element={<KelolaBeritaPage />}
+                />
+                <Route
+                  path={paths.admin.profil}
+                  element={<ProfilPadukuhanPage />}
                 />
               </Route>
             </Route>

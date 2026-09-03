@@ -14,18 +14,18 @@ import {
 } from '@/features/berita/hooks/use-berita';
 import type { Berita } from '@/features/berita/types';
 import { formatTanggal } from '@/features/berita/utils';
+import { pesanError } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 
 /**
  * CMS berita padukuhan: tulis, sunting, hapus.
  *
- * Dukuh saja (lihat `AppRoutes`). Bukan ADMIN: peran itu mengelola akun dan
- * sengaja tidak punya kewenangan atas isi portal — memberinya hak menerbitkan
- * berita mengaburkan pemisahan yang jadi dasar seluruh model peran ini.
+ * ADMIN saja (lihat `AppRoutes`), dan itu satu-satunya kewenangannya di luar
+ * kelola akun: isi portal bukan data warga, jadi memberikannya tidak membuka
+ * apa pun tentang penduduk. Tiap tindakan di sini masuk log audit.
  *
- * Berita disimpan di peramban, BUKAN di backend — lihat
- * `features/berita/api/berita-api.ts`. Peringatannya dipasang di layar supaya
- * penulisnya tidak mengira tulisannya sudah terbit untuk umum.
+ * Tersimpan di server sejak 3 September 2026 — begitu disimpan, beritanya
+ * langsung terbaca pengunjung di `/berita`.
  */
 export default function KelolaBeritaPage() {
   const { data, isLoading, isError } = useBeritaList();
@@ -50,11 +50,11 @@ export default function KelolaBeritaPage() {
         action={<Button onClick={() => setTarget('baru')}>Tulis Berita</Button>}
       />
 
-      <Alert tone="info">
-        Berita masih disimpan di peramban ini saja — belum ada tabel berita di
-        server. Tulisan tidak akan terlihat oleh pengunjung lain sampai
-        penyimpanannya dipindahkan ke backend.
-      </Alert>
+      {hapus.isError && (
+        <Alert tone="error">
+          {pesanError(hapus.error, 'Berita gagal dihapus.')}
+        </Alert>
+      )}
 
       <Card>
         <QueryBoundary

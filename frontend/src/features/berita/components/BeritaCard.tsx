@@ -3,7 +3,7 @@ import { Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import type { Berita } from '../types';
-import { formatTanggal, keParagraf } from '../utils';
+import { formatTanggal, keRingkasan } from '../utils';
 
 /**
  * Tempat foto utama. Berita tanpa foto tetap dapat kotak dengan ikon, bukan
@@ -41,7 +41,7 @@ export function FotoBerita({
 
 /** Kartu berita untuk grid daftar & pratinjau beranda. */
 export function BeritaCard({ berita }: { berita: Berita }) {
-  const [pembuka] = keParagraf(berita.isi);
+  const pembuka = keRingkasan(berita.isi);
 
   return (
     <Link

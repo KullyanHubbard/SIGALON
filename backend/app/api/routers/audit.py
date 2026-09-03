@@ -1,11 +1,16 @@
 """Riwayat perubahan: siapa mengubah apa, kapan, dari apa jadi apa.
 
-Yang dilihat mengikuti kewenangan, dan dua daftarnya berpotongan kosong —
-sama seperti kewenangan yang menghasilkannya:
+Yang dilihat mengikuti kewenangan, dan tumpangnya SATU ARAH saja:
 
-- **PENGURUS** melihat riwayat data warga, disaring wilayahnya sendiri.
-- **ADMIN** melihat riwayat kelola akun, dan tidak pernah melihat riwayat data
-  warga — sama seperti ia tidak boleh melihat datanya.
+- **PENGURUS** melihat riwayat data warga di wilayahnya, **ditambah seluruh
+  aksi Admin** (buat akun, reset password, berita, profil padukuhan). Aman:
+  aksi Admin tidak memuat data warga, dan pengurus memang sudah boleh membaca
+  data warga wilayahnya. Yang didapat pengawasan atas Admin.
+- **ADMIN** melihat aksi Admin saja, dan **tidak pernah** riwayat data warga.
+  Arah ini tertutup rapat dan bukan karena kelalaian: baris warga membawa nama
+  orang beserta perubahannya (`Jamilah Kurniawan · AKTIF -> MENINGGAL`), jadi
+  membukanya membatalkan "Admin nol akses data warga" lewat pintu belakang —
+  ia tidak bisa membuka daftar penduduk, tapi bisa membaca siapa meninggal.
 """
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -46,12 +51,16 @@ def riwayat(user: AuthUser = Depends(current_user)) -> list[CatatanAudit]:
     if user.role not in ROLE_PENGURUS:
         raise HTTPException(403, "Peran ini tidak punya riwayat untuk dibaca.")
 
-    # Disaring per wilayah lewat warga yang boleh dilihat pemanggilnya. Warga
-    # yang sudah pindah keluar wilayahnya ikut hilang dari riwayat — konsisten
-    # dengan daftar penduduk, yang juga tidak lagi menampilkannya.
+    # Satu query untuk dua jenis aksi, bukan dua lalu digabung: urutan waktunya
+    # sudah benar sejak dari SQL, dan batas 200 baris berlaku pada gabungannya.
+    #
+    # Aksi warga disaring per wilayah lewat warga yang boleh dilihat
+    # pemanggilnya; warga yang sudah pindah keluar wilayahnya ikut hilang dari
+    # riwayat — konsisten dengan daftar penduduk. Aksi Admin lolos apa adanya:
+    # sasarannya akun, berita, atau profil padukuhan, tidak ada warga di sana.
     boleh = {w.id for w in penduduk_untuk(user)}
     return [
         _keluaran(r)
-        for r in audit.riwayat(AKSI_WARGA)
-        if r["sasaran_id"] in boleh
+        for r in audit.riwayat(AKSI_WARGA + AKSI_AKUN)
+        if r["aksi"] in AKSI_AKUN or r["sasaran_id"] in boleh
     ]

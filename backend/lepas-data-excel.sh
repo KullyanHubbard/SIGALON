@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 
 DB="data/siduk.db"
 
-echo "=== Lepas data Excel dari SIDUK ==="
+echo "=== Lepas data Excel dari SIGALON ==="
 echo
 
 if [ ! -f "$DB" ]; then

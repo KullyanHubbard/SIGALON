@@ -2,9 +2,9 @@
 set -e
 cd "$(dirname "$0")"
 
-DEFAULT="../docs/data-penduduk.xlsx"
+DEFAULT="../docs/data-penduduk-contoh.xlsx"
 
-echo "=== Impor data Excel ke SIDUK ==="
+echo "=== Impor data Excel ke SIGALON ==="
 echo
 read -p "Path file Excel [Enter = $DEFAULT]: " FILE
 FILE="${FILE:-$DEFAULT}"

@@ -5,11 +5,11 @@ import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { Textarea } from '@/components/ui/Textarea';
 import { pesanError } from '@/lib/utils';
 import { useSimpanBerita } from '../hooks/use-berita';
 import { beritaSchema, type BeritaFormValues } from '../schemas';
 import type { Berita } from '../types';
+import { EditorIsiBerita } from './EditorIsiBerita';
 import { FotoBeritaField } from './FotoBeritaField';
 
 interface BeritaFormDialogProps {
@@ -43,6 +43,7 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
   });
 
   const foto = watch('foto');
+  const isi = watch('isi');
 
   // Isi ulang tiap kali dialog dibuka: satu instance form melayani semua
   // berita, jadi tanpa ini isian berita sebelumnya masih tertinggal.
@@ -116,12 +117,12 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
           }
         />
 
-        <Textarea
-          label="Isi Berita"
-          rows={10}
-          placeholder="Tulis isi berita. Pisahkan paragraf dengan satu baris kosong."
+        <EditorIsiBerita
+          value={isi}
+          onChange={(html) =>
+            setValue('isi', html, { shouldDirty: true, shouldValidate: true })
+          }
           error={errors.isi?.message}
-          {...register('isi')}
         />
 
         <div className="flex justify-end gap-2 pt-2">

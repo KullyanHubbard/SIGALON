@@ -1,7 +1,7 @@
-# CLAUDE.md — Panduan Kerja & Konvensi Kode (SIDUK)
+# CLAUDE.md — Panduan Kerja & Konvensi Kode (SIGALON)
 
 Dokumen ini adalah **sumber kebenaran** untuk gaya kode, arsitektur, dan alur
-kerja proyek **SIDUK — Portal Data Kependudukan Desa**. Baca ini sebelum menulis
+kerja proyek **SIGALON — Portal Data Kependudukan Desa**. Baca ini sebelum menulis
 kode agar hasil tetap rapi dan konsisten.
 
 ---
@@ -74,12 +74,20 @@ penduduk di SQLite, diisi dari file Excel pendataan lewat
 | ----------------------------------------- | ------------------------------- |
 | Repo & direktori                          | `NIA-WEB` — **jangan diubah**   |
 | Nama package (`frontend/package.json`)    | `nia-web-frontend` — **jangan diubah** |
-| Nama produk yang dilihat user             | **SIDUK**                       |
-| Judul dokumen, README, UI, FastAPI `title` | **SIDUK** (`title="SIDUK API"`) |
+| Nama produk yang dilihat user             | **SIGALON**                     |
+| Judul dokumen, README, UI, FastAPI `title` | **SIGALON** (`title="SIGALON API"`) |
 
 `NIA-WEB` / `nia-web-frontend` sudah tertanam di git history dan lockfile;
 menggantinya cuma bikin diff besar tanpa manfaat. Yang penting konsisten adalah
-nama yang **dibaca user** — itu selalu SIDUK.
+nama yang **dibaca user** — itu selalu SIGALON (berganti dari SIDUK pada
+3 September 2026, mengikuti logo yang sudah terpasang).
+
+**Dua nama lama sengaja TIDAK ikut berganti**, dan keduanya bukan kelalaian:
+berkas basis data `data/siduk.db` (menggantinya berarti instalasi berjalan
+kehilangan seluruh isinya) dan kunci `localStorage` berawalan `siduk.`
+(tema, ukuran teks, penanda kunjungan — menggantinya mengosongkan pilihan
+setiap pengunjung yang sudah ada). Keduanya identitas data, tidak pernah
+dibaca user.
 
 ## 2. Tech Stack
 
@@ -92,6 +100,7 @@ nama yang **dibaca user** — itu selalu SIDUK.
 | Auth state  | Zustand                                                              |
 | Form        | React Hook Form + Zod                                                |
 | Charts      | Recharts                                                             |
+| Editor teks | TipTap (StarterKit + Image) — isi berita saja                         |
 | Backend     | Python + FastAPI                                                     |
 | Database    | SQLite (`sqlite3` stdlib, tanpa ORM) — data penduduk                 |
 | Auth        | Sesi server-side (tabel `sesi`) + bcrypt. **Bukan JWT**              |
@@ -320,8 +329,9 @@ untuk alasan lengkapnya):**
     menyala.
   - `RedirectIfAuthenticated` — halaman login menolak user yang sudah masuk.
 - Menu sidebar mengikuti role via `navItemsForRole()` — **selalu perbarui ini saat menambah halaman**.
-- `homePathForRole()`: ADMIN mendarat di `/admin/pengurus` (satu-satunya
-  halaman yang terbuka untuknya), sisanya di `/admin/penduduk`.
+- `homePathForRole()`: ADMIN mendarat di `/admin/pengurus`, sisanya di
+  `/admin/penduduk`. ADMIN punya empat halaman — kelola akun, kelola berita,
+  profil padukuhan, riwayat — dan nol halaman data warga.
 
 > Keamanan sebenarnya WAJIB ditegakkan di backend (FastAPI). Guard frontend hanya UX.
 
@@ -365,13 +375,16 @@ dependensinya:
 .venv/bin/python -m app.data.agregat    # self-check kelompok umur & distribusi
 DATABASE_PATH=/tmp/uji.db .venv/bin/python -m app.data.pengurus   # self-check kelola akun
 DATABASE_PATH=/tmp/uji.db .venv/bin/python -m app.data.sesi       # self-check sesi login
+.venv/bin/python -m app.schemas.berita  # self-check penyaring HTML berita
+DATABASE_PATH=/tmp/uji.db .venv/bin/python -m app.data.padukuhan  # self-check profil padukuhan
 .venv/bin/python -m app.core.ratelimit  # self-check batas percobaan login
-.venv/bin/python -m app.data.impor_excel ../docs/data-penduduk.xlsx   # isi data (MENIMPA)
+.venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx   # isi data (MENIMPA)
 ```
 
 **Sebelum menganggap tugas selesai:** `npm run typecheck` **dan** `npm run lint`
-harus bersih (0 error), `npm run build` sukses, dan ketiga self-check backend
-di atas lolos bila menyentuh lapisan data.
+harus bersih (0 error), `npm run build` sukses, dan self-check backend di atas
+lolos bila menyentuh lapisan data — termasuk `app.schemas.berita` bila menyentuh
+isi berita, karena di situlah batas kepercayaan HTML-nya.
 
 ### Menguji — perkakasnya terbatas, ini yang jalan
 
@@ -533,6 +546,13 @@ Kontrak endpoint yang **sudah diimplementasikan** (bentuknya sinkron dengan
 | POST   | `/publik/kunjungan`              | tambah 1 ke hitungan kunjungan hari ini, kembalikan totalnya — **tanpa auth** |
 | GET    | `/publik/kunjungan`              | hitungan kunjungan hari ini tanpa menambah — **tanpa auth** |
 | GET    | `/publik/struktur-organisasi`    | bagan Dukuh/RW/RT + nama pemegang jabatan aktif — **tanpa auth** |
+| GET    | `/publik/berita`                 | semua berita, terbaru dulu — **tanpa auth**            |
+| GET    | `/publik/berita/{slug}`          | satu berita menurut slug — **tanpa auth**              |
+| POST   | `/berita`                        | terbitkan berita — ADMIN                                |
+| PATCH  | `/berita/{id}`                   | ganti seluruh isi satu berita — ADMIN                   |
+| DELETE | `/berita/{id}`                   | hapus berita — ADMIN                                    |
+| GET    | `/publik/padukuhan`              | keterangan padukuhan; `null` kalau belum diisi — **tanpa auth** |
+| PATCH  | `/padukuhan`                     | ubah keterangan padukuhan — ADMIN                       |
 | GET    | `/pengurus`                      | daftar **jabatan** (terisi & kosong) — ADMIN            |
 | GET    | `/pengurus/warga`                | cari warga buat dropdown (nama + RT/RW saja) — ADMIN    |
 | POST   | `/pengurus`                      | isi satu jabatan **kosong** — ADMIN                     |
@@ -600,21 +620,51 @@ harus di atas `/penduduk/{id}`, kalau tidak ia terbaca sebagai sebuah id.
   memang tidak ikut dikembalikan, bukan disembunyikan di layar.
 - ✅ Backend menolak jalan kalau tabel `pengurus` kosong tapi
   `ADMIN_USERNAME`/`ADMIN_PASSWORD` belum diisi.
-- ✅ Riwayat perubahan mengikuti kewenangan: PENGURUS melihat riwayat data
-  warga **di wilayahnya**, ADMIN hanya riwayat kelola akun. Dua daftar aksinya
-  (`audit.AKSI_WARGA` / `AKSI_AKUN`) berpotongan kosong, sama seperti
-  kewenangan yang menghasilkannya.
+- ✅ Riwayat perubahan mengikuti kewenangan, dan tumpangnya **satu arah**
+  (3 September 2026): PENGURUS melihat riwayat data warga **di wilayahnya**
+  DITAMBAH seluruh aksi Admin (`AKSI_AKUN`: kelola akun + isi portal) — aman,
+  karena aksi Admin tidak memuat data warga, dan hasilnya pengurus mengawasi
+  Admin. ADMIN tetap **tidak pernah** melihat `AKSI_WARGA`: barisnya membawa
+  nama orang beserta perubahannya (`… · AKTIF → MENINGGAL`), jadi membukanya
+  membatalkan "Admin nol akses data warga" lewat pintu belakang. Arah itu
+  ditutup sengaja, bukan karena belum sempat.
 - ✅ `deletedAt` (salah input) disaring di `store.semua_penduduk`, satu tempat.
   `PINDAH`/`MENINGGAL` dikeluarkan dari **hitungan** oleh `store.hanya_aktif`,
   dipanggil di jalur statistik saja — daftar penduduk tetap menampilkannya,
   kalau tidak penandaan yang keliru tidak bisa dibatalkan.
 
-**Berita padukuhan belum punya backend.** `features/berita` menulis ke
-`localStorage` di balik kontrak `BeritaApi`, jadi tulisan Dukuh TIDAK terlihat
-pengunjung lain dan kuotanya ±5 MB (foto ikut dihitung sebagai data URL, dibatasi
-600 KB per berkas). CMS-nya `/admin/berita`, **DUKUH saja** — ADMIN mengelola
-akun dan sengaja tidak punya kewenangan atas isi situs. Untuk memindahkannya:
-tabel `berita` + endpoint unggah, lalu ganti isi `beritaApi` saja.
+**Berita padukuhan tersimpan di SQLite** (tabel `berita`,
+`app/data/berita.py`) sejak 3 September 2026 — sebelumnya `localStorage`, yang
+artinya tulisan pengurus tidak pernah sampai ke pengunjung mana pun. CMS-nya
+`/admin/berita`, **ADMIN saja** (berubah dari DUKUH pada tanggal yang sama:
+berita adalah isi portal, dan isi portal kewenangan Admin — bukan data warga,
+jadi memberikannya tidak membuka apa pun tentang penduduk). Membaca lewat
+`/publik/berita*` tanpa auth; menulis, menyunting, menghapus lewat `/berita*`
+dengan `current_admin` + log audit.
+
+**`berita.isi` berisi HTML, dan HTML dari klien tidak dipercaya.** Editornya
+TipTap (`features/berita/components/EditorIsiBerita.tsx`): tebal, miring, garis
+bawah, judul h2/h3, daftar, kutipan, dan **foto yang bisa diletakkan di tengah
+tulisan**. Penyaringan terjadi **sekali, saat menyimpan**, di `bersihkan_html()`
+(`app/schemas/berita.py`, memakai `nh3`) — bukan saat menampilkan: halaman
+publik memasangnya lewat `dangerouslySetInnerHTML`, jadi yang tersimpan harus
+sudah bersih dan tidak ada jalur baca yang bisa lupa menyaring. Daftar tombol
+editor sengaja tidak melampaui daftar putih di server. **Tidak ada tombol
+tautan** dan `<a>` tidak diizinkan: mengizinkannya berarti melonggarkan skema
+URL yang boleh lewat, sementara `data:` harus tetap terbuka untuk foto sisipan.
+Panjang minimal 20 huruf diukur dari **teksnya**, bukan HTML-nya — kalau tidak,
+satu foto base64 meloloskan berita tanpa satu kata pun. Gaya tampilannya satu
+kelas `.isi-berita` di `styles/index.css`, dipakai kotak editor DAN halaman
+publik: itu yang membuat "yang ditulis = yang terbit" benar-benar berlaku.
+
+**Foto berita disimpan utuh sebagai data URL**, bukan berkas di disk — foto
+sampul di kolom `berita.foto`, foto sisipan ikut di dalam `berita.isi`: hapus berita = hapus satu baris tanpa berkas yatim, backup tetap
+menyalin satu file `.db`, dan tidak ada direktori unggahan yang izinnya harus
+dijaga. Dibatasi 600 KB per berkas di `FotoBeritaField` dan 900.000 karakter di
+`schemas/berita.py` (base64 membengkak ±33%). Ditandai `ponytail:` — `daftar()`
+mengirim seluruh foto sekaligus, jadi pindahkan ke berkas + StaticFiles begitu
+beritanya puluhan. **Berita BOLEH dihapus lewat API**, beda dari warga dan akun:
+yang ini isi situs, bukan catatan kependudukan.
 
 **Footer publik** (`components/layout/PublicShell.tsx`) punya tiga bagian
 tambahan di luar footer statis biasa:
@@ -638,8 +688,26 @@ desa — bukan placeholder seperti nama di bagan organisasi.
 tabel `penduduk`, jadi tidak ada yang bisa diagregasi. Halamannya memasang
 peringatan "Data contoh" secara menyolok; jangan dicabut sebelum datanya nyata.
 
-**Isi statis portal publik** (sejarah, batas wilayah, luas) tinggal di
-`lib/padukuhan.ts` sebagai konstanta.
+**Keterangan padukuhan (nama wilayah, luas, kontak, sejarah, batas) tinggal di
+tabel `padukuhan`** sejak 3 September 2026, disunting ADMIN di `/admin/profil`
+(`GET /publik/padukuhan` tanpa auth, `PATCH /padukuhan` untuk ADMIN). Sebelumnya
+konstanta, yang berarti mengganti nomor telepon balai padukuhan menuntut deploy
+ulang.
+
+**Barisnya boleh tidak ada, dan nilai bawaannya cuma di frontend**
+(`PADUKUHAN_BAWAAN` di `lib/padukuhan.ts`): selama Admin belum pernah menyimpan,
+endpointnya menjawab `null` dan frontend memakai bawaannya. Server tidak
+menyimpan nilai awal apa pun — dua daftar nilai bawaan dalam dua bahasa pasti
+berbeda diam-diam suatu saat. Bacanya **selalu** lewat `usePadukuhan()`
+(`hooks/use-padukuhan.ts` + `lib/padukuhan-api.ts`, pola yang sama dengan
+`warga-api.ts` di §4); mengimpor `PADUKUHAN_BAWAAN` langsung berarti halaman itu
+memperlihatkan nilai bawaan selamanya. Hook-nya tidak pernah `undefined` dan
+tidak punya keadaan memuat — kaki halaman & judul hero harus punya tulisan sejak
+render pertama.
+
+**Koordinat & radius peta TETAP konstanta** (`PETA` di `lib/padukuhan.ts`): itu
+setelan tampilan peta yang perubahannya harus dilihat hasilnya, bukan data yang
+dirawat perangkat desa.
 
 **Bagan struktur organisasi (`/profil`) HIDUP, bukan konstanta** — keputusan
 31 Agustus 2026, membalik keputusan sebelumnya di paragraf yang sama. Dukuh &

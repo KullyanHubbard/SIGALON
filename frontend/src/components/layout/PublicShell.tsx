@@ -1,6 +1,6 @@
 import { Mail, Phone } from 'lucide-react';
 import { Link, Outlet } from 'react-router-dom';
-import { PADUKUHAN } from '@/lib/padukuhan';
+import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { paths } from '@/routes/paths';
 import { BarKredit } from './BarKredit';
 import { PublicNavbar } from './PublicNavbar';
@@ -26,6 +26,8 @@ const JELAJAHI = [
  * kredit yang sama.
  */
 export function PublicShell() {
+  const padukuhan = usePadukuhan();
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <PublicNavbar />
@@ -37,12 +39,12 @@ export function PublicShell() {
         <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-3 lg:px-8">
           <div>
             <p className="text-lg font-bold text-white">
-              {PADUKUHAN.namaLengkap}
+              {padukuhan.namaLengkap}
             </p>
             <p className="mt-2 text-sm">
-              {PADUKUHAN.desa}, {PADUKUHAN.kapanewon}
+              {padukuhan.desa}, {padukuhan.kapanewon}
               <br />
-              {PADUKUHAN.kabupaten}, {PADUKUHAN.provinsi}
+              {padukuhan.kabupaten}, {padukuhan.provinsi}
             </p>
           </div>
 
@@ -53,20 +55,20 @@ export function PublicShell() {
             <ul className="mt-3 space-y-2 text-sm">
               <li>
                 <a
-                  href={`tel:${PADUKUHAN.telepon.replace(/[^+\d]/g, '')}`}
+                  href={`tel:${padukuhan.telepon.replace(/[^+\d]/g, '')}`}
                   className="flex items-center gap-2 hover:text-white"
                 >
                   <Phone className="h-4 w-4 shrink-0" aria-hidden />
-                  {PADUKUHAN.telepon}
+                  {padukuhan.telepon}
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${PADUKUHAN.email}`}
+                  href={`mailto:${padukuhan.email}`}
                   className="flex items-center gap-2 hover:text-white"
                 >
                   <Mail className="h-4 w-4 shrink-0" aria-hidden />
-                  {PADUKUHAN.email}
+                  {padukuhan.email}
                 </a>
               </li>
             </ul>

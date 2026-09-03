@@ -1,9 +1,11 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/Logo';
 import { env } from '@/config/env';
 import { useAuth } from '@/features/auth/hooks/use-auth';
+import ikonBack from '@/assets/back-navigasi.svg';
 import ikonClose from '@/assets/icons/nav/x-close.svg';
+import { paths } from '@/routes/paths';
 import { navItemsForRole } from './nav-config';
 
 interface SidebarProps {
@@ -51,6 +53,30 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             />
           </button>
         </div>
+
+        {/* Jalan pulang ke portal publik, untuk keempat peran. Di LUAR area
+            gulir di bawahnya: daftar menu boleh memanjang, tautan keluar tidak
+            boleh ikut hilang ke bawah lipatan. Pola & ikonnya kembar dengan
+            `PublicSidebar`, tapi ukurannya mengikuti butir menu di sebelahnya —
+            di sini ia berdiri sebaris dengan mereka, bukan catatan kaki.
+
+            `Link`, bukan `NavLink`: tujuannya di luar dasbor, jadi tidak pernah
+            ada keadaan "sedang aktif" yang perlu disorot. */}
+        <Link
+          to={paths.landing}
+          onClick={onClose}
+          className="mx-3 mt-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-colors hover:bg-slate-100 dark:hover:bg-white/10 dark:hover:text-white"
+        >
+          <span
+            aria-hidden
+            className="block h-5 w-5 shrink-0 bg-current"
+            style={{
+              mask: `url("${ikonBack}") center / contain no-repeat`,
+              WebkitMask: `url("${ikonBack}") center / contain no-repeat`,
+            }}
+          />
+          Kembali ke Beranda
+        </Link>
 
         <nav
           aria-label="Menu"

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, tulisLokal } from '@/lib/utils';
 
 /** Sama dengan kunci di skrip anti-kedip pada `index.html`. */
 const KUNCI = 'siduk.tema';
@@ -44,7 +44,7 @@ export function TombolTema() {
 
     akar.classList.add('tema-beralih');
     akar.classList.toggle('dark', baru);
-    localStorage.setItem(KUNCI, baru ? 'gelap' : 'terang');
+    tulisLokal(KUNCI, baru ? 'gelap' : 'terang');
     setGelap(baru);
 
     window.clearTimeout(jedaRef.current);

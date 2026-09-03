@@ -26,8 +26,10 @@ export const paths = {
     infografis: '/admin/infografis',
     /** Kelola akun pengurus. ADMIN saja. */
     pengurus: '/admin/pengurus',
-    /** Tulis & sunting berita padukuhan. DUKUH saja. */
+    /** Tulis & sunting berita padukuhan. ADMIN saja. */
     berita: '/admin/berita',
+    /** Keterangan tetap padukuhan yang tampil di portal publik. ADMIN saja. */
+    profil: '/admin/profil',
     /** Riwayat perubahan. Isinya beda menurut peran; lihat RiwayatPage. */
     riwayat: '/admin/riwayat',
   },

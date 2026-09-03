@@ -9,8 +9,9 @@ import { toBarisRiwayat } from '@/features/audit/view-model';
 /**
  * Riwayat perubahan. Satu halaman, dua isi yang berbeda:
  *
- * - Pengurus melihat perubahan data warga **di wilayahnya**.
- * - Admin melihat perubahan akun, dan tidak pernah melihat data warga.
+ * - Pengurus melihat perubahan data warga **di wilayahnya**, ditambah seluruh
+ *   aksi Admin — jadi yang memegang data ikut mengawasi yang memegang akun.
+ * - Admin melihat aksi Admin saja, dan tidak pernah melihat data warga.
  *
  * Yang memilah backend; halaman ini cuma menyesuaikan judulnya supaya orang
  * tahu riwayat apa yang sedang dibacanya.
@@ -27,8 +28,8 @@ export default function RiwayatPage() {
         title="Riwayat Perubahan"
         description={
           isAdmin
-            ? 'Catatan pembuatan akun dan reset password pengurus.'
-            : `Catatan perubahan data warga ${labelWilayah(user)}.`
+            ? 'Catatan kelola akun dan perubahan isi portal.'
+            : `Catatan perubahan data warga ${labelWilayah(user)}, ditambah kelola akun dan perubahan isi portal oleh Admin.`
         }
       />
       <RiwayatView
@@ -38,8 +39,8 @@ export default function RiwayatPage() {
         kosongJudul="Belum ada perubahan tercatat"
         kosongKeterangan={
           isAdmin
-            ? 'Pembuatan akun dan reset password akan muncul di sini.'
-            : 'Setiap perubahan data warga akan muncul di sini, lengkap dengan siapa yang mengubahnya.'
+            ? 'Pembuatan akun, reset password, dan perubahan isi portal akan muncul di sini.'
+            : 'Setiap perubahan data warga dan setiap tindakan Admin akan muncul di sini, lengkap dengan siapa yang melakukannya.'
         }
       />
     </div>

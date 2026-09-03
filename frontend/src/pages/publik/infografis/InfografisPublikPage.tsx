@@ -7,7 +7,7 @@ import ikonPerempuan from '@/assets/icons/perempuan.png';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { StatCard } from '@/components/ui/StatCard';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
-import { PADUKUHAN } from '@/lib/padukuhan';
+import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { cn, formatAngka } from '@/lib/utils';
 import { PANEL_BANSOS, TOTAL_PENERIMA_BANSOS } from './bansos';
 import { toPanelDemografi } from './view-model';
@@ -29,6 +29,7 @@ type TabId = (typeof TAB)[number]['id'];
  * pertama, dan tab tertentu tidak bisa ditautkan dari mana pun.
  */
 export default function InfografisPublikPage() {
+  const padukuhan = usePadukuhan();
   const [params, setParams] = useSearchParams();
   const tabAktif: TabId =
     params.get('tab') === 'bansos' ? 'bansos' : 'demografi';
@@ -43,7 +44,7 @@ export default function InfografisPublikPage() {
             Infografis
           </p>
           <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
-            Data {PADUKUHAN.namaLengkap}
+            Data {padukuhan.namaLengkap}
           </h1>
         </div>
       </section>

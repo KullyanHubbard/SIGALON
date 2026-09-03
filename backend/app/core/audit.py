@@ -17,9 +17,18 @@ from app.data import db
 
 # Aksi atas data warga — dibaca pengurus, disaring per wilayah.
 AKSI_WARGA = ("ubah-warga", "tambah-warga")
-# Aksi atas akun — dibaca Admin. Dua daftar ini berpotongan kosong, sama seperti
-# kewenangan yang menghasilkannya.
-AKSI_AKUN = ("tambah-pengurus", "reset-password", "ubah-lpm")
+# Aksi milik Admin — dibaca Admin. Sebagian besar soal akun; berita ikut di
+# sini karena isi portal juga kewenangannya. Dua daftar ini berpotongan kosong,
+# sama seperti kewenangan yang menghasilkannya.
+AKSI_AKUN = (
+    "tambah-pengurus",
+    "reset-password",
+    "ubah-lpm",
+    "tambah-berita",
+    "ubah-berita",
+    "hapus-berita",
+    "ubah-padukuhan",
+)
 
 
 def catat_audit(

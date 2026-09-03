@@ -196,6 +196,53 @@ CREATE TABLE IF NOT EXISTS lpm (
     id   INTEGER PRIMARY KEY CHECK (id = 1),
     nama TEXT NOT NULL DEFAULT ''
 );
+
+-- Berita padukuhan: ditulis Admin di `/admin/berita`, dibaca siapa saja di
+-- `/berita`. Sebelumnya tinggal di `localStorage` peramban penulisnya, yang
+-- artinya tidak satu pun pengunjung lain bisa membacanya.
+-- `slug` UNIQUE: dialah URL `/berita/:slug`, dan dua baris berslug sama berarti
+-- salah satunya tidak bisa dibuka sama sekali.
+-- `foto` menyimpan data URL gambarnya utuh, bukan path berkas — alasannya di
+-- `app/data/berita.py`.
+-- Keterangan tetap padukuhan: nama wilayah, luas, kontak, sejarah, batas.
+-- Satu baris tunggal (id selalu 1), sama polanya dengan `lpm`.
+--
+-- Dulu konstanta di `frontend/src/lib/padukuhan.ts`, yang berarti mengganti
+-- nomor telepon balai padukuhan menuntut deploy ulang. Barisnya BOLEH tidak
+-- ada: selama belum pernah disimpan Admin, frontend memakai nilai bawaannya
+-- sendiri — jadi tidak ada nilai desa yang dikarang di sisi server, dan tidak
+-- ada dua daftar nilai awal yang bisa berbeda diam-diam.
+--
+-- Koordinat & radius peta TIDAK di sini: itu setelan tampilan peta yang
+-- perubahannya harus dilihat hasilnya, bukan data yang dirawat perangkat desa.
+CREATE TABLE IF NOT EXISTS padukuhan (
+    id           INTEGER PRIMARY KEY CHECK (id = 1),
+    nama         TEXT NOT NULL,
+    namaLengkap  TEXT NOT NULL,
+    desa         TEXT NOT NULL,
+    kapanewon    TEXT NOT NULL,
+    kabupaten    TEXT NOT NULL,
+    provinsi     TEXT NOT NULL,
+    luasWilayah  TEXT NOT NULL,
+    telepon      TEXT NOT NULL,
+    email        TEXT NOT NULL,
+    -- Paragraf dipisah baris kosong, sama seperti isi berita sebelum jadi HTML.
+    sejarah      TEXT NOT NULL,
+    batasUtara   TEXT NOT NULL,
+    batasTimur   TEXT NOT NULL,
+    batasSelatan TEXT NOT NULL,
+    batasBarat   TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS berita (
+    id            TEXT PRIMARY KEY,
+    slug          TEXT NOT NULL UNIQUE,
+    judul         TEXT NOT NULL,
+    foto          TEXT NOT NULL DEFAULT '',
+    tanggalTerbit TEXT NOT NULL,
+    penulis       TEXT NOT NULL,
+    isi           TEXT NOT NULL
+);
 """
 
 

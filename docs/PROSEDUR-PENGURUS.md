@@ -1,4 +1,4 @@
-# Prosedur Pengurus — SIDUK, Portal Data Kependudukan
+# Prosedur Pengurus — SIGALON, Portal Data Kependudukan
 
 Dokumen ini untuk **pengurus padukuhan** (Dukuh, RW, RT), bukan untuk
 programmer. **Simpan salinan cetaknya di rumah Dukuh.**

@@ -5,3 +5,8 @@ pydantic-settings==2.6.1
 # Dipakai impor Excel & pembangkit template di `tools/`. Bukan cuma
 # perkakas: mengisi data pertama kali TIDAK BISA tanpa ini.
 openpyxl==3.1.5
+
+# Penyaring HTML berita (pengikat Rust untuk ammonia). Batas kepercayaan,
+# bukan kenyamanan: isi berita dipasang ke `dangerouslySetInnerHTML` di halaman
+# publik, jadi yang tersimpan harus sudah bersih. Lihat `app/schemas/berita.py`.
+nh3==0.3.7

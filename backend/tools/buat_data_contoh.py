@@ -1,4 +1,4 @@
-"""Bikin docs/data-penduduk.xlsx — data CONTOH untuk menguji sistem.
+"""Bikin docs/data-penduduk-contoh.xlsx — data CONTOH untuk menguji sistem.
 
 Isinya karangan: 100 keluarga utuh (bapak/ibu/anak) yang berbagi alamat dan
 marga, umur & pendidikan & pekerjaan dibuat saling masuk akal. Bukan warga
@@ -258,7 +258,7 @@ for r, baris in enumerate(baris_semua, start=BARIS_HEADER + 1):
 
 ws.auto_filter.ref = f"A{BARIS_HEADER}:{get_column_letter(len(KOLOM))}{len(baris_semua) + BARIS_HEADER}"
 
-wb.save("../docs/data-penduduk.xlsx")
+wb.save("../docs/data-penduduk-contoh.xlsx")
 
 jml_kk = len({b["noKK"] for b in baris_semua})
 per_kk = [sum(1 for b in baris_semua if b["noKK"] == kk) for kk in {b["noKK"] for b in baris_semua}]

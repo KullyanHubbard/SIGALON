@@ -47,7 +47,13 @@ def sisa_tunggu(username: str) -> int:
 
 def catat_gagal(username: str) -> None:
     sekarang = time.monotonic()
-    _bersihkan(username, sekarang)
+    # Sapu SELURUH isi, bukan cuma username ini: yang dicoba sekali lalu tidak
+    # pernah lagi (penebakan yang berpindah-pindah username) tidak punya
+    # kesempatan lain untuk dibersihkan, dan tinggal di memori sampai restart.
+    # Isinya paling banyak sejumlah username yang pernah gagal dalam 15 menit,
+    # jadi menyapunya tiap kegagalan tidak terasa.
+    for nama in list(_gagal):
+        _bersihkan(nama, sekarang)
     _gagal.setdefault(username, []).append(sekarang)
 
 
@@ -58,6 +64,12 @@ def reset(username: str) -> None:
 
 def demo() -> None:
     """Self-check. Jalankan: .venv/bin/python -m app.core.ratelimit"""
+    # Username yang gagal sekali lalu ditinggalkan tidak boleh menumpuk.
+    _gagal.clear()
+    _gagal["ditinggalkan"] = [time.monotonic() - JENDELA_DETIK - 1]
+    catat_gagal("orang_lain")
+    assert "ditinggalkan" not in _gagal, _gagal
+    _gagal.clear()
     _gagal.clear()
     assert sisa_tunggu("budi") == 0
 

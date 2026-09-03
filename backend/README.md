@@ -1,4 +1,4 @@
-# Backend SIDUK
+# Backend SIGALON
 
 FastAPI + SQLite (`sqlite3` stdlib, tanpa ORM). Enam tabel: `penduduk`,
 `pengurus`, `sesi`, `pengajuan` + `persetujuan` (riwayat perpindahan jabatan),
@@ -97,7 +97,7 @@ Database kosong tetap kosong — tidak ada seeding otomatis. Data masuk dari fil
 Excel pendataan:
 
 ```bash
-.venv/bin/python -m app.data.impor_excel ../docs/data-penduduk.xlsx
+.venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx
 ```
 
 **Setiap impor MENIMPA seluruh tabel penduduk**, jadi skrip ini **menolak jalan
@@ -124,7 +124,7 @@ Formulir kosong untuk pengurus dibangkitkan dari definisi kolom yang sama:
 
 ```bash
 .venv/bin/python -m tools.buat_template_excel   # -> docs/template-data-penduduk.xlsx
-.venv/bin/python -m tools.buat_data_contoh      # -> docs/data-penduduk.xlsx (data karangan)
+.venv/bin/python -m tools.buat_data_contoh      # -> docs/data-penduduk-contoh.xlsx (data karangan)
 ```
 
 ## Sambungkan ke frontend
