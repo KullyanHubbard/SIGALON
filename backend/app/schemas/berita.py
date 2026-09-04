@@ -99,8 +99,8 @@ class BeritaBaru(BaseModel):
         """Nilai ini dipasang apa adanya ke `<img src>` di halaman publik.
         Tanpa penjagaan ini, `data:text/html,…` yang dikirim langsung ke API
         ikut tersimpan dan terbit."""
-        if v and not v.startswith("data:image/"):
-            raise ValueError("Foto harus berupa data URL gambar")
+        if v and not (v.startswith("data:image/") or v.startswith("/uploads/")):
+            raise ValueError("Foto harus berupa data URL gambar atau path /uploads/")
         return v
 
 

@@ -61,6 +61,12 @@ class Settings(BaseSettings):
         return path if path.is_absolute() else _BACKEND_DIR / path
 
     @property
+    def UPLOADS_DIR(self) -> Path:
+        path = self.DATABASE_FILE.parent / "uploads"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    @property
     def CORS_ORIGINS(self) -> list[str]:
         return _pisah_koma(self.CORS_ORIGINS_RAW)
 

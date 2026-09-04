@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.routers import (
     audit,
@@ -15,6 +16,7 @@ from app.api.routers import (
     publik,
 )
 from app.core.config import settings
+from app.data.berita import migrasi_foto_ke_disk
 from app.data.pengurus import bootstrap
 from app.data.pengurus import daftar as daftar_pengurus
 from app.data.store import semua_penduduk
@@ -27,6 +29,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.mount("/uploads", StaticFiles(directory=settings.UPLOADS_DIR), name="uploads")
+app.mount("/api/uploads", StaticFiles(directory=settings.UPLOADS_DIR), name="api_uploads")
 
 
 @app.exception_handler(HTTPException)
@@ -87,6 +92,7 @@ def _startup() -> None:
     sungguhan, log server jadi tempat bocornya.
     """
     bootstrap()
+    migrasi_foto_ke_disk()
     print("=== SIGALON backend ===")
     print(f"  Akun pengurus: {len(daftar_pengurus())} akun terdaftar")
     jumlah = len(semua_penduduk())

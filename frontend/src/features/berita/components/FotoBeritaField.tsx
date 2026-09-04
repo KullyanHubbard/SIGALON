@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { bacaFoto } from '../foto';
+import { bantuFotoUrl } from '../utils';
 
 interface FotoBeritaFieldProps {
   value: string;
@@ -21,15 +22,17 @@ export function FotoBeritaField({ value, onChange }: FotoBeritaFieldProps) {
     onChange(hasil.dataUrl);
   };
 
+  const src = bantuFotoUrl(value);
+
   return (
     <div>
       <label className="mb-1.5 block text-sm font-medium text-slate-700">
         Foto Sampul
       </label>
-      {value && (
+      {src && (
         <div className="mb-2 flex items-center gap-3">
           <img
-            src={value}
+            src={src}
             alt="Pratinjau foto utama"
             className="h-20 w-32 rounded-lg object-cover"
           />

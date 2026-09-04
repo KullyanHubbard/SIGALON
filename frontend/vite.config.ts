@@ -25,6 +25,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (jalur) => jalur.replace(/^\/api/, ''),
       },
+      '/uploads': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
     },
   },
 });

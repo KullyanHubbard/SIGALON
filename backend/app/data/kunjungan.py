@@ -14,9 +14,26 @@ import datetime as dt
 from app.core.config import settings
 from app.data import db
 
+# Baris kunjungan yang lebih tua dari ini dihapus otomatis. Frontend hanya
+# membaca hitungan hari ini; data historis tidak punya konsumen dan hanya
+# menambah berat DB (~30 byte/baris, tapi tanpa alasan).
+RETENSI_KUNJUNGAN_HARI = 90
+
 
 def _hari_ini() -> str:
     return dt.date.today().isoformat()
+
+
+def _pangkas_kunjungan_lama() -> None:
+    """Buang baris kunjungan yang lebih tua dari `RETENSI_KUNJUNGAN_HARI`.
+
+    Menumpang di `tambah()` — dipanggil paling banyak sekali per browser per
+    hari, jadi overhead-nya nyaris tidak terasa.
+    """
+    batas = (dt.date.today() - dt.timedelta(days=RETENSI_KUNJUNGAN_HARI)).isoformat()
+    with db.koneksi(settings.DATABASE_FILE) as conn:
+        with conn:
+            conn.execute("DELETE FROM kunjungan WHERE tanggal < ?", (batas,))
 
 
 def tambah() -> int:
@@ -33,7 +50,8 @@ def tambah() -> int:
         row = conn.execute(
             "SELECT jumlah FROM kunjungan WHERE tanggal = ?", (_hari_ini(),)
         ).fetchone()
-        return row["jumlah"]
+    _pangkas_kunjungan_lama()
+    return row["jumlah"]
 
 
 def hari_ini() -> int:

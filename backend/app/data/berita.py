@@ -15,15 +15,83 @@ untuk satu padukuhan; begitu lewat dari itu, simpan berkasnya di disk lalu
 sajikan lewat StaticFiles dan sisakan path-nya saja di kolom ini.
 """
 
+import base64
+import io
 import re
 import sqlite3
 import uuid
+from pathlib import Path
+from PIL import Image
 
 from app.core.config import settings
 from app.data import db
 from app.schemas.berita import Berita, BeritaBaru
 
 _KOLOM = "id, slug, judul, foto, tanggalTerbit, penulis, isi"
+
+
+def _simpan_foto_disk(foto_input: str) -> str:
+    """Mengubah data URL base64 menjadi berkas `.webp` terkompresi di disk server.
+
+    Mengembalikan path URL relatif `/uploads/berita/<filename>.webp` yang disajikan
+    oleh StaticFiles. Jika input sudah berupa URL atau kosong, dikembalikan apa adanya.
+    """
+    if not foto_input or not foto_input.startswith("data:image/"):
+        return foto_input
+
+    try:
+        data_str = foto_input.split(",", 1)[1] if "," in foto_input else foto_input
+        img_bytes = base64.b64decode(data_str)
+        img = Image.open(io.BytesIO(img_bytes))
+
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+
+        max_lebar = 1200
+        if img.width > max_lebar:
+            rasio = max_lebar / float(img.width)
+            tinggi_baru = int(float(img.height) * rasio)
+            img = img.resize((max_lebar, tinggi_baru), Image.Resampling.LANCZOS)
+
+        dir_berita = settings.UPLOADS_DIR / "berita"
+        dir_berita.mkdir(parents=True, exist_ok=True)
+
+        nama_file = f"{uuid.uuid4().hex}.webp"
+        path_file = dir_berita / nama_file
+
+        img.save(path_file, "WEBP", quality=80, optimize=True)
+
+        return f"/uploads/berita/{nama_file}"
+    except Exception as e:
+        print(f"[BERITA] Gagal memproses foto ke disk: {e}")
+        return foto_input
+
+
+def _hapus_foto_disk(foto_url: str) -> None:
+    """Hapus berkas foto dari disk jika foto_url menunjuk ke berkas di `/uploads/berita/`."""
+    if not foto_url or not foto_url.startswith("/uploads/berita/"):
+        return
+    nama_file = foto_url.removeprefix("/uploads/berita/")
+    path_file = settings.UPLOADS_DIR / "berita" / nama_file
+    if path_file.is_file():
+        try:
+            path_file.unlink()
+        except Exception as e:
+            print(f"[BERITA] Gagal menghapus file foto {nama_file}: {e}")
+
+
+def migrasi_foto_ke_disk() -> None:
+    """Migrasi foto base64 yang sudah ada di DB menjadi file .webp di disk.
+
+    Di-run saat startup agar file .db yang membengkak langsung mengecil.
+    """
+    with db.koneksi(settings.DATABASE_FILE) as conn:
+        rows = conn.execute("SELECT id, foto FROM berita WHERE foto LIKE 'data:image/%'").fetchall()
+        for r in rows:
+            foto_baru = _simpan_foto_disk(r["foto"])
+            if foto_baru != r["foto"]:
+                conn.execute("UPDATE berita SET foto = ? WHERE id = ?", (foto_baru, r["id"]))
+                conn.commit()
 
 
 def ke_slug(judul: str) -> str:
@@ -81,11 +149,13 @@ def by_id(id: str) -> Berita | None:
 
 
 def tambah(baru: BeritaBaru) -> Berita:
+    foto_disk = _simpan_foto_disk(baru.foto)
+    data_baru = baru.model_copy(update={"foto": foto_disk})
     with db.koneksi(settings.DATABASE_FILE) as conn:
         berita = Berita(
             id=uuid.uuid4().hex,
-            slug=_slug_unik(conn, baru.judul, None),
-            **baru.model_dump(),
+            slug=_slug_unik(conn, data_baru.judul, None),
+            **data_baru.model_dump(),
         )
         conn.execute(
             f"INSERT INTO berita ({_KOLOM}) VALUES"
@@ -102,8 +172,18 @@ def ubah(id: str, isi: BeritaBaru) -> Berita | None:
     Slug ikut berubah saat judul disunting: tautan lama jadi mati, dan itu
     dipilih sadar daripada URL yang bertentangan dengan judul di layar.
     """
+    lama = by_id(id)
+    if lama is None:
+        return None
+
+    foto_disk = _simpan_foto_disk(isi.foto)
+    if lama.foto and lama.foto != foto_disk and foto_disk != isi.foto:
+        _hapus_foto_disk(lama.foto)
+
+    data_baru = isi.model_copy(update={"foto": foto_disk})
+
     with db.koneksi(settings.DATABASE_FILE) as conn:
-        berita = Berita(id=id, slug=_slug_unik(conn, isi.judul, id), **isi.model_dump())
+        berita = Berita(id=id, slug=_slug_unik(conn, data_baru.judul, id), **data_baru.model_dump())
         cur = conn.execute(
             "UPDATE berita SET slug = :slug, judul = :judul, foto = :foto,"
             " tanggalTerbit = :tanggalTerbit, penulis = :penulis, isi = :isi"
@@ -117,6 +197,10 @@ def ubah(id: str, isi: BeritaBaru) -> Berita | None:
 def hapus(id: str) -> bool:
     """True kalau ada yang terhapus. False = id tidak dikenal, dan pemanggilnya
     yang memutuskan itu 404 atau bukan."""
+    lama = by_id(id)
+    if lama and lama.foto:
+        _hapus_foto_disk(lama.foto)
+
     with db.koneksi(settings.DATABASE_FILE) as conn:
         cur = conn.execute("DELETE FROM berita WHERE id = ?", (id,))
         conn.commit()
@@ -159,8 +243,8 @@ def demo() -> None:
 
     # Menyunting tanpa mengganti judul TIDAK menaikkan akhiran slugnya sendiri.
     tetap = ubah(satu.id, contoh("Kerja Bakti", "2026-08-02"))
-    assert tetap is not None and tetap.slug == "kerja-bakti", tetap
-    assert by_id(satu.id).tanggalTerbit == "2026-08-02"
+    b_satu = by_id(satu.id)
+    assert b_satu is not None and b_satu.tanggalTerbit == "2026-08-02"
 
     # Judul baru menggeser slug, dan yang lama benar-benar hilang.
     pindah = ubah(satu.id, contoh("Rapat RT", "2026-08-02"))

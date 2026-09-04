@@ -3,7 +3,7 @@ import { Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import type { Berita } from '../types';
-import { formatTanggal, keRingkasan } from '../utils';
+import { bantuFotoUrl, formatTanggal, keRingkasan } from '../utils';
 
 export function FotoBerita({
   berita,
@@ -12,10 +12,11 @@ export function FotoBerita({
   berita: Berita;
   className?: string;
 }) {
-  if (berita.foto) {
+  const src = bantuFotoUrl(berita.foto);
+  if (src) {
     return (
       <img
-        src={berita.foto}
+        src={src}
         alt={berita.judul}
         className={cn('object-cover', className)}
       />

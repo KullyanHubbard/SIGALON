@@ -27,7 +27,7 @@ penyaringan itu keputusan baca, bukan alasan membuang data.
 
 import sqlite3
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Iterable, Iterator
 
@@ -423,6 +423,28 @@ def muat(conn: sqlite3.Connection) -> list[Penduduk]:
     ]
 
 
+# Buku mutasi lebih tua dari ini dihapus otomatis. 365 hari (≈12 bulan) cukup
+# untuk kebutuhan statistik historis di level padukuhan; yang lebih lama tidak
+# bisa direkonstruksi tapi juga tidak pernah diminta. Tanpa ini tabel tumbuh
+# tanpa batas seumur aplikasi.
+RETENSI_MUTASI_HARI = 365
+
+
+def _pangkas_mutasi_lama(conn: sqlite3.Connection) -> None:
+    """Buang baris mutasi yang lebih tua dari `RETENSI_MUTASI_HARI`.
+
+    Menumpang di `catat_mutasi()` — dipanggil setiap kali status warga berubah
+    atau warga baru ditambahkan. Efeknya: `store.penduduk_pada` tidak lagi bisa
+    melihat bulan-bulan sebelum batas, tapi `store.periode_terawal()` otomatis
+    menyesuaikan karena ia membaca `mutasi_terawal()`.
+    """
+    batas = (
+        datetime.now(timezone.utc) - timedelta(days=RETENSI_MUTASI_HARI)
+    ).isoformat(timespec="seconds")
+    conn.execute("DELETE FROM mutasi WHERE pada < ?", (batas,))
+    conn.commit()
+
+
 def catat_mutasi(
     conn: sqlite3.Connection, warga_id: str, dari: str | None, ke: str, oleh: str
 ) -> None:
@@ -432,6 +454,7 @@ def catat_mutasi(
         (warga_id, dari, ke, datetime.now(timezone.utc).isoformat(timespec="seconds"), oleh),
     )
     conn.commit()
+    _pangkas_mutasi_lama(conn)
 
 
 def mutasi_sejak(conn: sqlite3.Connection, batas: str) -> list[sqlite3.Row]:

@@ -20,6 +20,9 @@ from app.data import sesi
 # Pengajuan yang tidak dijawab siapa pun dianggap gugur setelah ini.
 UMUR_MAKS_HARI = 30
 
+# Jumlah maksimal riwayat pergantian selesai yang disimpan (agar tidak menumpuk).
+MAKS_RIWAYAT_SELESAI = 4
+
 STATUS_MENUNGGU = "MENUNGGU"
 STATUS_DISETUJUI = "DISETUJUI"
 STATUS_DITOLAK = "DITOLAK"
@@ -141,6 +144,31 @@ def _ambil(conn, id: str) -> Pengajuan | None:
     return _dari_row(row, _muat_suara(conn, id)) if row else None
 
 
+def _pangkas_riwayat_selesai(conn) -> None:
+    """Otomatis memangkas riwayat pergantian yang sudah selesai.
+
+    Menyimpan maksimal `MAKS_RIWAYAT_SELESAI` (4) riwayat pergantian selesai
+    terbaru. Pengajuan selesai (DISETUJUI, DITOLAK, GUGUR) yang melebihi
+    batas dihapus dari DB beserta suaranya agar tidak menumpuk.
+    Pengajuan yang masih berjalan (MENUNGGU) selalu dipertahankan.
+    """
+    rows = conn.execute(
+        "SELECT id FROM pengajuan WHERE status != ? ORDER BY diajukan_pada DESC, id DESC",
+        (STATUS_MENUNGGU,),
+    ).fetchall()
+
+    if len(rows) > MAKS_RIWAYAT_SELESAI:
+        id_dihapus = [r["id"] for r in rows[MAKS_RIWAYAT_SELESAI:]]
+        with conn:
+            ph = ",".join("?" * len(id_dihapus))
+            conn.execute(
+                f"DELETE FROM persetujuan WHERE pengajuan_id IN ({ph})", id_dihapus
+            )
+            conn.execute(
+                f"DELETE FROM pengajuan WHERE id IN ({ph})", id_dihapus
+            )
+
+
 def _selesaikan(conn, id: str, status: str, sebab: str) -> None:
     with conn:
         conn.execute(
@@ -148,6 +176,7 @@ def _selesaikan(conn, id: str, status: str, sebab: str) -> None:
             " WHERE id = ? AND status = ?",
             (status, _sekarang(), sebab, id, STATUS_MENUNGGU),
         )
+    _pangkas_riwayat_selesai(conn)
 
 
 def _kadaluarsa(p: Pengajuan) -> bool:
@@ -400,12 +429,20 @@ def daftar(*, hanya_berjalan: bool = False) -> list[Pengajuan]:
         rows = conn.execute(
             "SELECT id FROM pengajuan ORDER BY diajukan_pada DESC"
         ).fetchall()
+        for r in rows:
+            p = _ambil(conn, r["id"])
+            if p is not None:
+                _evaluasi(conn, p)
+        _pangkas_riwayat_selesai(conn)
+
+        rows = conn.execute(
+            "SELECT id FROM pengajuan ORDER BY diajukan_pada DESC"
+        ).fetchall()
         hasil = []
         for r in rows:
             p = _ambil(conn, r["id"])
             if p is None:
                 continue
-            p = _evaluasi(conn, p)
             if hanya_berjalan and p.status != STATUS_MENUNGGU:
                 continue
             hasil.append(p)

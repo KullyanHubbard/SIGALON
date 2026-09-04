@@ -27,3 +27,18 @@ export function formatTanggal(iso: string): string {
     ? iso
     : formatterTanggal.format(tanggal);
 }
+
+export function bantuFotoUrl(url: string | undefined | null): string {
+  if (!url) return '';
+  if (
+    url.startsWith('data:image/') ||
+    url.startsWith('http://') ||
+    url.startsWith('https://')
+  ) {
+    return url;
+  }
+  if (url.startsWith('/uploads/')) {
+    return `/api${url}`;
+  }
+  return url;
+}

@@ -9,7 +9,7 @@ Tetap ikut dicetak ke console: waktu ada yang aneh, orang membaca log server
 lebih dulu sebelum membuka database.
 """
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from app.core.config import settings
 from app.data import db
@@ -29,6 +29,25 @@ AKSI_AKUN = (
     "hapus-berita",
     "ubah-padukuhan",
 )
+
+# Riwayat audit lebih tua dari ini dihapus otomatis. 180 hari (≈6 bulan) cukup
+# untuk penelusuran sengketa data di level padukuhan; yang lebih lama jarang
+# sekali dibuka dan hanya menambah berat DB.
+RETENSI_AUDIT_HARI = 180
+
+
+def _pangkas_audit_lama() -> None:
+    """Buang entri audit_log yang lebih tua dari `RETENSI_AUDIT_HARI`.
+
+    Menumpang di `catat_audit()` — tidak ada penjadwal di aplikasi ini, jadi
+    pembersihan dilakukan setiap kali catatan baru masuk.
+    """
+    batas = (
+        datetime.now(timezone.utc) - timedelta(days=RETENSI_AUDIT_HARI)
+    ).isoformat(timespec="seconds")
+    with db.koneksi(settings.DATABASE_FILE) as conn:
+        with conn:
+            conn.execute("DELETE FROM audit_log WHERE waktu < ?", (batas,))
 
 
 def catat_audit(
@@ -50,6 +69,7 @@ def catat_audit(
                 " perubahan) VALUES (?, ?, ?, ?, ?, ?)",
                 (waktu, aktor, aksi, sasaran, sasaran_id, perubahan or None),
             )
+    _pangkas_audit_lama()
     ekor = f" ({perubahan})" if perubahan else ""
     print(f"[AUDIT] {aktor} melakukan '{aksi}' pada {sasaran}{ekor}")
 
