@@ -6,11 +6,11 @@ interface AuthState {
   user: AuthUser | null;
   token: string | null;
   isAuthenticated: boolean;
-  /** Simpan sesi (dipanggil setelah login sukses) + persist ke storage. */
+
   setSession: (session: Session) => void;
-  /** Perbarui data user tanpa login ulang (mis. setelah ganti password). */
+
   updateUser: (user: AuthUser) => void;
-  /** Bersihkan sesi (logout). */
+
   clear: () => void;
 }
 

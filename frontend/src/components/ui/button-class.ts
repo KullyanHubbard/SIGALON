@@ -21,15 +21,6 @@ const sizeStyles: Record<Size, string> = {
   lg: 'h-12 px-6 text-base',
 };
 
-/**
- * Gaya tombol tanpa elemennya. Dipakai `Button` dan `<Link>` yang harus tampil
- * sebagai tombol (CTA halaman publik).
- *
- * Dipisah dari `Button.tsx`, bukan lewat `asChild`: pola itu butuh
- * `@radix-ui/react-slot`, satu dependensi baru untuk sesuatu yang di sini cuma
- * soal daftar class. Berkasnya sendiri terpisah karena `Button.tsx` hanya boleh
- * mengekspor komponen (aturan `react-refresh/only-export-components`).
- */
 export function buttonClass({
   variant = 'primary',
   size = 'md',

@@ -10,13 +10,6 @@ import { JudulBagian } from './components/JudulBagian';
 import { KartuJelajah } from './components/KartuJelajah';
 import { RingkasanPenduduk } from './components/RingkasanPenduduk';
 
-/**
- * Beranda portal publik — perakit bagian, tanpa state sendiri.
- *
- * Tiap bagian yang butuh data memanggil hook-nya sendiri (`RingkasanPenduduk`,
- * `BeritaTerkini`): kalau query-nya diangkat ke sini, satu bagian yang lambat
- * ikut menahan seluruh halaman.
- */
 export default function HomePage() {
   return (
     <div className="flex flex-col">

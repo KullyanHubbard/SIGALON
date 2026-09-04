@@ -6,7 +6,6 @@ export const petugasLoginSchema = z.object({
 });
 export type PetugasLoginFormValues = z.infer<typeof petugasLoginSchema>;
 
-/** Ganti password sendiri saat pertama kali masuk. */
 export const gantiPasswordSchema = z
   .object({
     passwordLama: z.string().min(1, 'Password lama wajib diisi'),
@@ -19,8 +18,7 @@ export const gantiPasswordSchema = z
   })
   .refine((v) => v.passwordBaru !== v.passwordLama, {
     path: ['passwordBaru'],
-    // Kalau boleh sama, tuntutan mengganti password bisa dipenuhi tanpa
-    // mengganti apa pun. Backend menolaknya juga.
+
     message: 'Password baru harus berbeda dari yang lama',
   });
 export type GantiPasswordFormValues = z.infer<typeof gantiPasswordSchema>;

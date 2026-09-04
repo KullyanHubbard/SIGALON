@@ -10,13 +10,6 @@ import { useAuth, useGantiPassword } from '../hooks/use-auth';
 import { gantiPasswordSchema, type GantiPasswordFormValues } from '../schemas';
 import { AuthLayout } from './AuthLayout';
 
-/**
- * Ganti password sendiri.
- *
- * Wajib dilewati sekali oleh setiap akun baru: password awalnya datang dari
- * tangan Admin, dan selama belum diganti backend menolak akun ini di semua
- * endpoint lain. Layar ini kenyamanan — yang menegakkan tetap backend.
- */
 export function GantiPasswordForm() {
   const { user, harusGantiPassword } = useAuth();
   const ganti = useGantiPassword();

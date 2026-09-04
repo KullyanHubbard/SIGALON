@@ -12,7 +12,6 @@ import { usePadukuhanQuery, useUbahPadukuhan } from '@/hooks/use-padukuhan';
 import { PADUKUHAN_BAWAAN, type Padukuhan } from '@/lib/padukuhan';
 import { pesanError } from '@/lib/utils';
 
-/** Kolom wajib isi. Batasnya kembar dengan `backend/app/schemas/padukuhan.py`. */
 const wajib = (maks: number) =>
   z.string().trim().min(1, 'Wajib diisi').max(maks, `Maksimal ${maks} huruf`);
 
@@ -36,23 +35,7 @@ const skema = z.object({
   batasBarat: wajib(150),
 });
 
-/**
- * Keterangan tetap padukuhan yang tampil di portal publik: nama wilayah, luas,
- * kontak, sejarah, batas.
- *
- * ADMIN saja. Isinya bukan data warga maupun akun — sama seperti berita, ini
- * isi portal, dan yang mengurus isi portal Admin. Sebelum halaman ini ada,
- * mengganti nomor telepon balai padukuhan berarti mengubah kode dan deploy
- * ulang.
- *
- * Koordinat & radius peta TIDAK ada di sini, sengaja: itu setelan tampilan
- * peta, bukan data yang dirawat perangkat desa (lihat `PETA` di
- * `lib/padukuhan.ts`).
- */
 export default function ProfilPadukuhanPage() {
-  // Query mentah, bukan `usePadukuhan()`: di sini bedanya penting antara
-  // "server bilang belum pernah diisi" (`null` — wajar, tinggal isi) dan
-  // "server tidak menjawab" (galat — jangan simpan apa pun).
   const { data, isPending, isError } = usePadukuhanQuery();
   const padukuhan = data ?? PADUKUHAN_BAWAAN;
   const simpan = useUbahPadukuhan();
@@ -67,15 +50,10 @@ export default function ProfilPadukuhanPage() {
     defaultValues: padukuhan,
   });
 
-  // `usePadukuhan` mula-mula menjawab nilai bawaan, lalu berganti begitu
-  // jawaban server tiba — form harus ikut. Isian yang sedang diketik TIDAK
-  // ditimpa: tanpa penjagaan `isDirty`, jawaban yang datang terlambat
-  // menghapus ketikan orang di tengah jalan.
   useEffect(() => {
     if (data !== undefined && !isDirty) reset(data ?? PADUKUHAN_BAWAAN);
   }, [data, isDirty, reset]);
 
-  // Sesudah semua hook, supaya urutan hook tetap sama di tiap render.
   if (isPending || isError) {
     return (
       <div className="space-y-6">
@@ -97,8 +75,6 @@ export default function ProfilPadukuhanPage() {
   }
 
   const onSubmit = handleSubmit(async (nilai) => {
-    // `reset` dengan nilai yang benar-benar tersimpan: itu yang memadamkan
-    // `isDirty`, jadi perubahan berikutnya dari server boleh masuk lagi.
     reset(await simpan.mutateAsync(nilai));
   });
 

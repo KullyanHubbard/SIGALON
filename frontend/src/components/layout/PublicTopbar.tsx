@@ -2,12 +2,6 @@ import { Logo } from '@/components/ui/Logo';
 import ikonMenu from '@/assets/icons/nav/menu.svg';
 import { AccountButton } from './AccountButton';
 
-/**
- * Bilah atas landing page publik untuk layar kecil — gantinya `PublicSidebar`
- * yang jadi drawer di bawah breakpoint `lg`. Tombol menu membuka drawer itu;
- * tanpanya nav bagian statistik (termasuk rincian per RT) tidak terjangkau
- * sama sekali di ponsel.
- */
 export function PublicTopbar({ onOpenNav }: { onOpenNav: () => void }) {
   return (
     <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-surface px-4 py-3 sm:px-5 sm:py-4 lg:hidden">

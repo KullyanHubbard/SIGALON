@@ -10,7 +10,6 @@ interface TabelPendudukProps {
   onUbah: (id: string) => void;
 }
 
-/** Tabel warga. Barisnya sudah siap tampil — pemformatan ada di `view-model`. */
 export function TabelPenduduk({ rows, onPilih, onUbah }: TabelPendudukProps) {
   return (
     <Table>
@@ -42,10 +41,7 @@ export function TabelPenduduk({ rows, onPilih, onUbah }: TabelPendudukProps) {
                 row.keterangan
               )}
             </Td>
-            {/* Ikon saja: dua tombol berteks per baris menghasilkan kolom
-                selebar dua kolom data, dan mata harus melewatinya di tiap
-                baris. Nama warga ikut di `aria-label` supaya pembaca layar
-                tahu baris mana yang sedang dibuka. */}
+            {}
             <Td className="text-right">
               <div className="flex items-center justify-end gap-1">
                 <Button

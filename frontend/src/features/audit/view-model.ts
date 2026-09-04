@@ -1,12 +1,5 @@
 import type { CatatanAudit } from './types';
 
-/**
- * Tanggal & jam pakai `Intl` langsung, bukan helper di `lib/`.
- *
- * Bukan penghindaran gaya: tanpa impor beralias `@/`, berkas ini bisa diuji
- * apa adanya dengan `node --experimental-strip-types` — dan pemecah teks
- * perubahan di bawah adalah bagian yang paling perlu diuji di seluruh fitur ini.
- */
 const TANGGAL = new Intl.DateTimeFormat('id-ID', {
   day: 'numeric',
   month: 'long',
@@ -17,7 +10,6 @@ const JAM = new Intl.DateTimeFormat('id-ID', {
   minute: '2-digit',
 });
 
-/** Aksi mentah -> kalimat yang bisa dibaca orang. */
 const AKSI_LABEL: Record<string, string> = {
   'ubah-warga': 'Mengubah data',
   'tambah-warga': 'Menambah warga',
@@ -30,7 +22,6 @@ const AKSI_LABEL: Record<string, string> = {
   'ubah-padukuhan': 'Mengubah profil padukuhan',
 };
 
-/** Satu perubahan kolom, sudah dipecah supaya bisa ditata di layar. */
 export interface PerubahanKolom {
   kolom: string;
   lama: string;
@@ -45,18 +36,10 @@ export interface BarisRiwayat {
   aksi: string;
   sasaran: string;
   perubahan: PerubahanKolom[];
-  /** Keterangan bebas yang bukan pasangan lama->baru (mis. wilayah warga baru). */
+
   catatan: string;
 }
 
-/**
- * Pecah "nama: 'A' -> 'B'; alamat.jalan: 'C' -> 'D'" jadi baris-baris.
- *
- * Backend menyimpannya sebagai teks karena yang membacanya manusia yang
- * menelusuri sengketa data. Pemecahannya di sini supaya tampilannya bisa
- * menata kolom, dan gagal-pecah tetap ditampilkan apa adanya sebagai catatan —
- * lebih baik terbaca kasar daripada hilang.
- */
 export function toBarisRiwayat(c: CatatanAudit): BarisRiwayat {
   const potongan = (c.perubahan ?? '')
     .split(';')

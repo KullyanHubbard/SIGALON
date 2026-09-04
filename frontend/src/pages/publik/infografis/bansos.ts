@@ -1,18 +1,5 @@
 import type { PanelDistribusi } from '@/types/statistik';
 
-/**
- * Data penerima bantuan sosial.
- *
- * KONSTANTA, bukan hasil query: tabel `penduduk` tidak menyimpan status
- * penerima bantuan sama sekali, jadi tidak ada apa pun untuk diagregasi. Angka
- * di bawah adalah CONTOH supaya bentuk halamannya bisa dilihat dan disetujui
- * perangkat desa lebih dulu.
- *
- * ponytail: ganti dengan endpoint `/publik/bansos` begitu kolom penerima
- * bantuan benar-benar didata. Bentuk `PanelDistribusi` di sini sudah sama
- * dengan yang dipakai panel demografi, jadi hanya berkas ini yang berubah.
- */
-
 export const TOTAL_PENERIMA_BANSOS = 214;
 
 export const PANEL_BANSOS: PanelDistribusi[] = [

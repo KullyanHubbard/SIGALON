@@ -12,10 +12,6 @@ import { formatAngka } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import { JudulBagian } from './JudulBagian';
 
-/**
- * Empat angka ringkas dari `/publik/statistik` — cacah saja, tanpa nama &
- * alamat.
- */
 export function RingkasanPenduduk() {
   const statistik = useStatistikPublik();
 
@@ -57,7 +53,7 @@ export function RingkasanPenduduk() {
               </div>
 
               <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 text-white shadow-2xl shadow-purple-950/50 sm:p-10 lg:p-12">
-                {/* Peta satelit Donokerto — menyatu di background card */}
+                {}
                 <img
                   src={petaSatelit}
                   alt=""
@@ -69,7 +65,7 @@ export function RingkasanPenduduk() {
                   className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 mix-blend-luminosity"
                 />
 
-                {/* Content: Text left — CTA right */}
+                {}
                 <div className="relative z-10 flex flex-col items-center gap-6 lg:flex-row lg:justify-between">
                   <div className="max-w-lg text-center lg:text-left">
                     <h3 className="text-xl font-bold leading-snug tracking-tight sm:text-3xl">

@@ -16,17 +16,12 @@ import type { WargaFormValues } from '../schemas';
 interface WargaFormFieldsProps {
   register: UseFormRegister<WargaFormValues>;
   errors: FieldErrors<WargaFormValues>;
-  /** Tambah warga: status kependudukan disembunyikan (warga baru selalu AKTIF). */
+
   menambah: boolean;
-  /** Hanya Dukuh yang boleh memindahkan warga antar-wilayah. */
+
   bolehPindahWilayah: boolean;
 }
 
-/**
- * Tiga kotak tanggal lahir, BUKAN `<input type="date">`: urutan kotak bawaan
- * browser (dd/mm vs mm/dd) ikut bahasanya dan tidak bisa dipaksa, jadi isian
- * bisa terbaca diam-diam sebagai tanggal lain.
- */
 function TanggalLahir({
   register,
   errors,
@@ -56,7 +51,6 @@ function TanggalLahir({
   );
 }
 
-/** Kisi isian formulir data warga. Tampilan saja — tanpa state & tanpa mutasi. */
 export function WargaFormFields({
   register,
   errors,
@@ -119,7 +113,7 @@ export function WargaFormFields({
         error={errors.statusHubunganKeluarga?.message}
         {...register('statusHubunganKeluarga')}
       />
-      {/* Warga baru selalu AKTIF — pilihannya cuma relevan saat mengubah. */}
+      {}
       {!menambah && (
         <Select
           label="Status Kependudukan"

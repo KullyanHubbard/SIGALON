@@ -8,11 +8,10 @@ import { petugasLoginSchema, type PetugasLoginFormValues } from '../schemas';
 import type { Role } from '../types';
 import { LoginPetugasFormView } from './LoginPetugasFormView';
 
-/** Logika masuk pengurus. Tampilannya ada di `LoginPetugasFormView`. */
 export function LoginPetugasForm() {
   const login = useLoginPetugas();
   const redirectAfterLogin = useRedirectAfterLogin();
-  // Orientasi saja: tidak ikut dikirim, dan backend tidak memeriksanya.
+
   const [peran, setPeran] = useState<Role>('DUKUH');
 
   const {

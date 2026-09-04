@@ -14,12 +14,6 @@ interface UbahLpmDialogProps {
   onClose: () => void;
 }
 
-/**
- * Isi Ketua LPM yang sedang kosong dengan memilih dari data warga.
- *
- * Ketua LPM tidak punya akun login (bukan `pengurus`), tetapi orangnya
- * dipilih dari data penduduk dan tidak boleh merangkap jabatan lain.
- */
 export function UbahLpmDialog({ open, onClose }: UbahLpmDialogProps) {
   const [cari, setCari] = useState('');
   const [terpilih, setTerpilih] = useState<WargaPilihan | null>(null);

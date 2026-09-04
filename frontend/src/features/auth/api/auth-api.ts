@@ -6,12 +6,9 @@ import type {
   Session,
 } from '../types';
 
-/** Kontrak API autentikasi. Hanya pengurus yang punya akun. */
 export interface AuthApi {
-  /** Perangkat desa: username + password. */
   login(credentials: PetugasCredentials): Promise<Session>;
-  /** Ganti password sendiri — satu-satunya aksi yang terbuka selagi
-   *  `harusGantiPassword` menyala. */
+
   gantiPassword(payload: GantiPassword): Promise<AuthUser>;
   logout(tokenOverride?: string): Promise<void>;
 }

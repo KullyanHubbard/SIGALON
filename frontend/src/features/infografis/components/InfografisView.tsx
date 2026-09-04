@@ -7,11 +7,10 @@ interface InfografisViewProps {
   isLoading: boolean;
   isError: boolean;
   panels: PanelDistribusi[] | undefined;
-  /** Wilayah yang angkanya sedang ditampilkan, mis. "RW 020". */
+
   wilayah: string;
 }
 
-/** Halaman infografis: judul + grid panel. Tampilan saja. */
 export function InfografisView({
   isLoading,
   isError,

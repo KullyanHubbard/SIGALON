@@ -12,17 +12,8 @@ import { formatTanggal } from '@/features/berita/utils';
 import { paths } from '@/routes/paths';
 import { WADAH } from '@/components/layout/wadah';
 
-/** Banyaknya berita lain di sidebar. Lebih dari ini kolomnya jadi lebih panjang dari artikelnya. */
 const JUMLAH_TERKINI = 5;
 
-/**
- * Satu berita: kolom utama di kiri, "Berita Terkini" di kanan.
- *
- * Dua query, bukan satu: daftar dipakai sidebar dan sudah ter-cache dari
- * halaman daftar, sedangkan detailnya dicari per slug. React Query
- * menggabungkan keduanya tanpa permintaan ekstra saat pembaca datang dari
- * `/berita`.
- */
 export default function BeritaDetailPage() {
   const { slug = '' } = useParams();
   const { data, isLoading, isError } = useBerita(slug);
@@ -67,14 +58,7 @@ export default function BeritaDetailPage() {
                   className="mt-6 h-64 w-full rounded-xl sm:h-96"
                 />
 
-                {/* HTML dari editor, dipasang apa adanya — dan itu aman
-                    HANYA karena disaring daftar putih saat DISIMPAN
-                    (`backend/app/schemas/berita.py`), bukan di sini. Menyaring
-                    ulang saat menampilkan berarti dua daftar putih yang bisa
-                    berbeda diam-diam; yang di server tidak bisa dilewati.
-                    Kelas `isi-berita` sama persis dengan yang dipakai kotak
-                    editornya, jadi yang ditulis penulis itu yang dilihat
-                    pembaca. */}
+                {}
                 <div
                   className="isi-berita mt-8 text-base text-slate-700"
                   dangerouslySetInnerHTML={{ __html: berita.isi }}
@@ -83,9 +67,7 @@ export default function BeritaDetailPage() {
             )}
           </QueryBoundary>
 
-          {/* Di LUAR QueryBoundary: dulu tautan ini ikut cabang sukses, jadi
-              pembaca yang membuka tautan lama (judulnya sudah disunting, slug
-              ikut berganti) mendarat di halaman tanpa satu pun jalan lanjut. */}
+          {}
           <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
             <Link
               to={paths.berita}
@@ -97,8 +79,7 @@ export default function BeritaDetailPage() {
           </div>
         </article>
 
-        {/* Sidebar hanya dicetak kalau memang ada berita lain: kartu "Berita
-            Terkini" yang isinya kosong cuma menyempitkan kolom artikel. */}
+        {}
         {terkini.length > 0 && (
           <aside className="lg:sticky lg:top-24 lg:h-fit">
             <Card>

@@ -7,13 +7,8 @@ import { useBeritaList } from '@/features/berita/hooks/use-berita';
 import { paths } from '@/routes/paths';
 import { JudulBagian } from './JudulBagian';
 
-/** Berapa berita terbaru yang muncul di beranda. */
 const CACAH_TAMPIL = 3;
 
-/**
- * Tiga berita terbaru. Sumbernya penyimpanan lokal — lihat
- * `features/berita/api/berita-api.ts`.
- */
 export function BeritaTerkini() {
   const berita = useBeritaList();
 

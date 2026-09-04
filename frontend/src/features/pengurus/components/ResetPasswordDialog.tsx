@@ -10,19 +10,10 @@ import { passwordBaruSchema, type PasswordBaruFormValues } from '../schemas';
 import type { Jabatan } from '../types';
 
 interface ResetPasswordDialogProps {
-  /** Jabatan yang pemegangnya sedang direset; `null` = dialog tertutup. */
   jabatan: Jabatan | null;
   onClose: () => void;
 }
 
-/**
- * Reset password satu akun pengurus.
- *
- * Password barunya diketik Admin, bukan dibangkitkan sistem: tidak ada jalur
- * pengiriman (email/SMS) di aplikasi ini, jadi ia harus menyampaikannya
- * langsung ke orangnya. Password ini juga sekali pakai — pemiliknya wajib
- * menggantinya saat masuk.
- */
 export function ResetPasswordDialog({
   jabatan,
   onClose,

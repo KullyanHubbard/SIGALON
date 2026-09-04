@@ -3,7 +3,6 @@ import { BeritaCard } from '@/features/berita/components/BeritaCard';
 import { useBeritaList } from '@/features/berita/hooks/use-berita';
 import { WADAH } from '@/components/layout/wadah';
 
-/** Daftar berita publik: grid kartu, terbaru dulu. */
 export default function BeritaListPage() {
   const { data, isLoading, isError } = useBeritaList();
 

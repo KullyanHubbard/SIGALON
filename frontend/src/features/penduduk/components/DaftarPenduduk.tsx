@@ -9,13 +9,6 @@ import { DaftarPendudukView, type PaginasiView } from './DaftarPendudukView';
 
 const PAGE_SIZE = 8;
 
-/**
- * Daftar penduduk untuk pengurus: pencarian nama, filter kategori, paginasi,
- * dan pemilihan detail.
- *
- * Seluruh state layar dan turunannya berhenti di sini; `DaftarPendudukView`
- * hanya menerima nilai yang sudah jadi.
- */
 export function DaftarPenduduk() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<FilterPenduduk>({});
@@ -56,13 +49,12 @@ export function DaftarPenduduk() {
 
   function onSearchChange(value: string) {
     setSearch(value);
-    setPage(1); // reset ke halaman awal saat query berubah
+    setPage(1);
   }
 
   function onFilterChange(next: FilterPenduduk) {
     setFilter(next);
-    // Wajib: mengubah filter di halaman 5 akan menghasilkan daftar kosong yang
-    // terlihat seperti bug, padahal datanya cuma tinggal satu halaman.
+
     setPage(1);
   }
 

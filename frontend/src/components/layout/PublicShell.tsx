@@ -13,18 +13,6 @@ const JELAJAHI = [
   { label: 'Statistik Warga', to: paths.statistik },
 ];
 
-/**
- * Kerangka semua halaman publik ber-navbar: beranda, profil, infografis,
- * berita. Dipasang sebagai layout route, jadi navbar & footer tidak ikut
- * di-mount ulang saat berpindah halaman — termasuk widget mengambangnya, yang
- * kalau tidak begitu akan memicu ulang hitungan kunjungan tiap navigasi.
- *
- * Halaman `/statistik` TIDAK memakai ini — kerangkanya rail kiri
- * (`PublicLandingLayout`) yang tingginya dikunci ke viewport, dan dua kerangka
- * itu tidak bisa ditumpuk tanpa merusak penggulungannya. Penghitung kunjungan &
- * tombol pengaduan/ukuran teks/tema tetap ada di sana, dipasang lewat slot bar
- * kredit yang sama.
- */
 export function PublicShell() {
   const padukuhan = usePadukuhan();
 
@@ -91,10 +79,7 @@ export function PublicShell() {
         </div>
       </div>
 
-      {/* Di luar footer ungu: `sticky` cuma menempel selama induknya terlihat,
-          dan footer itu baru muncul di dasar dokumen.
-          Widget mengambang ikut masuk ke bar ini — dulu `fixed` sendiri di atas
-          isi halaman, sekarang satu baris dengan kredit. */}
+      {}
       <BarKredit className="min-h-20 px-4 py-2 sm:px-6 lg:px-8" />
     </div>
   );

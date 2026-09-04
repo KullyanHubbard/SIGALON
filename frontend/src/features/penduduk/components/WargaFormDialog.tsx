@@ -13,7 +13,6 @@ import type { Penduduk } from '../types';
 import { WargaFormFields } from './WargaFormFields';
 
 interface WargaFormDialogProps {
-  /** `null` = tertutup. `'baru'` = tambah warga. Selain itu = ubah warga itu. */
   target: Penduduk | 'baru' | null;
   onClose: () => void;
 }
@@ -37,15 +36,6 @@ const KOSONG: WargaFormValues = {
   rw: '',
 };
 
-/**
- * Formulir data warga — dipakai untuk menambah maupun mengubah. Semua state &
- * mutasi ada di sini; isian kolomnya di `WargaFormFields`.
- *
- * Yang ditegakkan di sini, dan ditegakkan ulang backend: **RT/RW terkunci untuk
- * Ketua RT & RW.** Memindahkan warga antar-wilayah hanya kewenangan Dukuh —
- * kalau Ketua RT boleh, ia bisa memindahkan orang keluar dari wilayahnya
- * sendiri lalu tidak bisa lagi membatalkannya.
- */
 export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
   const { user } = useAuth();
   const tambah = useTambahPenduduk();
@@ -76,7 +66,6 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         rw: warga.alamat.rw,
       });
     } else {
-      // Wilayah sendiri sebagai bawaan; Ketua RT/RW tidak bisa mengubahnya.
       reset({ ...KOSONG, rt: user?.rt ?? '', rw: user?.rw ?? '' });
     }
   }, [target, warga, reset, user]);
@@ -101,8 +90,6 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
     if (menambah) {
       tambah.mutate(
         {
-          // `statusKependudukan` tidak dikirim: warga baru selalu AKTIF, dan
-          // menawarkan pilihan lain di sini cuma mengundang salah isi.
           ...inti,
           kewarganegaraan: 'WNI',
           alamat: {
@@ -125,8 +112,7 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         payload: {
           ...inti,
           statusKependudukan: v.statusKependudukan,
-          // RT/RW hanya ikut dikirim kalau memang boleh diubah — kalau tidak,
-          // backend menolak seluruh permintaannya walau nilainya sama.
+
           alamat: bolehPindahWilayah ? alamat : { jalan: v.jalan },
         },
       },

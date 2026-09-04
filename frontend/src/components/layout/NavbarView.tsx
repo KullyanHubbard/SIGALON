@@ -8,7 +8,7 @@ import { paths } from '@/routes/paths';
 
 interface NavbarViewProps {
   nama: string;
-  /** Teks jabatan di bawah nama, mis. "Ketua RT 03" atau "Dukuh". */
+
   peran: string;
   onOpenSidebar: () => void;
   menuOpen: boolean;
@@ -18,7 +18,6 @@ interface NavbarViewProps {
   onLogout: () => void;
 }
 
-/** Bilah atas: tombol sidebar (mobile) + menu pengguna. Tampilan saja. */
 export function NavbarView({
   nama,
   peran,
@@ -76,18 +75,13 @@ export function NavbarView({
             <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-surface p-1.5 shadow-lg">
               <div className="px-3 py-2">
                 <p className="text-sm font-medium text-slate-800">{nama}</p>
-                {/* Satu-satunya tempat jabatan pasti terlihat: baris nama+peran
-                    di header dipakai `hidden sm:block`, jadi di mobile ini
-                    satu-satunya tempat orang tahu jabatannya sendiri. */}
+                {}
                 {!samaPeran && (
                   <p className="text-xs text-slate-500">{peran}</p>
                 )}
               </div>
               <div className="my-1 h-px bg-slate-200" />
-              {/* Satu-satunya jalan ke halaman ganti password bagi orang yang
-                  tidak sedang dipaksa menggantinya. Tanpa ini, akun yang
-                  passwordnya sudah pernah diganti tidak punya cara mengubahnya
-                  lagi selain mengetik alamatnya sendiri. */}
+              {}
               <Link
                 to={paths.gantiPassword}
                 onClick={onTutupMenu}

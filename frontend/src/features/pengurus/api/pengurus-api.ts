@@ -1,18 +1,11 @@
 import { apiClient } from '@/lib/api-client';
 import type { Jabatan, Pengurus, PengurusBaru } from '../types';
 
-/**
- * Kontrak kelola akun pengurus. Seluruh endpoint hanya untuk ADMIN.
- *
- * Tidak ada cara mengubah atau menonaktifkan akun dari sini: jabatan hanya
- * berpindah tangan lewat pergantian yang disetujui (`features/pergantian`).
- */
 export interface PengurusApi {
-  /** Seluruh jabatan padukuhan, terisi maupun kosong. */
   daftarJabatan(): Promise<Jabatan[]>;
   tambah(payload: PengurusBaru): Promise<Pengurus>;
   resetPassword(id: string, password: string): Promise<void>;
-  /** Ketua LPM bukan jabatan berakun — diisi dari Kode Warga. */
+
   isiLpm(wargaId: string): Promise<{ nama: string; wargaId: string }>;
 }
 

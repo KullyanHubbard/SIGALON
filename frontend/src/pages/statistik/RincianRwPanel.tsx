@@ -5,24 +5,15 @@ import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statis
 import { STAT_WARGA } from '@/lib/stat-warga';
 import { toRincianRw } from './view-model';
 
-/**
- * Melayani RW maupun RT: bentuk agregatnya identik (`RincianRw` rekursif), yang
- * berbeda cuma wilayah mana yang dipetik. Query-nya sama dengan panel
- * dashboard, jadi berpindah wilayah tidak memicu permintaan baru.
- *
- * Tanpa judul & tombol kembali — keduanya sudah dibawa `StatistikBreadcrumb`
- * di atas kolom ini.
- */
 export function RincianRwPanel({
   rw,
   rt,
   periode,
 }: {
-  /** Label RW yang dibuka, mis. `'RW 19'`. */
   rw: string;
-  /** Label RT di dalam `rw`, mis. `'RT 01'`, atau `null` untuk se-RW. */
+
   rt: string | null;
-  /** Bulan yang sedang dilihat, `YYYY-MM`. */
+
   periode: string;
 }) {
   const { data, isLoading, isError } = useStatistikPublik(periode);
@@ -35,8 +26,7 @@ export function RincianRwPanel({
       <QueryBoundary
         isLoading={isLoading}
         isError={isError}
-        // `undefined` = query belum selesai, `null` = sudah dan wilayahnya
-        // tidak ada.
+
         data={data ? (rincian ? toRincianRw(rincian) : null) : undefined}
         loadingLabel="Memuat statistik"
         errorMessage="Statistik belum bisa ditampilkan. Anda tetap bisa masuk."

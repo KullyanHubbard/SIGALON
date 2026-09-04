@@ -20,14 +20,6 @@ const TAB = [
 
 type TabId = (typeof TAB)[number]['id'];
 
-/**
- * Infografis publik: demografi penduduk & bantuan sosial.
- *
- * Tab aktif hidup di URL (`/infografis?tab=bansos`), bukan `useState` — alasan
- * yang sama dengan wilayah aktif di halaman statistik: dengan state biasa,
- * tombol Back dari tab kedua keluar dari situs alih-alih kembali ke tab
- * pertama, dan tab tertentu tidak bisa ditautkan dari mana pun.
- */
 export default function InfografisPublikPage() {
   const padukuhan = usePadukuhan();
   const [params, setParams] = useSearchParams();
@@ -49,8 +41,7 @@ export default function InfografisPublikPage() {
         </div>
       </section>
 
-      {/* Tab sebagai bilah tersendiri di bawah judul: `sticky` supaya tetap
-          terjangkau saat panel bawah digulung. */}
+      {}
       <div className="sticky top-16 z-20 border-b border-slate-200 bg-surface">
         <div className={`${WADAH} flex gap-1 overflow-x-auto`} role="tablist">
           {TAB.map((t) => (
@@ -119,10 +110,7 @@ export default function InfografisPublikPage() {
           </QueryBoundary>
         ) : (
           <div className="space-y-6">
-            {/* Peringatan sumber data dipasang menyolok, bukan sebagai catatan
-                kaki: angka bansos di halaman ini belum berasal dari pendataan
-                mana pun, dan angka yang salah dikira resmi lebih berbahaya
-                daripada halaman yang kosong. */}
+            {}
             <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-5 py-4 text-sm text-amber-900 dark:text-amber-200">
               <p className="font-semibold">Data contoh</p>
               <p className="mt-1">

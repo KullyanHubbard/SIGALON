@@ -19,7 +19,6 @@ interface AdminDashboardViewProps {
   distribusiUsia: Distribusi[] | undefined;
 }
 
-/** Dashboard pengurus: angka ringkas, satu grafik, dan pintasan. Tampilan saja. */
 export function AdminDashboardView({
   namaPengurus,
   isLoading,

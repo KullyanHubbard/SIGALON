@@ -8,19 +8,12 @@ interface ModalProps {
   children: ReactNode;
 }
 
-/** Apa saja yang bisa menerima fokus keyboard di dalam dialog. */
 const BISA_FOKUS =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
 
-/** Modal dasar dengan overlay + tutup via ESC / klik luar. */
 export function Modal({ open, onClose, title, children }: ModalProps) {
   const kotak = useRef<HTMLDivElement>(null);
 
-  // Perpindahan fokus dipisah dari pemasangan listener, dan itu WAJIB:
-  // `onClose` selalu fungsi baru tiap render pemanggilnya, jadi efek yang
-  // bergantung padanya berjalan ulang berkali-kali selagi dialog terbuka.
-  // Digabung, tiap putaran itu mengembalikan fokus ke tombol pembuka — kursor
-  // orang melompat keluar dari kolom yang sedang diketiknya.
   useEffect(() => {
     if (!open) return;
 
@@ -28,7 +21,6 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
     kotak.current?.focus();
 
     return () => {
-      // Kembalikan fokus ke tombol yang membuka dialog, bukan ke awal halaman.
       if (sebelumnya instanceof HTMLElement) sebelumnya.focus();
     };
   }, [open]);
@@ -36,9 +28,6 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   useEffect(() => {
     if (!open) return;
 
-    // Fokus dikurung di dalam dialog selama terbuka. Tanpa ini Tab berjalan
-    // terus ke halaman di belakangnya — yang bagi pemakai keyboard berarti
-    // mengisi formulir yang tidak terlihat, di balik tirai gelap.
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();

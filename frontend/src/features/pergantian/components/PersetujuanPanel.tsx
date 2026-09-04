@@ -5,16 +5,6 @@ import { pesanError } from '@/lib/utils';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useJawabPengajuan, useMenungguJawaban } from '../hooks/use-pergantian';
 
-/**
- * Kotak "Menunggu persetujuan Anda".
- *
- * Ditaruh di kerangka dashboard, bukan di satu halaman: ini panggilan yang
- * tidak boleh terlewat, dan pengurus tidak selalu mendarat di halaman yang
- * sama. Kosong = tidak menggambar apa pun.
- *
- * Isinya hanya pengajuan yang memang ditujukan kepada orang ini — bukan
- * disembunyikan di layar, backend memang tidak mengirimkan yang lain.
- */
 export function PersetujuanPanel() {
   const { isPengurus } = useAuth();
   const { data } = useMenungguJawaban(isPengurus);
@@ -30,11 +20,6 @@ export function PersetujuanPanel() {
       />
       <CardContent className="space-y-4">
         {data.map((p) => (
-          // `bg-amber-500/[9%]`, bukan `bg-amber-50`: ramp amber tidak dibalik di
-          // mode gelap, jadi amber-50 tetap kuning muda sementara teks slate di
-          // atasnya ikut terang — tulisannya hilang. Tint transparan menumpang
-          // latar kartu, jadi satu kelas benar di dua mode; pola yang sama
-          // dengan `SOROT_BRAND` di `lib/colors.ts`.
           <div
             key={p.id}
             className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-amber-500/[9%] px-4 py-3"

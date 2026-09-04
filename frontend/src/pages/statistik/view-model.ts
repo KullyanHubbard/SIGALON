@@ -9,16 +9,6 @@ import { toStatWarga } from '@/lib/stat-warga';
 import type { StatWarga } from '@/lib/stat-warga';
 import type { PanelDistribusi } from '@/types/statistik';
 
-/**
- * Susunan panel rincian satu RW di halaman depan.
- *
- * Tinggal di level halaman, bukan di dalam fitur, karena di sinilah dua fitur
- * bertemu: angka agregat dari `statistik-publik`, peta label domain dari
- * `penduduk`. Fitur tidak boleh saling mengimpor (CLAUDE.md §4) — halaman boleh
- * merakit. Alasan & bentuknya sama persis dengan
- * `pages/admin/infografis/view-model.ts`.
- */
-
 export interface RincianRwViewModel {
   stat: StatWarga[];
   panels: PanelDistribusi[];

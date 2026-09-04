@@ -1,5 +1,3 @@
-/** Agregat statistik kependudukan untuk halaman infografis (admin). */
-
 import type { Distribusi } from '@/types/statistik';
 
 export interface InfografisData {

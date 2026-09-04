@@ -34,7 +34,6 @@ interface DaftarPendudukViewProps {
   onUbah: (id: string) => void;
 }
 
-/** Tabel daftar penduduk + pencarian + paginasi. Tampilan saja. */
 export function DaftarPendudukView({
   search,
   onSearchChange,

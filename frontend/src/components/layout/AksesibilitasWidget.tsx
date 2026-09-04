@@ -20,16 +20,6 @@ function skalaTersimpan(): number {
   return SKALA.some((s) => s.persen === angka) ? angka : 100;
 }
 
-/**
- * Tombol mengambang: perbesar/perkecil ukuran teks seluruh halaman.
- *
- * Murni klien — ukuran font Tailwind di proyek ini sudah `rem` (lihat
- * `tailwind.config.js`), jadi mengubah `font-size` akar dokumen ikut
- * menskalakan semuanya tanpa menyentuh satu pun kelas Tailwind.
- *
- * Disimpan `localStorage` supaya pilihannya bertahan lintas kunjungan,
- * diterapkan sekali saat komponen ini pertama mount di `PublicShell`.
- */
 export function AksesibilitasWidget() {
   const [open, setOpen] = useState(false);
   const [persen, setPersen] = useState(100);

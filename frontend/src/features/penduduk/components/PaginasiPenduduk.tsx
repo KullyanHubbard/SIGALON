@@ -1,15 +1,13 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
-/** Keterangan paginasi yang sudah dihitung container. */
 export interface PaginasiView {
-  /** mis. "1–8 dari 42" */
   ringkasan: string;
   halaman: number;
   totalHalaman: number;
   bisaMundur: boolean;
   bisaMaju: boolean;
-  /** Query lama masih tampil sementara yang baru dimuat. */
+
   sedangMenyegarkan: boolean;
 }
 
@@ -19,7 +17,6 @@ interface PaginasiPendudukProps {
   onNext: () => void;
 }
 
-/** Baris navigasi halaman di kaki tabel penduduk. */
 export function PaginasiPenduduk({
   paginasi,
   onPrev,

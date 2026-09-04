@@ -9,7 +9,6 @@ import { paths } from '@/routes/paths';
 import { navItemsForRole } from './nav-config';
 
 interface SidebarProps {
-  /** Untuk mode mobile (drawer). */
   open: boolean;
   onClose: () => void;
 }
@@ -20,7 +19,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Overlay mobile */}
+      {}
       {open && (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"
@@ -35,7 +34,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        {/* Header — h-20 sama dengan PublicSidebar & breadcrumb landing */}
+        {}
         <div className="relative flex h-20 shrink-0 items-center justify-center border-b border-slate-100 px-5">
           <Logo className="h-8" />
           <button
@@ -54,14 +53,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {/* Jalan pulang ke portal publik, untuk keempat peran. Di LUAR area
-            gulir di bawahnya: daftar menu boleh memanjang, tautan keluar tidak
-            boleh ikut hilang ke bawah lipatan. Pola & ikonnya kembar dengan
-            `PublicSidebar`, tapi ukurannya mengikuti butir menu di sebelahnya —
-            di sini ia berdiri sebaris dengan mereka, bukan catatan kaki.
-
-            `Link`, bukan `NavLink`: tujuannya di luar dasbor, jadi tidak pernah
-            ada keadaan "sedang aktif" yang perlu disorot. */}
+        {}
         <Link
           to={paths.landing}
           onClick={onClose}

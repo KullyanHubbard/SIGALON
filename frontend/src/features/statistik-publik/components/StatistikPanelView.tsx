@@ -15,13 +15,6 @@ interface StatistikPanelViewProps {
   onPilihRw: (rw: string) => void;
 }
 
-/**
- * Tampilan saja — angka sudah berupa string dari `view-model.ts`, kecuali total
- * di tengah donut yang sengaja mentah karena `CountUp` memformatnya per bingkai.
- *
- * Tiap baris RW di kartu ringkasan membuka rinciannya, dan itu satu-satunya
- * jalan ke sana di layar kecil: rail kiri disembunyikan di bawah `lg`.
- */
 export function StatistikPanelView({
   isLoading,
   isError,
@@ -37,8 +30,6 @@ export function StatistikPanelView({
       errorMessage="Statistik belum bisa ditampilkan. Anda tetap bisa masuk."
     >
       {(data) => (
-        // Dua kolom setara: donut dulu berdiri tanpa kartu dan mendominasi,
-        // sementara kolom kanan menggantung setengah tinggi.
         <div className="grid items-stretch gap-6 lg:grid-cols-2">
           <Card className="flex flex-col">
             <CardHeader title="Sebaran Warga per RW" />
@@ -54,10 +45,7 @@ export function StatistikPanelView({
                 }}
                 center={
                   <>
-                    {/* Hero figure: di sini `tabular-nums` justru WAJIB meski
-                      angka display biasanya lebih baik tanpanya — angkanya
-                      berubah tiap bingkai, dan lebar digit proporsional bikin
-                      seluruh angka bergoyang kiri-kanan selama menghitung. */}
+                    {}
                     <CountUp
                       value={data.total}
                       className="text-6xl font-bold tabular-nums leading-none text-slate-900"
@@ -71,8 +59,7 @@ export function StatistikPanelView({
             </div>
           </Card>
 
-          {/* Kolom kanan menyamakan tinggi ke kartu donut: kartu daftar RW yang
-              `flex-1` yang memanjang, bukan kartu jenis kelamin. */}
+          {}
           <div className="flex flex-col gap-4">
             <div className="grid gap-4 sm:grid-cols-2">
               {data.stat.map((stat) => (

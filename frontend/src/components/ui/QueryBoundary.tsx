@@ -6,27 +6,19 @@ import { LoadingBlock } from './Spinner';
 interface QueryBoundaryProps<T> {
   isLoading: boolean;
   isError: boolean;
-  /** `undefined` = belum ada data, `null` = sudah dicek dan memang tidak ada. */
+
   data: T | null | undefined;
-  /** Data ada tapi kosong, mis. daftar tanpa hasil. */
+
   isEmpty?: (data: T) => boolean;
   loadingLabel?: string;
   errorMessage?: string;
   emptyTitle?: string;
   emptyDescription?: string;
-  /** Ganti seluruh tampilan kosong bila butuh bentuk lain. */
+
   empty?: ReactNode;
   children: (data: T) => ReactNode;
 }
 
-/**
- * Satu tempat untuk empat keadaan sebuah query: memuat, gagal, kosong, ada isi.
- *
- * Sebelumnya tiap halaman menulis rantai ternary-nya sendiri dengan bentuk
- * berbeda-beda — ada yang lupa menangani cabang gagal, sehingga bagian layar
- * hilang diam-diam. Komponen ini murni presentasi: ia tidak tahu apa pun soal
- * React Query, hanya menerima beberapa boolean dan sebuah nilai.
- */
 export function QueryBoundary<T>({
   isLoading,
   isError,

@@ -2,13 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { Role } from '../types';
 
-/**
- * Empat peran di halaman masuk, beserta contoh username tiap peran.
- *
- * Pilihan ini kini diverifikasi di layar masuk. Jika peran dari backend
- * tidak cocok dengan tombol yang ditekan, proses masuk akan dibatalkan
- * (sesi dicabut kembali) dan menampilkan error.
- */
 export const PERAN_LOGIN = [
   {
     role: 'ADMIN' as Role,
@@ -49,8 +42,7 @@ export function PilihanPeranLogin({ dipilih, onPilih }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<Map<Role, HTMLButtonElement>>(new Map());
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
-  // Matikan transisi saat render pertama supaya indikator tidak terlihat
-  // meluncur dari pojok kiri atas.
+
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -65,7 +57,6 @@ export function PilihanPeranLogin({ dipilih, onPilih }: Props) {
       width: btnRect.width,
     });
 
-    // Nyalakan transisi setelah posisi awal terpasang.
     if (!ready) requestAnimationFrame(() => setReady(true));
   }, [dipilih, ready]);
 
@@ -76,7 +67,7 @@ export function PilihanPeranLogin({ dipilih, onPilih }: Props) {
       aria-label="Pilih peran"
       className="relative mt-4 grid grid-cols-4 rounded-xl bg-slate-100 p-1"
     >
-      {/* Sliding indicator — kotak putih yang meluncur di belakang tombol. */}
+      {}
       <span
         aria-hidden
         className={cn(

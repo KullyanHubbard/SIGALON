@@ -6,11 +6,6 @@ import { cn } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import { AccountButton } from './AccountButton';
 
-/**
- * Tautan publik. `end` wajib untuk `/` — tanpa itu beranda cocok sebagai
- * prefix setiap route dan menunya menyala di semua halaman. Untuk `/berita`
- * justru sebaliknya: prefix-nya harus cocok agar `/berita/:slug` ikut menyala.
- */
 const TAUTAN = [
   { label: 'Beranda', to: paths.landing, end: true },
   { label: 'Profil Desa', to: paths.profil, end: true },
@@ -27,14 +22,6 @@ const tautanClass = ({ isActive }: { isActive: boolean }) =>
       : 'font-medium text-slate-600 hover:bg-slate-100 dark:hover:bg-white/10 dark:hover:text-white hover:text-slate-900',
   );
 
-/**
- * Bilah navigasi halaman publik: beranda, profil, infografis, berita,
- * statistik, plus pintu masuk pengurus.
- *
- * `sticky`, bukan `fixed`: halaman publik panjang dan navigasinya harus selalu
- * terjangkau, tapi `fixed` mengharuskan tiap halaman menyisakan padding atas
- * sendiri-sendiri — satu yang lupa langsung tertutup bilahnya.
- */
 export function PublicNavbar() {
   const [open, setOpen] = useState(false);
 
@@ -67,8 +54,6 @@ export function PublicNavbar() {
       </div>
 
       {open && (
-        // Menutup sendiri saat sebuah tautan diklik: tanpa itu panelnya tetap
-        // menutupi halaman tujuan setelah navigasi.
         <nav
           className="flex flex-col gap-1 border-t border-slate-200 px-4 py-3 lg:hidden"
           onClick={() => setOpen(false)}

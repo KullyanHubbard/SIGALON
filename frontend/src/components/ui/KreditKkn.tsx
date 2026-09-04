@@ -2,29 +2,13 @@ import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 interface KreditKknProps {
-  /** Padding, garis, & latar dari kerangka pemakainya — beda per kerangka. */
   className?: string;
-  /** Sudut kiri bar, mis. penghitung kunjungan. Kosong di kebanyakan kerangka. */
+
   kiri?: ReactNode;
-  /** Sudut kanan bar, mis. tombol pengaduan / ukuran teks / tema. */
+
   kanan?: ReactNode;
 }
 
-/**
- * Kredit pembuat, satu-satunya sumber teksnya. Dipasang di kaki keempat
- * kerangka halaman (`PublicLandingLayout`, `DashboardLayout`, `AuthLayout`,
- * `NotFoundPage`) — tidak ada satu kerangka induk yang membungkus semuanya,
- * jadi empat pemasangan itu memang lantai terendahnya.
- *
- * `sticky bottom-0`: barnya menempel ke dasar viewport selama digulir, tapi
- * tetap memakan ruang di akhir alur — jadi tidak ada isi yang tertutup dan
- * tidak perlu padding tambahan di pemakainya. Syaratnya ia harus jadi anak
- * langsung kerangka setinggi halaman, bukan dibungkus footer lain.
- *
- * Penekanan nama lewat `font-semibold`, bukan warna, supaya warnanya bisa
- * diwariskan kalau nanti dipasang di atas latar gelap (mis. panel brand
- * `AuthLayout`) tanpa menyiapkan varian.
- */
 export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
   return (
     <footer

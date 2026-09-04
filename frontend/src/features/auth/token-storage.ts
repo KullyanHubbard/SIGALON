@@ -1,14 +1,5 @@
 import type { Session } from './types';
 
-/**
- * Persistensi sesi di localStorage.
- * Dipisah dari store agar bisa dipakai interceptor api-client tanpa
- * membuat dependensi lingkaran ke store Zustand.
- *
- * Catatan keamanan: menyimpan token di localStorage rawan XSS. Untuk produksi,
- * pertimbangkan httpOnly cookie yang di-set oleh FastAPI.
- */
-
 const STORAGE_KEY = 'nia.session';
 
 export function getStoredSession(): Session | null {

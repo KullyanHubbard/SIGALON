@@ -18,18 +18,8 @@ import {
   toFilterChips,
 } from '../labels';
 
-/** Satu pilihan dropdown: nilai yang dikirim ke API + teks yang dibaca orang. */
 type Opsi = readonly [nilai: string, teks: string];
 
-/**
- * Filter yang tinggal di dalam panel, bukan di baris depan.
- *
- * Baris depan cuma memuat wilayah (RW/RT) karena itu yang dipakai tiap hari:
- * pengurus bekerja per-RT, sisanya dipakai sesekali saat mencari kelompok
- * tertentu. Daftar ini juga yang dihitung jadi angka pada tombol Filter —
- * menghitung RW/RT ikut berarti memberi tahu ada filter tersembunyi padahal
- * pilihannya terpampang di sebelahnya.
- */
 const LANJUTAN = [
   'jenisKelamin',
   'kelompokUmur',
@@ -45,7 +35,7 @@ interface ToolbarPendudukProps {
   search: string;
   onSearchChange: (value: string) => void;
   value: FilterPenduduk;
-  /** Pilihan non-enum dari data (RT/RW/pekerjaan). `undefined` selagi dimuat. */
+
   opsi: FilterOpsi | undefined;
   onChange: (next: FilterPenduduk) => void;
   onTambah: () => void;
@@ -59,8 +49,6 @@ function dariData(nilai: string[] | undefined): Opsi[] {
   return (nilai ?? []).map((v) => [v, v] as Opsi);
 }
 
-/** Dropdown ramping untuk baris depan: tanpa label di atasnya, tingginya sama
- *  dengan tombol di sebelahnya supaya barisnya rata. */
 function PilihanRingkas({
   label,
   nilai,
@@ -78,8 +66,6 @@ function PilihanRingkas({
       value={nilai ?? ''}
       onChange={(e) => onPilih(e.target.value)}
       className={cn(
-        // `border-1`, bukan `border`: `borderWidth.DEFAULT` di tailwind.config
-        // di-setel 4px.
         'focus-ring h-10 rounded-lg border-1 bg-surface px-3 text-sm transition-colors',
         nilai
           ? 'border-brand-600 font-medium text-brand-700 dark:text-brand-300'
@@ -96,7 +82,6 @@ function PilihanRingkas({
   );
 }
 
-/** Dropdown berlabel di dalam panel filter. */
 function PilihanPanel({
   field,
   nilai,
@@ -125,17 +110,6 @@ function PilihanPanel({
   );
 }
 
-/**
- * Bilah kontrol daftar penduduk: cari nama, wilayah, panel filter lanjutan, dan
- * tombol tambah warga — satu baris, dengan chip filter aktif di bawahnya.
- *
- * Chip itu yang membuat panel aman dilipat: filter yang tidak kelihatan adalah
- * filter yang bikin orang mengira datanya hilang. Semua filter digabung AND
- * oleh backend.
- *
- * Menggantikan pencarian NIK/No. KK yang hilang bersama dua kolom itu: yang
- * dicari pengurus sekarang selalu sekelompok orang, bukan satu nomor.
- */
 export function ToolbarPenduduk({
   search,
   onSearchChange,
@@ -149,16 +123,9 @@ export function ToolbarPenduduk({
     setPanelOpen(false),
   );
 
-  /**
-   * Nilai kosong dibuang dari objek, bukan disimpan sebagai `''` — kalau tidak,
-   * query key React Query berbeda hanya karena ada field bernilai kosong, dan
-   * cache-nya pecah tanpa alasan.
-   */
   const set = (field: keyof FilterPenduduk, v: string) => {
     const next = { ...value };
     if (v) {
-      // Nilai <select> selalu `string`; union sempitnya dijaga oleh daftar
-      // pilihan yang dibangkitkan dari `labels`/`opsi`, bukan input bebas.
       next[field] = v as never;
     } else {
       delete next[field];
@@ -195,9 +162,7 @@ export function ToolbarPenduduk({
           onPilih={(v) => set('rt', v)}
         />
 
-        {/* `relative` dipasang di grup kanan, bukan di tombolnya: panel
-            digantung pada tepi kanan toolbar, jadi di layar sempit ia melebar
-            ke dalam kartu, bukan keluar layar. */}
+        {}
         <div
           className="relative ml-auto flex items-center gap-2"
           ref={panelRef}

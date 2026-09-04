@@ -5,11 +5,6 @@ import { paths } from '@/routes/paths';
 import type { Berita } from '../types';
 import { formatTanggal, keRingkasan } from '../utils';
 
-/**
- * Tempat foto utama. Berita tanpa foto tetap dapat kotak dengan ikon, bukan
- * ruang kosong — grid yang sebagian kartunya bergambar dan sebagian tidak
- * terbaca rusak, bukan bervariasi.
- */
 export function FotoBerita({
   berita,
   className,
@@ -39,7 +34,6 @@ export function FotoBerita({
   );
 }
 
-/** Kartu berita untuk grid daftar & pratinjau beranda. */
 export function BeritaCard({ berita }: { berita: Berita }) {
   const pembuka = keRingkasan(berita.isi);
 
@@ -67,7 +61,6 @@ export function BeritaCard({ berita }: { berita: Berita }) {
   );
 }
 
-/** Baris ringkas untuk sidebar "Berita Terkini": thumbnail kecil + judul. */
 export function BeritaBarisRingkas({ berita }: { berita: Berita }) {
   return (
     <Link

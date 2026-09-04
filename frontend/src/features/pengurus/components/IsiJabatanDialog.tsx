@@ -16,21 +16,10 @@ import { isiJabatanSchema, type IsiJabatanFormValues } from '../schemas';
 import type { Jabatan } from '../types';
 
 interface IsiJabatanDialogProps {
-  /** Jabatan yang sedang diisi; `null` = dialog tertutup. */
   jabatan: Jabatan | null;
   onClose: () => void;
 }
 
-/**
- * Buatkan akun untuk satu jabatan kosong.
- *
- * Jabatannya sudah ditentukan barisnya, jadi form ini tidak menanyakan jabatan,
- * RW, maupun RT — tiganya ikut apa adanya dari baris yang diklik.
- *
- * Orangnya **dipilih dari data warga, bukan diketik**: Admin buta terhadap isi
- * data kependudukan, jadi ia tidak punya cara tahu nama siapa yang benar. Kotak
- * pencarian ini sama persis dengan yang dipakai saat mengajukan pergantian.
- */
 export function IsiJabatanDialog({ jabatan, onClose }: IsiJabatanDialogProps) {
   const tambah = useTambahPengurus();
   const [cari, setCari] = useState('');
@@ -48,7 +37,6 @@ export function IsiJabatanDialog({ jabatan, onClose }: IsiJabatanDialogProps) {
     defaultValues: { username: '', password: '' },
   });
 
-  // Kalau kolom Jabatan di Excel sudah menandai orangnya, ia langsung terpilih.
   useEffect(() => {
     if (!jabatan) return;
     setWarga(

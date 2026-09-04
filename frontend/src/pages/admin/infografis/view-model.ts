@@ -7,14 +7,6 @@ import {
 import type { InfografisData } from '@/features/infografis/types';
 import type { PanelDistribusi } from '@/types/statistik';
 
-/**
- * Susunan panel halaman infografis.
- *
- * Tinggal di level halaman, bukan di dalam fitur, karena di sinilah dua fitur
- * bertemu: angka agregat dari `infografis`, peta label domain dari `penduduk`.
- * Fitur tidak boleh saling mengimpor (CLAUDE.md §4) — halaman boleh merakit.
- */
-
 export function toPanelInfografis(data: InfografisData): PanelDistribusi[] {
   return [
     {

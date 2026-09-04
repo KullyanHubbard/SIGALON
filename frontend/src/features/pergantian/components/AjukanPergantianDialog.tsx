@@ -10,24 +10,15 @@ import type { WargaPilihan } from '@/lib/warga-api';
 import { useAjukanPergantian } from '../hooks/use-pergantian';
 
 interface AjukanPergantianDialogProps {
-  /** Jabatan yang diganti pemegangnya; `null` = dialog tertutup. */
   jabatan: {
-    /** Kunci jabatan, mis. `RT:019/001`. */
     kode: string;
-    /** Label yang dibaca orang, mis. "Ketua RT 001". */
+
     label: string;
     namaPemegang: string;
   } | null;
   onClose: () => void;
 }
 
-/**
- * Usulkan pengganti untuk satu jabatan terisi.
- *
- * Tiap pilihan menampilkan "Nama — RT/RW": di satu padukuhan nama kembar itu
- * biasa, dan salah pilih di sini berarti mengusulkan orang yang salah untuk
- * sebuah jabatan.
- */
 export function AjukanPergantianDialog({
   jabatan,
   onClose,
@@ -87,7 +78,7 @@ export function AjukanPergantianDialog({
         />
 
         {jabatan?.kode === 'LPM' && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700 flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700">
             <span>Ingin mencopot Ketua LPM tanpa memilih pengganti?</span>
             <Button
               type="button"

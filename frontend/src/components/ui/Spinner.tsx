@@ -7,7 +7,6 @@ export function Spinner({ className }: { className?: string }) {
   );
 }
 
-/** Pembungkus loading yang memenuhi tinggi kontainer. */
 export function LoadingBlock({ label = 'Memuat…' }: { label?: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-500">

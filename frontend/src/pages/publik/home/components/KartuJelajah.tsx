@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
-/** Satu pintu masuk di bagian "Jelajahi Padukuhan". */
 export function KartuJelajah({
   ke,
   judul,

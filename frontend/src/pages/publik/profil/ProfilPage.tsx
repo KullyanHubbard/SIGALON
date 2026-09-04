@@ -9,7 +9,6 @@ import { formatAngka } from '@/lib/utils';
 import { BaganOrganisasi } from './components/BaganOrganisasi';
 import { BarisKeterangan } from './components/BarisKeterangan';
 
-/** Profil padukuhan: sejarah, bagan pengurus, peta, batas & luas wilayah. */
 export default function ProfilPage() {
   const statistik = useStatistikPublik();
   const padukuhan = usePadukuhan();
@@ -48,8 +47,7 @@ export default function ProfilPage() {
                   label="Luas wilayah"
                   nilai={padukuhan.luasWilayah}
                 />
-                {/* Populasi dari `/publik/statistik`, bukan angka tetap: kalau
-                    ditulis manual ia langsung basi pada impor data berikutnya. */}
+                {}
                 <QueryBoundary
                   isLoading={statistik.isLoading}
                   isError={statistik.isError}

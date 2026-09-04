@@ -5,9 +5,9 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
-  /** Ikon di dalam sisi kiri kolom — penanda, bukan kontrol. */
+
   icon?: ReactNode;
-  /** Kontrol di dalam sisi kanan kolom, mis. tombol lihat/sembunyikan PIN. */
+
   trailing?: ReactNode;
 }
 
@@ -24,8 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        {/* Relatif hanya bila ada isian di dalamnya — kolom polos tidak perlu
-            konteks posisi. */}
+        {}
         <div className={cn((icon || trailing) && 'relative')}>
           {icon && (
             <span
@@ -39,8 +38,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              // `border-1`, bukan `border`: `borderWidth.DEFAULT` di
-              // tailwind.config di-setel 4px.
               'focus-ring h-10 w-full rounded-lg border-1 border-slate-300 bg-surface px-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-brand-600 focus-visible:ring-brand-600/20',
               icon && 'pl-10',
               trailing && 'pr-11',

@@ -13,15 +13,6 @@ interface PilihWargaProps {
   hint?: string;
 }
 
-/**
- * Kotak cari + daftar warga yang bisa diklik.
- *
- * Tiap baris menampilkan "Nama — RT/RW": di satu padukuhan nama kembar itu
- * biasa, dan salah pilih berarti menunjuk orang yang salah untuk sebuah
- * jabatan.
- *
- * Tampilan saja — pemanggil yang memegang state & querynya.
- */
 export function PilihWarga({
   label,
   cari,

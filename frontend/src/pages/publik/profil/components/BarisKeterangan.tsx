@@ -1,4 +1,3 @@
-/** Satu baris `<dt>/<dd>` di dalam kartu keterangan wilayah. */
 export function BarisKeterangan({
   label,
   nilai,

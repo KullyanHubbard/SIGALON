@@ -10,14 +10,6 @@ import { useDaftarJabatan } from '@/features/pengurus/hooks/use-pengurus';
 import type { Jabatan } from '@/features/pengurus/types';
 import { useStrukturOrganisasi } from '@/features/struktur-organisasi/hooks/use-struktur-organisasi';
 
-/**
- * Kelola jabatan perangkat desa. Admin saja — dan ia buta terhadap data warga,
- * ditegakkan backend, bukan sekadar disembunyikan menunya.
- *
- * Dua fitur bertemu di halaman ini: daftar jabatan milik `pengurus`, dan
- * pengajuan pergantian milik `pergantian`. Keduanya dirakit di sini, bukan
- * saling mengimpor (CLAUDE.md §4).
- */
 export default function PengurusPage() {
   const jabatan = useDaftarJabatan();
   const pengajuan = usePengajuanList();

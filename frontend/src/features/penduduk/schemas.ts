@@ -1,13 +1,6 @@
 import { z } from 'zod';
 import { keTanggalLahirIso } from '@/lib/tanggal';
 
-/**
- * Form data warga — dipakai untuk menambah maupun mengubah.
- *
- * Tanggal lahir tiga kotak terpisah, bukan satu `<input type="date">`. Lihat
- * `keTanggalLahirIso` untuk alasannya; ringkasnya, urutan kotak bawaan browser
- * tidak bisa dipaksa dd/mm/yyyy.
- */
 export const wargaSchema = z
   .object({
     nama: z.string().trim().min(1, 'Nama wajib diisi'),
@@ -56,8 +49,6 @@ export const wargaSchema = z
     rw: z.string().trim().min(1, 'RW wajib diisi'),
   })
   .refine((v) => keTanggalLahirIso(v) !== null, {
-    // Menangkap dua hal yang lolos pemeriksaan per kotak: tanggal yang tidak
-    // ada di kalender (31 Februari) dan tanggal yang melewati hari ini.
     message: 'Tanggal itu tidak ada di kalender, atau melewati hari ini',
     path: ['tanggal'],
   });

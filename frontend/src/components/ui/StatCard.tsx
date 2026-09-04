@@ -7,17 +7,14 @@ export function StatCard({
 }: {
   label: string;
   value: string | number;
-  /** URL gambar hasil impor dari `@/assets/icons`. */
+
   icon: string;
 }) {
   return (
     <Card className="flex items-center gap-3 p-3.5 sm:gap-4 sm:p-4">
-      {/* Tanpa kotak latar: ikonnya ilustrasi yang sudah berwarna sendiri, dan
-          kotak terang di baliknya jadi tambalan putih di mode gelap. */}
-      {/* `alt` kosong: labelnya sudah ada di sebelah, ikon cuma hiasan. */}
-      {/* Tanpa `dark:`: ramp slate sudah dibalik di `:root.dark` (CLAUDE.md
-          §Styling). `dark:text-slate-300` justru memakai warna GELAP di mode
-          gelap — labelnya hilang di atas kartu. */}
+      {}
+      {}
+      {}
       <img
         src={icon}
         alt=""

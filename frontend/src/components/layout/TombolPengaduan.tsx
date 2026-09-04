@@ -1,13 +1,6 @@
 import { Headset } from 'lucide-react';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
 
-/**
- * Tombol mengambang pengaduan warga: `mailto:` ke email padukuhan.
- *
- * Bukan formulir dengan penyimpanan sendiri — itu fitur terpisah (perlu
- * backend, moderasi, dsb) yang belum ada spesifikasinya. `mailto:` cukup untuk
- * "ada jalur pengaduan" tanpa membangun subsistem baru.
- */
 export function TombolPengaduan() {
   const padukuhan = usePadukuhan();
 

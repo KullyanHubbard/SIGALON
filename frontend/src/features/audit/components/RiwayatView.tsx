@@ -13,7 +13,6 @@ interface RiwayatViewProps {
   kosongKeterangan: string;
 }
 
-/** Tabel riwayat perubahan. Tampilan saja. */
 export function RiwayatView({
   isLoading,
   isError,

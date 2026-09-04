@@ -12,8 +12,6 @@ import {
 } from './guards';
 import { paths } from './paths';
 
-// Code-splitting per halaman: halaman admin & portal publik hanya dimuat saat
-// dibutuhkan, memperkecil bundle awal.
 const HomePage = lazy(() => import('@/pages/publik/home/HomePage'));
 const ProfilPage = lazy(() => import('@/pages/publik/profil/ProfilPage'));
 const InfografisPublikPage = lazy(
@@ -56,13 +54,12 @@ export function AppRoutes() {
         </Route>
 
         <Route element={<RequireAuth />}>
-          {/* Di luar `RequireGantiPassword`: inilah satu-satunya halaman yang
-              harus tetap terbuka selagi password awal belum diganti. */}
+          {}
           <Route path={paths.gantiPassword} element={<GantiPasswordPage />} />
 
           <Route element={<RequireGantiPassword />}>
             <Route element={<DashboardLayout />}>
-              {/* Baca data warga: Dukuh/RW/RT. Admin ditolak backend juga. */}
+              {}
               <Route element={<RequireRole roles={ROLE_PENGURUS} />}>
                 <Route
                   path={paths.admin.root}
@@ -75,12 +72,10 @@ export function AppRoutes() {
                 />
               </Route>
 
-              {/* Riwayat: dua peran, isi berbeda — backend yang memilah. */}
+              {}
               <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
 
-              {/* Admin saja: kelola akun, dan isi portal publik. Data warga
-                  tetap tertutup untuknya — backend yang menolaknya, bukan
-                  guard ini. */}
+              {}
               <Route element={<RequireRole roles={['ADMIN']} />}>
                 <Route path={paths.admin.pengurus} element={<PengurusPage />} />
                 <Route
@@ -96,10 +91,7 @@ export function AppRoutes() {
           </Route>
         </Route>
 
-        {/* Halaman publik, terbuka untuk semua — termasuk yang sudah masuk.
-            Semua berbagi satu `PublicShell` (navbar + footer) kecuali
-            `/statistik`, yang kerangkanya rail kiri dan tingginya dikunci ke
-            viewport — dua kerangka itu tidak bisa ditumpuk. */}
+        {}
         <Route element={<PublicShell />}>
           <Route path={paths.landing} element={<HomePage />} />
           <Route path={paths.profil} element={<ProfilPage />} />

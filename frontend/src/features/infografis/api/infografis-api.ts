@@ -1,7 +1,6 @@
 import { apiClient } from '@/lib/api-client';
 import type { InfografisData } from '../types';
 
-/** Kontrak API infografis (agregat statistik) — khusus admin. */
 export interface InfografisApi {
   get(): Promise<InfografisData>;
 }

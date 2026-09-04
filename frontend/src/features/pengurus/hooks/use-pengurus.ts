@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { pengurusApi } from '../api/pengurus-api';
 import type { PengurusBaru } from '../types';
 
-/** Query keys terpusat agar caching konsisten & mudah di-invalidate. */
 export const pengurusKeys = {
   all: ['pengurus'] as const,
   jabatan: () => [...pengurusKeys.all, 'jabatan'] as const,
@@ -15,7 +14,6 @@ export function useDaftarJabatan() {
   });
 }
 
-/** Setiap mutasi menyegarkan daftar jabatan — tabelnya harus langsung berubah. */
 function useSegarkanJabatan() {
   const queryClient = useQueryClient();
   return () => queryClient.invalidateQueries({ queryKey: pengurusKeys.all });
@@ -38,11 +36,6 @@ export function useResetPassword() {
   });
 }
 
-/**
- * Menyegarkan `/publik/struktur-organisasi` lewat key literalnya, BUKAN
- * `strukturOrganisasiKeys` yang diekspor `features/struktur-organisasi`:
- * fitur ini tidak boleh mengimpor internal fitur lain (CLAUDE.md §4).
- */
 export function useIsiLpm() {
   const queryClient = useQueryClient();
   return useMutation({

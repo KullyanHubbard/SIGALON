@@ -6,12 +6,11 @@ import { daftarPeriode, labelPeriode } from '@/lib/tanggal';
 import { useStatistikPublik } from '../hooks/use-statistik-publik';
 
 interface StatistikNavProps {
-  /** Label RW yang sedang dibuka, atau `null` untuk dashboard. */
   rwAktif: string | null;
-  /** Label RT yang sedang dibuka di dalam `rwAktif`, atau `null`. */
+
   rtAktif: string | null;
   onPilih: (rw: string | null, rt?: string | null) => void;
-  /** Periode aktif, mis. `'2026-08'`. */
+
   periode: string;
   onPilihPeriode: (periode: string) => void;
 }
@@ -25,13 +24,6 @@ function itemClass(aktif: boolean) {
   );
 }
 
-/**
- * Rail kiri halaman depan. Sub-baris RT selalu tampil tanpa buka-tutup: satu
- * padukuhan cuma punya beberapa RT, jadi daftarnya tetap pendek.
- *
- * Wilayahnya dari query yang sama dengan panelnya — React Query menyatukannya
- * jadi satu permintaan, jadi nav tidak perlu dioper data lewat props.
- */
 export function StatistikNav({
   rwAktif,
   rtAktif,
@@ -49,14 +41,12 @@ export function StatistikNav({
         aria-current={rwAktif === null ? 'page' : undefined}
         className={itemClass(rwAktif === null)}
       >
-        {/* `alt` kosong: labelnya persis di sebelah, ikon cuma hiasan. */}
+        {}
         <img src={ikonDashboard} alt="" className="h-5 w-5 shrink-0" />
         Dashboard
       </button>
 
-      {/* Bulan lampau dihitung dengan memutar mundur buku mutasi di backend.
-          Daftar pilihannya dibatasi `periodeTerawal` dari jawaban yang sama —
-          bulan sebelum buku mutasi ada memang tidak bisa dihitung. */}
+      {}
       <div>
         <p className="px-3 text-sm font-semibold uppercase tracking-widest text-slate-900">
           Periode
@@ -109,8 +99,6 @@ export function StatistikNav({
                 </button>
 
                 {rw.perRt.length > 0 && (
-                  // Indentasi saja sebagai penanda hierarki — tanpa garis
-                  // vertikal, tanpa penambah lebar.
                   <ul className="ml-8 mt-1 space-y-1">
                     {rw.perRt.map((rt) => {
                       const aktif =
@@ -123,8 +111,7 @@ export function StatistikNav({
                             aria-current={aktif ? 'page' : undefined}
                             className={cn(itemClass(aktif), 'py-2 text-sm')}
                           >
-                            {/* Titik, bukan ikon: bulatan bergaris di sini
-                                terbaca sebagai radio button. */}
+                            {}
                             <span
                               aria-hidden
                               className="ml-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-current opacity-50"

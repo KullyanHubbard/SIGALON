@@ -10,10 +10,6 @@ import { pendudukApi } from '../api/penduduk-api';
 
 type ListParams = PaginationParams & FilterPenduduk;
 
-/**
- * Query keys terpusat agar caching konsisten & mudah di-invalidate. `params`
- * ikut masuk key: tiap kombinasi filter punya cache sendiri.
- */
 export const pendudukKeys = {
   all: ['penduduk'] as const,
   list: (params: ListParams) => [...pendudukKeys.all, 'list', params] as const,
@@ -21,7 +17,6 @@ export const pendudukKeys = {
   filterOpsi: () => [...pendudukKeys.all, 'filter-opsi'] as const,
 };
 
-/** Daftar penduduk dengan paginasi, pencarian nama, dan filter kategori. */
 export function usePendudukList(params: ListParams) {
   return useQuery({
     queryKey: pendudukKeys.list(params),
@@ -30,10 +25,6 @@ export function usePendudukList(params: ListParams) {
   });
 }
 
-/**
- * Pilihan RT/RW/pekerjaan untuk dropdown filter. Jarang berubah — data
- * penduduk read-only sampai impor Excel berikutnya.
- */
 export function useFilterOpsi() {
   return useQuery({
     queryKey: pendudukKeys.filterOpsi(),
@@ -42,8 +33,6 @@ export function useFilterOpsi() {
   });
 }
 
-/** Tiap perubahan menyegarkan daftar, detail, pilihan filter, dan infografis —
- *  angka agregat ikut bergerak begitu satu warga berubah. */
 function useSegarkanPenduduk() {
   const queryClient = useQueryClient();
   return () => {

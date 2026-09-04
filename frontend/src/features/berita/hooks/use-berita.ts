@@ -22,14 +22,12 @@ export function useBerita(slug: string) {
   });
 }
 
-/** Simpan sekaligus melayani tambah (`id` kosong) dan sunting. */
 export function useSimpanBerita() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ input, id }: { input: BeritaBaru; id?: string }) =>
       beritaApi.simpan(input, id),
-    // Seluruh cabang `berita` dibuang, bukan cuma listnya: judul yang disunting
-    // mengubah slug, jadi entri detail lama ikut basi.
+
     onSuccess: () => qc.invalidateQueries({ queryKey: beritaKeys.all }),
   });
 }

@@ -6,16 +6,6 @@ import { RiwayatView } from '@/features/audit/components/RiwayatView';
 import { useRiwayat } from '@/features/audit/hooks/use-audit';
 import { toBarisRiwayat } from '@/features/audit/view-model';
 
-/**
- * Riwayat perubahan. Satu halaman, dua isi yang berbeda:
- *
- * - Pengurus melihat perubahan data warga **di wilayahnya**, ditambah seluruh
- *   aksi Admin — jadi yang memegang data ikut mengawasi yang memegang akun.
- * - Admin melihat aksi Admin saja, dan tidak pernah melihat data warga.
- *
- * Yang memilah backend; halaman ini cuma menyesuaikan judulnya supaya orang
- * tahu riwayat apa yang sedang dibacanya.
- */
 export default function RiwayatPage() {
   const { user, isAdmin } = useAuth();
   const { data, isLoading, isError } = useRiwayat();

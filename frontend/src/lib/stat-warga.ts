@@ -4,11 +4,6 @@ import ikonPenduduk from '@/assets/icons/penduduk.png';
 import ikonPerempuan from '@/assets/icons/perempuan.png';
 import { formatAngka } from './utils';
 
-/**
- * Empat angka ringkas kependudukan, dipakai dashboard pengurus + statistik
- * publik + rincian RW. Di `lib` karena ketiganya fitur berbeda dan fitur tidak
- * boleh saling impor (CLAUDE.md §4).
- */
 export type StatWargaId = 'keluarga' | 'penduduk' | 'lakiLaki' | 'perempuan';
 
 export const STAT_WARGA: Record<StatWargaId, { label: string; icon: string }> =
@@ -19,9 +14,7 @@ export const STAT_WARGA: Record<StatWargaId, { label: string; icon: string }> =
     perempuan: { label: 'Perempuan', icon: ikonPerempuan },
   };
 
-/** Bentuk minimal yang dibutuhkan `toStatWarga` — agregat mana pun cocok. */
 export interface TotalWarga {
-  /** Opsional: infografis pengurus tidak menghitung KK, statistik publik ya. */
   totalKepalaKeluarga?: number;
   totalPenduduk: number;
   totalLakiLaki: number;
@@ -30,7 +23,7 @@ export interface TotalWarga {
 
 export interface StatWarga {
   id: StatWargaId;
-  /** Sudah terformat, mis. `'1.234'`. */
+
   value: string;
 }
 

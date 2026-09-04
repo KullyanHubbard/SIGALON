@@ -16,12 +16,11 @@ interface LoginPetugasFormViewProps {
   onSubmit: FormEventHandler<HTMLFormElement>;
   isPending: boolean;
   errorMessage: string | null;
-  /** Peran yang sedang dipilih. Orientasi saja — tidak dikirim ke backend. */
+
   peran: Role;
   onPilihPeran: (role: Role) => void;
 }
 
-/** Tampilan form masuk pengurus. Tanpa hook — lihat `LoginPetugasForm`. */
 export function LoginPetugasFormView({
   register,
   errors,

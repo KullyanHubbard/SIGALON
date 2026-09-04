@@ -3,12 +3,10 @@ import { Button } from '@/components/ui/Button';
 import { bacaFoto } from '../foto';
 
 interface FotoBeritaFieldProps {
-  /** Data URL foto saat ini, atau `''` kalau belum ada. */
   value: string;
   onChange: (dataUrl: string) => void;
 }
 
-/** Pemilih foto utama berita, lengkap dengan pratinjau & batas ukuran. */
 export function FotoBeritaField({ value, onChange }: FotoBeritaFieldProps) {
   const [error, setError] = useState<string | null>(null);
 

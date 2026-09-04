@@ -7,16 +7,6 @@ type PasswordInputProps = Omit<
   'type' | 'trailing'
 >;
 
-/**
- * Kolom rahasia (PIN / password) dengan tombol lihat-sembunyikan.
- *
- * Dipakai empat kali (masuk warga, masuk pengurus, dua kolom PIN di aktivasi),
- * jadi keadaan "sedang terlihat" hidup di sini — bukan diulang di tiap form.
- *
- * Tombolnya `tabIndex={-1}`: pengguna keyboard menekan Tab dari kolom PIN untuk
- * sampai ke tombol Masuk, bukan untuk singgah di sakelar tampilan. Tetap bisa
- * dijangkau dengan klik, dan `aria-label`-nya menyatakan keadaan sekarang.
- */
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
   (props, ref) => {
     const [terlihat, setTerlihat] = useState(false);

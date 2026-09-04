@@ -17,26 +17,11 @@ import { cn } from '@/lib/utils';
 import { bacaFoto } from '../foto';
 
 interface EditorIsiBeritaProps {
-  /** HTML isi artikel. */
   value: string;
   onChange: (html: string) => void;
   error?: string;
 }
 
-/**
- * Penyunting isi berita: tebal, miring, judul, daftar, kutipan, dan foto yang
- * bisa diletakkan di tengah tulisan.
- *
- * Keluarannya HTML, dan HTML dari klien tidak dipercaya siapa pun: yang
- * menentukan tag mana boleh terbit adalah `bersihkan_html` di
- * `backend/app/schemas/berita.py`, saat menyimpan. Daftar tombol di sini
- * sengaja tidak melampaui daftar putih di sana — tombol yang menghasilkan tag
- * terlarang cuma akan menghilangkan tulisan orang tanpa penjelasan.
- *
- * Tanpa tombol tautan, sengaja: mengizinkan `<a>` berarti melonggarkan skema
- * URL yang boleh lewat, sementara `data:` harus tetap terbuka untuk foto
- * sisipan. Berita padukuhan belum membutuhkannya.
- */
 export function EditorIsiBerita({
   value,
   onChange,
@@ -47,8 +32,6 @@ export function EditorIsiBerita({
 
   const editor = useEditor({
     extensions: [
-      // `link: false` — lihat catatan di atas. Judul dibatasi dua tingkat:
-      // judul beritanya sendiri sudah h1 di halaman publik.
       StarterKit.configure({ heading: { levels: [2, 3] }, link: false }),
       Image.configure({ inline: false }),
     ],
@@ -62,10 +45,6 @@ export function EditorIsiBerita({
     },
   });
 
-  // Dialognya satu instance untuk semua berita, jadi isi editor harus diganti
-  // saat berita yang dibuka berganti. Perbandingan dengan `getHTML()` menahan
-  // putaran balik: tiap ketikan memperbarui `value`, dan tanpa penjagaan ini
-  // kursor akan dilempar ke awal setiap huruf.
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value, { emitUpdate: false });
@@ -80,10 +59,7 @@ export function EditorIsiBerita({
       return;
     }
     setGalatFoto(null);
-    // Keterangan foto ditanyakan, bukan diambil dari nama berkas: pembaca layar
-    // membacakan `alt`, dan "IMG_20260903_112034.jpg" tidak memberitahu apa pun
-    // kepada yang tidak bisa melihat fotonya. Batal = foto tanpa keterangan,
-    // yang tetap boleh — memaksanya cuma akan diisi asal-asalan.
+
     const keterangan = window.prompt(
       'Keterangan foto untuk pembaca layar (boleh dikosongkan):',
       '',
@@ -192,8 +168,7 @@ export function EditorIsiBerita({
             className="sr-only"
             onChange={(e) => {
               void sisipkanFoto(e.target.files?.[0]);
-              // Dikosongkan supaya memilih berkas yang sama dua kali tetap
-              // memicu `change` — kalau tidak, foto kedua diam saja.
+
               e.target.value = '';
             }}
           />
@@ -214,7 +189,6 @@ export function EditorIsiBerita({
   );
 }
 
-/** Satu tombol format. `aria-pressed` supaya keadaan aktifnya tidak cuma warna. */
 function TombolAlat({
   label,
   aktif,

@@ -24,7 +24,6 @@ interface DaftarPengajuanViewProps {
   pengajuan: Pengajuan[] | undefined;
 }
 
-/** Riwayat pengajuan pergantian beserta siapa sudah menjawab apa. */
 export function DaftarPengajuanView({
   isLoading,
   isError,

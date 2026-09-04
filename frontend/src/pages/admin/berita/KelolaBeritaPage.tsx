@@ -17,16 +17,6 @@ import { formatTanggal } from '@/features/berita/utils';
 import { pesanError } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 
-/**
- * CMS berita padukuhan: tulis, sunting, hapus.
- *
- * ADMIN saja (lihat `AppRoutes`), dan itu satu-satunya kewenangannya di luar
- * kelola akun: isi portal bukan data warga, jadi memberikannya tidak membuka
- * apa pun tentang penduduk. Tiap tindakan di sini masuk log audit.
- *
- * Tersimpan di server sejak 3 September 2026 — begitu disimpan, beritanya
- * langsung terbaca pengunjung di `/berita`.
- */
 export default function KelolaBeritaPage() {
   const { data, isLoading, isError } = useBeritaList();
   const hapus = useHapusBerita();

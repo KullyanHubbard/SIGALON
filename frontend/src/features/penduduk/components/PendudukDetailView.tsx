@@ -12,12 +12,6 @@ function Field({ label, value }: { label: string; value: string }) {
   );
 }
 
-/**
- * Kartu detail lengkap satu penduduk.
- *
- * Menerima data yang sudah diterjemahkan `toPendudukDetail` — tidak ada peta
- * enum maupun perhitungan umur di sini, hanya tata letak.
- */
 export function PendudukDetailView({ detail }: { detail: PendudukDetailData }) {
   return (
     <Card>

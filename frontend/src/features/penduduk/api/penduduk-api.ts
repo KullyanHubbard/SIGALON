@@ -8,17 +8,15 @@ import type {
   PendudukUbah,
 } from '../types';
 
-/** Kontrak API data kependudukan. Semua endpoint butuh sesi pengurus. */
 export interface PendudukApi {
-  /** Daftar penduduk: paginasi, cari nama, dan filter kategori (AND). */
   list(params: PaginationParams & FilterPenduduk): Promise<Paginated<Penduduk>>;
-  /** Detail satu penduduk. `id` dibangkitkan saat impor, bukan NIK. */
+
   getById(id: string): Promise<Penduduk | null>;
-  /** Pilihan filter non-enum (RT, RW, pekerjaan) dari isi data. */
+
   filterOpsi(): Promise<FilterOpsi>;
-  /** Tambah warga di wilayah sendiri. Kode Warganya dibangkitkan backend. */
+
   tambah(payload: PendudukBaru): Promise<Penduduk>;
-  /** Ubah sebagian data satu warga. */
+
   ubah(id: string, payload: PendudukUbah): Promise<Penduduk>;
 }
 

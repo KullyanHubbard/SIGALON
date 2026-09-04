@@ -5,29 +5,25 @@ import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { paths } from '@/routes/paths';
 import latarHero from '@/assets/hero-beranda.webp';
 
-/** Bagian paling atas beranda: foto Merapi, sambutan, dan dua tombol. */
 export function HeroBeranda() {
   const padukuhan = usePadukuhan();
 
   return (
     <section className="relative isolate overflow-hidden">
-      {/* `object-cover`: fotonya 1170x781, jauh lebih jangkung dari kotak hero,
-          jadi yang kepotong atas-bawah — bukan diregangkan. */}
+      {}
       <img
         src={latarHero}
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden
       />
-      {/* Gradasi gelap terpisah dari fotonya supaya kontras teks tidak ikut
-          berubah kalau fotonya diganti lagi. */}
+      {}
       <div
         className="absolute inset-0 bg-gradient-to-r from-[#3b1368]/90 via-[#3b1368]/70 to-transparent"
         aria-hidden
       />
 
-      {/* Satu kolom sejak maskotnya dicabut. Teksnya dijaga selebar setengah
-          layar supaya tetap duduk di sisi foto yang digelapkan gradasi. */}
+      {}
       <div className={`${WADAH} relative py-14 sm:py-20 lg:py-28`}>
         <div className="max-w-2xl text-center lg:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-200 sm:text-sm">

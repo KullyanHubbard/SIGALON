@@ -1,8 +1,3 @@
-/**
- * Akses terpusat & tervalidasi untuk environment variables.
- * Jangan pernah membaca `import.meta.env.*` langsung di luar file ini.
- */
-
 function readString(value: string | undefined, fallback: string): string {
   return value && value.trim().length > 0 ? value : fallback;
 }

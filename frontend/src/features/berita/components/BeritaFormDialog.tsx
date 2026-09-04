@@ -13,7 +13,6 @@ import { EditorIsiBerita } from './EditorIsiBerita';
 import { FotoBeritaField } from './FotoBeritaField';
 
 interface BeritaFormDialogProps {
-  /** `null` = tertutup. `'baru'` = tulis berita. Selain itu = sunting berita itu. */
   target: Berita | 'baru' | null;
   onClose: () => void;
 }
@@ -26,7 +25,6 @@ const KOSONG: BeritaFormValues = {
   foto: '',
 };
 
-/** Formulir berita — dipakai untuk menulis baru maupun menyunting. */
 export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
   const simpan = useSimpanBerita();
 
@@ -45,8 +43,6 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
   const foto = watch('foto');
   const isi = watch('isi');
 
-  // Isi ulang tiap kali dialog dibuka: satu instance form melayani semua
-  // berita, jadi tanpa ini isian berita sebelumnya masih tertinggal.
   useEffect(() => {
     if (target === null) return;
     simpan.reset();
@@ -61,8 +57,7 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
             foto: target.foto,
           },
     );
-    // `simpan` sengaja tidak jadi dependensi: objek mutasinya berganti identitas
-    // tiap render, dan mengikutkannya mengosongkan form saat sedang diketik.
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, reset]);
 
@@ -107,8 +102,7 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
           />
         </div>
 
-        {/* `key` mengikuti berita yang dibuka: pesan galat ukuran foto milik
-            berita sebelumnya harus ikut hilang saat pindah berita. */}
+        {}
         <FotoBeritaField
           key={target === 'baru' || target === null ? 'baru' : target.id}
           value={foto}

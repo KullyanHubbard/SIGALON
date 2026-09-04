@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 
 type Tone = 'info' | 'success' | 'error';
 
-/** Tint transparan + `dark:` di teks, alasannya sama dengan `Badge`. */
 const config: Record<Tone, { icon: typeof Info; className: string }> = {
   info: {
     icon: Info,

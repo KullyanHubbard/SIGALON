@@ -1,20 +1,12 @@
 import { toJalurWilayah } from '../view-model';
 
 interface StatistikBreadcrumbProps {
-  /** Label RW yang sedang dibuka, atau `null` untuk dashboard. */
   rwAktif: string | null;
-  /** Label RT yang sedang dibuka di dalam `rwAktif`, atau `null`. */
+
   rtAktif: string | null;
   onPilih: (rw: string | null, rt?: string | null) => void;
 }
 
-/**
- * Jalur wilayah di bar atas kolom kanan, mis. `Statistik Warga / RW 19 / RT 01`.
- *
- * Tampilan saja: susunan ruasnya datang dari `toJalurWilayah` di `view-model`,
- * komponen ini tidak memutuskan ruas apa yang muncul. Ruas terakhir bukan
- * tautan — itu halaman yang sedang dibuka.
- */
 export function StatistikBreadcrumb({
   rwAktif,
   rtAktif,

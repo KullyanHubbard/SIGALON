@@ -10,18 +10,6 @@ interface AccountButtonProps {
   className?: string;
 }
 
-/**
- * Pintu ke area pribadi pada landing publik: "Masuk" bagi pengunjung,
- * "Akun Saya" bagi yang sudah punya sesi.
- *
- * Dipakai di dua tempat — `PublicSidebar` (layar besar) dan `PublicTopbar`
- * (layar kecil) — satu komponen supaya gaya & tujuannya tidak bisa berbeda
- * antara keduanya.
- *
- * Labelnya sengaja bukan "Dashboard": rail kiri landing sudah punya tombol
- * bernama itu untuk panel statistik, dan dua "Dashboard" di satu layar menunjuk
- * tempat berbeda.
- */
 export function AccountButton({ className }: AccountButtonProps) {
   const { isAuthenticated, user } = useAuth();
 
@@ -33,10 +21,7 @@ export function AccountButton({ className }: AccountButtonProps) {
         className,
       )}
     >
-      {/* Ikon masuk dipasang sebagai mask seperti di `Sidebar`, bukan `<img>`:
-          berkasnya satu warna, jadi `bg-current` yang mewarnainya mengikuti
-          teks tombol. URL wajib dipetik ganda — tanpa itu mask diabaikan diam-
-          diam dan yang tampil kotak penuh. */}
+      {}
       <span
         aria-hidden
         className="h-4 w-4 shrink-0 bg-current"

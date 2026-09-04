@@ -2,15 +2,6 @@ import { apiClient } from '@/lib/api-client';
 import { ApiError } from '@/types/api';
 import type { Berita, BeritaBaru } from '../types';
 
-/**
- * Kontrak berita. Membaca lewat `/publik/berita` (tanpa sesi, sama seperti
- * pengunjung biasa), menulis lewat `/berita` yang cuma dibuka untuk ADMIN.
- *
- * Sampai 3 September 2026 isinya `localStorage`, jadi tulisan pengurus tidak
- * pernah sampai ke pengunjung mana pun. Yang berpindah cuma berkas ini —
- * komponen dan hook-nya tidak berubah satu baris, dan itu memang gunanya
- * kontrak ini dibuat lebih dulu.
- */
 export interface BeritaApi {
   list(): Promise<Berita[]>;
   getBySlug(slug: string): Promise<Berita | null>;
@@ -31,10 +22,6 @@ export const beritaApi: BeritaApi = {
       );
       return data;
     } catch (galat) {
-      // 404 di sini keadaan biasa, bukan kegagalan: tautan lama tersebar lalu
-      // judulnya disunting. Halaman detail menampilkannya sebagai "Berita
-      // tidak ditemukan", sedangkan galat lain tetap dilempar supaya gangguan
-      // jaringan tidak menyamar jadi berita yang hilang.
       if (galat instanceof ApiError && galat.status === 404) return null;
       throw galat;
     }

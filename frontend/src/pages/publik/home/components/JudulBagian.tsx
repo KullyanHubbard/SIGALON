@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-/** Judul + deskripsi satu bagian beranda, dengan tombol opsional di kanan. */
 export function JudulBagian({
   judul,
   deskripsi,

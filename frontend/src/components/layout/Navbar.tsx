@@ -3,7 +3,6 @@ import { useDismissOnOutside } from '@/hooks/use-dismiss-on-outside';
 import { useAuth, useLogout } from '@/features/auth/hooks/use-auth';
 import { NavbarView } from './NavbarView';
 
-/** Sesi + perilaku dropdown. Tampilannya ada di `NavbarView`. */
 export function Navbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
   const { user } = useAuth();
   const logout = useLogout();

@@ -3,7 +3,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { queryClient } from '@/lib/query-client';
 
-/** Semua context provider global dikumpulkan di satu tempat. */
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
