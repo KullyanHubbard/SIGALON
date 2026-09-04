@@ -262,7 +262,16 @@ def buka(path: Path) -> sqlite3.Connection:
     _ganti_nama_kolom(conn)
     conn.executescript(SKEMA)
     _tambal_kolom(conn)
+    _migrasi_data(conn)
     return conn
+
+
+def _migrasi_data(conn: sqlite3.Connection) -> None:
+    """Migrasi nilai data lama yang berubah di skema baru."""
+    conn.execute(
+        "UPDATE penduduk SET pendidikan = 'TIDAK_BELUM_SEKOLAH' WHERE pendidikan = 'TIDAK_SEKOLAH'"
+    )
+    conn.commit()
 
 
 # Kolom yang ditambahkan setelah ada instalasi berjalan. `CREATE TABLE IF NOT

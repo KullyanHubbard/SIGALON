@@ -47,7 +47,6 @@ export default function ProfilPage() {
                   label="Luas wilayah"
                   nilai={padukuhan.luasWilayah}
                 />
-                {}
                 <QueryBoundary
                   isLoading={statistik.isLoading}
                   isError={statistik.isError}
@@ -98,9 +97,10 @@ export default function ProfilPage() {
         <h2 className="mb-6 text-2xl font-bold text-slate-900">
           Peta & Letak Wilayah
         </h2>
+
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <PetaPadukuhan className="h-[24rem]" />
+            <PetaPadukuhan className="w-full aspect-[1600/514] lg:h-full lg:aspect-auto min-h-[18rem]" />
           </div>
 
           <Card className="h-fit">

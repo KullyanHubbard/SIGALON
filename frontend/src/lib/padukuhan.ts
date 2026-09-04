@@ -39,10 +39,12 @@ export const PADUKUHAN_BAWAAN: Padukuhan = {
 };
 
 export const PETA = {
-  koordinat: { lat: -7.6256, lon: 110.3789 },
+  koordinat: { lat: -7.656826, lon: 110.363111 },
 
   radiusPeta: 0.012,
 } as const;
+
+export const GOOGLE_MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${PETA.koordinat.lat},${PETA.koordinat.lon}`;
 
 export function paragrafSejarah(sejarah: string): string[] {
   return sejarah

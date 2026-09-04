@@ -42,8 +42,8 @@ BARIS_HEADER = 2  # baris 1 = judul
 # Pembangkit file Excel di `backend/tools/` membaca daftar ini juga, supaya
 # bentuk file dan pembacanya tidak mungkin melenceng sendiri-sendiri.
 KOLOM: list[tuple[str, str, int]] = [
-    ("id", "Kode Warga", 14),
     ("kodeKeluarga", "Kode Keluarga", 14),
+    ("id", "Kode Warga", 14),
     ("nama", "Nama Lengkap", 24),
     ("jenisKelamin", "Jenis Kelamin", 14),
     ("tempatLahir", "Tempat Lahir", 16),
@@ -72,7 +72,7 @@ PILIHAN: dict[str, list[str]] = {
     "jenisKelamin": ["LAKI_LAKI", "PEREMPUAN"],
     "agama": ["ISLAM", "KRISTEN", "KATOLIK", "HINDU", "BUDDHA", "KONGHUCU", "LAINNYA"],
     "statusPerkawinan": ["BELUM_KAWIN", "KAWIN", "CERAI_HIDUP", "CERAI_MATI"],
-    "pendidikan": ["TIDAK_SEKOLAH", "SD", "SMP", "SMA", "D3", "S1", "S2", "S3"],
+    "pendidikan": ["TIDAK_BELUM_SEKOLAH", "BELUM_TAMAT_SD", "SD", "SMP", "SMA", "D3", "D4", "S1", "S2", "S3"],
     "golonganDarah": ["A", "B", "AB", "O", "TIDAK_TAHU"],
     "statusHubunganKeluarga": [
         "KEPALA_KELUARGA", "ISTRI", "ANAK", "FAMILI_LAIN", "LAINNYA",

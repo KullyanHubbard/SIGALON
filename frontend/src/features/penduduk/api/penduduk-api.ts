@@ -18,6 +18,10 @@ export interface PendudukApi {
   tambah(payload: PendudukBaru): Promise<Penduduk>;
 
   ubah(id: string, payload: PendudukUbah): Promise<Penduduk>;
+
+  ekspor(
+    params: FilterPenduduk & { search?: string; format?: 'xlsx' | 'csv' },
+  ): Promise<Blob>;
 }
 
 export const pendudukApi: PendudukApi = {
@@ -44,6 +48,13 @@ export const pendudukApi: PendudukApi = {
       `/penduduk/${id}`,
       payload,
     );
+    return data;
+  },
+  async ekspor(params) {
+    const { data } = await apiClient.get<Blob>('/penduduk/ekspor', {
+      params,
+      responseType: 'blob',
+    });
     return data;
   },
 };

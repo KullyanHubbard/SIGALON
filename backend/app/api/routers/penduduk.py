@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from datetime import date
+import io
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from fastapi.responses import StreamingResponse
 
 from app.api.routers.auth import current_pengurus
 from app.data.agregat import kelompok_umur, umur
+from app.data.ekspor import bikin_csv, bikin_excel
+from app.data.padukuhan import ambil as ambil_padukuhan
 from app.data import store
 from app.data.store import penduduk_untuk
 from app.schemas.auth import AuthUser
@@ -104,6 +109,61 @@ def list_penduduk(
         total=len(hasil),
         page=page,
         pageSize=pageSize,
+    )
+
+
+@router.get("/penduduk/ekspor")
+def ekspor_penduduk(
+    search: str = "",
+    jenisKelamin: str = "",
+    agama: str = "",
+    golonganDarah: str = "",
+    pendidikan: str = "",
+    statusPerkawinan: str = "",
+    statusHubunganKeluarga: str = "",
+    pekerjaan: str = "",
+    rt: str = "",
+    rw: str = "",
+    kelompokUmur: str = "",
+    format: str = Query("xlsx", pattern="^(xlsx|csv)$"),
+    user: AuthUser = Depends(current_pengurus),
+) -> Response:
+    """Ekspor data warga ke file Excel (.xlsx) atau CSV (.csv) sesuai hak akses & filter."""
+    hasil = saring(
+        penduduk_untuk(user),
+        search=search,
+        pekerjaan=pekerjaan,
+        rt=rt,
+        rw=rw,
+        kelompokUmur=kelompokUmur,
+        jenisKelamin=jenisKelamin,
+        agama=agama,
+        golonganDarah=golonganDarah,
+        pendidikan=pendidikan,
+        statusPerkawinan=statusPerkawinan,
+        statusHubunganKeluarga=statusHubunganKeluarga,
+    )
+
+    tgl = date.today().isoformat()
+    padukuhan = ambil_padukuhan()
+    judul = f"DATA PENDUDUK — {padukuhan.namaLengkap.upper() if padukuhan else 'PADUKUHAN'}"
+
+    if format == "csv":
+        konten_csv = bikin_csv(hasil)
+        nama_file = f"data-penduduk-{tgl}.csv"
+        return Response(
+            content=konten_csv,
+            media_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{nama_file}"'},
+        )
+
+    # Default: Excel (.xlsx)
+    konten_xlsx = bikin_excel(hasil, judul=judul)
+    nama_file = f"data-penduduk-{tgl}.xlsx"
+    return StreamingResponse(
+        io.BytesIO(konten_xlsx),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{nama_file}"'},
     )
 
 

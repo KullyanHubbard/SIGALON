@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Plus, Search, SlidersHorizontal, X } from 'lucide-react';
+import {
+  ChevronDown,
+  Download,
+  FileSpreadsheet,
+  FileText,
+  Loader2,
+  Plus,
+  Search,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -39,6 +49,8 @@ interface ToolbarPendudukProps {
   opsi: FilterOpsi | undefined;
   onChange: (next: FilterPenduduk) => void;
   onTambah: () => void;
+  onEkspor?: (format: 'xlsx' | 'csv') => void;
+  isExporting?: boolean;
 }
 
 function dariLabel(map: Record<string, string>): Opsi[] {
@@ -117,10 +129,16 @@ export function ToolbarPenduduk({
   opsi,
   onChange,
   onTambah,
+  onEkspor,
+  isExporting,
 }: ToolbarPendudukProps) {
   const [panelOpen, setPanelOpen] = useState(false);
   const panelRef = useDismissOnOutside<HTMLDivElement>(panelOpen, () =>
     setPanelOpen(false),
+  );
+  const [eksporOpen, setEksporOpen] = useState(false);
+  const eksporRef = useDismissOnOutside<HTMLDivElement>(eksporOpen, () =>
+    setEksporOpen(false),
   );
 
   const set = (field: keyof FilterPenduduk, v: string) => {
@@ -163,16 +181,75 @@ export function ToolbarPenduduk({
         />
 
         {}
-        <div
-          className="relative ml-auto flex items-center gap-2"
-          ref={panelRef}
-        >
-          <Button
-            variant="outline"
-            onClick={() => setPanelOpen((v) => !v)}
-            aria-haspopup="dialog"
-            aria-expanded={panelOpen}
+        <div className="ml-auto flex items-center gap-2">
+          {onEkspor && (
+            <div className="relative" ref={eksporRef}>
+              <Button
+                variant="outline"
+                onClick={() => setEksporOpen((v) => !v)}
+                disabled={isExporting}
+                aria-haspopup="menu"
+                aria-expanded={eksporOpen}
+              >
+                {isExporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                Ekspor
+                <ChevronDown className="h-3 w-3 opacity-60" />
+              </Button>
+
+              {eksporOpen && (
+                <div
+                  role="menu"
+                  className="absolute right-0 top-full z-30 mt-2 w-48 rounded-xl border-1 border-slate-200 bg-surface p-1 shadow-lg"
+                >
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setEksporOpen(false);
+                      onEkspor('xlsx');
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+                    <div>
+                      <p className="font-semibold text-slate-900">Excel (.xlsx)</p>
+                      <p className="text-xs text-slate-500">Format resmi</p>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setEksporOpen(false);
+                      onEkspor('csv');
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    <FileText className="h-4 w-4 text-blue-600" />
+                    <div>
+                      <p className="font-semibold text-slate-900">CSV (.csv)</p>
+                      <p className="text-xs text-slate-500">Format teks</p>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div
+            className="relative flex items-center gap-2"
+            ref={panelRef}
           >
+            <Button
+              variant="outline"
+              onClick={() => setPanelOpen((v) => !v)}
+              aria-haspopup="dialog"
+              aria-expanded={panelOpen}
+            >
             <SlidersHorizontal className="h-4 w-4" />
             Filter
             {jumlahLanjutan > 0 && (
@@ -271,8 +348,9 @@ export function ToolbarPenduduk({
           )}
         </div>
       </div>
+    </div>
 
-      {chips.length > 0 && (
+    {chips.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           {chips.map((chip) => (
             <span

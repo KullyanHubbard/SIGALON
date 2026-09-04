@@ -34,11 +34,13 @@ export const statusPerkawinanLabel: Record<StatusPerkawinan, string> = {
 };
 
 export const pendidikanLabel: Record<Pendidikan, string> = {
-  TIDAK_SEKOLAH: 'Tidak Sekolah',
+  TIDAK_BELUM_SEKOLAH: 'Tidak/Belum Sekolah',
+  BELUM_TAMAT_SD: 'Belum Tamat SD',
   SD: 'SD',
   SMP: 'SMP',
   SMA: 'SMA/SMK',
   D3: 'Diploma (D3)',
+  D4: 'Diploma (D4)',
   S1: 'Sarjana (S1)',
   S2: 'Magister (S2)',
   S3: 'Doktor (S3)',

@@ -32,6 +32,8 @@ interface DaftarPendudukViewProps {
   onTutupDetail: () => void;
   onTambah: () => void;
   onUbah: (id: string) => void;
+  onEkspor?: (format: 'xlsx' | 'csv') => void;
+  isExporting?: boolean;
 }
 
 export function DaftarPendudukView({
@@ -51,6 +53,8 @@ export function DaftarPendudukView({
   onTutupDetail,
   onTambah,
   onUbah,
+  onEkspor,
+  isExporting,
 }: DaftarPendudukViewProps) {
   return (
     <>
@@ -63,6 +67,8 @@ export function DaftarPendudukView({
             opsi={filterOpsi}
             onChange={onFilterChange}
             onTambah={onTambah}
+            onEkspor={onEkspor}
+            isExporting={isExporting}
           />
         </CardContent>
 

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks/use-debounce';
 import type { FilterPenduduk } from '../types';
 import { useFilterOpsi, usePendudukList } from '../hooks/use-penduduk';
+import { pendudukApi } from '../api/penduduk-api';
 import type { Penduduk } from '../types';
 import { toPendudukDetail, toPendudukRow } from '../view-model';
 import { WargaFormDialog } from './WargaFormDialog';
@@ -15,6 +16,7 @@ export function DaftarPenduduk() {
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [formTarget, setFormTarget] = useState<Penduduk | 'baru' | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const debouncedSearch = useDebounce(search);
   const { data: filterOpsi } = useFilterOpsi();
@@ -63,6 +65,31 @@ export function DaftarPenduduk() {
     if (warga) setFormTarget(warga);
   }
 
+  async function handleEkspor(format: 'xlsx' | 'csv') {
+    try {
+      setIsExporting(true);
+      const blob = await pendudukApi.ekspor({
+        search: debouncedSearch,
+        ...filter,
+        format,
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const tgl = new Date().toISOString().slice(0, 10);
+      a.download = `data-penduduk-${tgl}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Gagal mengekspor data penduduk:', err);
+      alert('Gagal mengekspor data penduduk. Silakan coba lagi.');
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   return (
     <>
       <DaftarPendudukView
@@ -82,6 +109,8 @@ export function DaftarPenduduk() {
         onTutupDetail={() => setSelectedId(null)}
         onTambah={() => setFormTarget('baru')}
         onUbah={onUbah}
+        onEkspor={handleEkspor}
+        isExporting={isExporting}
       />
       <WargaFormDialog
         target={formTarget}

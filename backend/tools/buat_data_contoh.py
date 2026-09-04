@@ -88,7 +88,7 @@ def umur(lahir: date) -> int:
 
 def pendidikan_utk(u: int) -> str:
     if u < 6:
-        return "TIDAK_SEKOLAH"
+        return "TIDAK_BELUM_SEKOLAH"
     if u < 12:
         return "SD"
     if u < 15:
@@ -96,7 +96,7 @@ def pendidikan_utk(u: int) -> str:
     if u < 18:
         return "SMA"
     return random.choice(
-        ["SD"] * 2 + ["SMP"] * 3 + ["SMA"] * 8 + ["D3"] * 2 + ["S1"] * 3 + ["S2"]
+        ["SD"] * 2 + ["SMP"] * 3 + ["SMA"] * 8 + ["D3"] * 2 + ["D4"] + ["S1"] * 3 + ["S2"]
     )
 
 
@@ -105,7 +105,7 @@ def pekerjaan_utk(u: int, perempuan: bool, pendidikan: str) -> str:
         return "Belum/Tidak Bekerja"
     if u < 18:
         return "Pelajar/Mahasiswa"
-    if u < 23 and pendidikan in {"D3", "S1", "S2"}:
+    if u < 23 and pendidikan in {"D3", "D4", "S1", "S2"}:
         return "Pelajar/Mahasiswa"
     if u >= 65:
         return "Pensiunan" if random.random() < 0.4 else "Tidak Bekerja"

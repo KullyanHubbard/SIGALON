@@ -73,7 +73,7 @@ export default function HomePage() {
 
       <section className={`${WADAH} py-16`}>
         <JudulBagian judul="PETA PADUKUHAN" className="uppercase" />
-        <PetaPadukuhan className="h-[26rem]" />
+        <PetaPadukuhan className="w-full aspect-[1600/514] min-h-[14rem]" />
       </section>
 
       <BeritaTerkini />

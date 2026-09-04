@@ -18,9 +18,21 @@ KELOMPOK_UMUR = ("0-5", "6-12", "13-17", "18-25", "26-40", "41-60", "60+")
 # Batas atas (inklusif) tiap kelompok kecuali yang terakhir.
 _BATAS_UMUR = (5, 12, 17, 25, 40, 60)
 
-# Urutan tampil pendidikan — jenjang naik dari SD ke tertinggi. "Tidak
-# Sekolah" bukan jenjang, ditaruh di ekor, bukan di kepala urutan naik.
-URUTAN_PENDIDIKAN = ("SD", "SMP", "SMA", "D3", "S1", "S2", "S3", "TIDAK_SEKOLAH")
+# Urutan tampil pendidikan — jenjang naik dari SD ke tertinggi. Non-jenjang
+# ditaruh di ekor, bukan di kepala urutan naik.
+URUTAN_PENDIDIKAN = (
+    "SD",
+    "SMP",
+    "SMA",
+    "D3",
+    "D4",
+    "S1",
+    "S2",
+    "S3",
+    "BELUM_TAMAT_SD",
+    "TIDAK_BELUM_SEKOLAH",
+    "TIDAK_SEKOLAH",
+)
 
 
 def _dua_digit(kode: str) -> str:
@@ -81,9 +93,15 @@ def distribusi_kelompok_umur(orang: Iterable[Penduduk]) -> list[Distribusi]:
 
 def distribusi_pendidikan(orang: Iterable[Penduduk]) -> list[Distribusi]:
     """Cacah per pendidikan, urut jenjang — bukan urut jumlah."""
+    def _bobot(label: str) -> int:
+        try:
+            return URUTAN_PENDIDIKAN.index(label)
+        except ValueError:
+            return 999
+
     return sorted(
         distribusi_by(orang, lambda p: p.pendidikan),
-        key=lambda d: URUTAN_PENDIDIKAN.index(d.label),
+        key=lambda d: _bobot(d.label),
     )
 
 
