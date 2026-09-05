@@ -1,7 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -21,14 +20,7 @@ export default {
           950: '#2E1065', // purple-950
         },
 
-        // Ramp abu-abu & warna permukaan dibaca dari CSS variable
-      // (`styles/index.css`). Satu blok `:root.dark` di situ membalik seluruh
-        // situs — kalau nilainya ditulis literal di sini, mode gelap berarti
-        // menempelkan `dark:` di ±275 kelas yang tersebar di 98 berkas.
-      //
-        // `white` sengaja TIDAK ikut: `text-white` selalu duduk di atas latar
-        // brand/rose yang warnanya sama di kedua mode. Latar kartu memakai
-        // `bg-surface`, bukan `bg-white`.
+        // Ramp abu-abu & warna permukaan dibaca dari CSS variable (`styles/index.css`)
         surface: 'rgb(var(--surface) / <alpha-value>)',
         slate: {
           50: 'rgb(var(--slate-50) / <alpha-value>)',

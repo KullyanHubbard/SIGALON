@@ -60,9 +60,9 @@ export function PilihWarga({
               type="button"
               onClick={() => onPilih(w)}
               className={cn(
-                'flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-white/10',
+                'flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50',
                 terpilih?.id === w.id &&
-                  'font-bold text-brand-600 dark:text-brand-300',
+                  'font-bold text-brand-600',
               )}
             >
               <span>{w.nama}</span>

@@ -12,15 +12,15 @@ export function JudulBagian({
   className?: string;
 }) {
   return (
-    <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-4 sm:mb-8 flex flex-wrap items-end justify-between gap-3 sm:gap-4">
       <div>
         <h2
-          className={`text-2xl font-bold text-slate-900 sm:text-3xl ${className ?? ''}`}
+          className={`text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 ${className ?? ''}`}
         >
           {judul}
         </h2>
         {deskripsi && (
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">{deskripsi}</p>
+          <p className="mt-1 sm:mt-2 max-w-2xl text-xs sm:text-sm text-slate-600">{deskripsi}</p>
         )}
       </div>
       {aksi}

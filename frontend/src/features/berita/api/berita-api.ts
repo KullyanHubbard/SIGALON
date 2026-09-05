@@ -12,7 +12,7 @@ export interface BeritaApi {
 export const beritaApi: BeritaApi = {
   async list() {
     const { data } = await apiClient.get<Berita[]>('/publik/berita');
-    return data;
+    return [...data].sort((a, b) => b.tanggalTerbit.localeCompare(a.tanggalTerbit));
   },
 
   async getBySlug(slug) {

@@ -2,7 +2,6 @@ import { KreditKkn } from '@/components/ui/KreditKkn';
 import { AksesibilitasWidget } from './AksesibilitasWidget';
 import { BadgeKunjungan } from './BadgeKunjungan';
 import { TombolPengaduan } from './TombolPengaduan';
-import { TombolTema } from './TombolTema';
 
 export function BarKredit({ className }: { className?: string }) {
   return (
@@ -10,10 +9,9 @@ export function BarKredit({ className }: { className?: string }) {
       className={className}
       kiri={<BadgeKunjungan />}
       kanan={
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5">
           <TombolPengaduan />
           <AksesibilitasWidget />
-          <TombolTema />
         </div>
       }
     />

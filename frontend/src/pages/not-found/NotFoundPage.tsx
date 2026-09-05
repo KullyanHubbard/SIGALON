@@ -19,7 +19,7 @@ export default function NotFoundPage() {
         </Link>
       </div>
 
-      <KreditKkn className="px-4 py-4" />
+      <KreditKkn className="px-4 py-2" />
     </div>
   );
 }

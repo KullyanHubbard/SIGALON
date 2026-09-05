@@ -33,7 +33,7 @@ export function NavbarView({
   return (
     <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-slate-200 bg-surface/80 px-4 backdrop-blur lg:px-6">
       <button
-        className="rounded-md p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10 lg:hidden"
+        className="rounded-md p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
         onClick={onOpenSidebar}
         aria-label="Buka menu"
       >
@@ -85,7 +85,7 @@ export function NavbarView({
               <Link
                 to={paths.gantiPassword}
                 onClick={onTutupMenu}
-                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 dark:hover:bg-white/10 dark:hover:text-white"
+                className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100"
               >
                 <span
                   aria-hidden

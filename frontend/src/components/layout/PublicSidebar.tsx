@@ -55,7 +55,7 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
         <Link
           to={paths.landing}
           onClick={onClose}
-          className="focus-ring mx-3 mt-3 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-white/10 dark:hover:text-white"
+          className="focus-ring mx-3 mt-3 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
         >
           <span
             aria-hidden

@@ -160,9 +160,9 @@ export function DaftarJabatanView({
                         onClick={() =>
                           onAjukanPergantian({
                             kode: 'LPM',
-                            role: 'LPM' as any,
+                            role: 'LPM' as unknown as Jabatan['role'],
                             label: 'Ketua LPM',
-                            pemegang: { nama: lpmNama } as any,
+                            pemegang: { nama: lpmNama } as unknown as Jabatan['pemegang'],
                             calon: null,
                           })
                         }

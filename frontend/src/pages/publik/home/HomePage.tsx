@@ -15,9 +15,9 @@ export default function HomePage() {
     <div className="flex flex-col">
       <HeroBeranda />
 
-      <section className={`${WADAH} py-16`}>
+      <section className={`${WADAH} py-8 sm:py-16`}>
         <JudulBagian judul="JELAJAHI PADUKUHAN" className="uppercase" />
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-2.5 sm:gap-6 md:grid-cols-3">
           <KartuJelajah
             ke={paths.profil}
             judul="Profil Padukuhan"
@@ -30,7 +30,7 @@ export default function HomePage() {
                 height={144}
                 loading="lazy"
                 decoding="async"
-                className="h-12 w-12 object-contain"
+                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
               />
             }
           />
@@ -46,7 +46,7 @@ export default function HomePage() {
                 height={144}
                 loading="lazy"
                 decoding="async"
-                className="h-12 w-12 object-contain"
+                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
               />
             }
           />
@@ -62,7 +62,7 @@ export default function HomePage() {
                 height={144}
                 loading="lazy"
                 decoding="async"
-                className="h-12 w-12 object-contain"
+                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
               />
             }
           />
@@ -71,9 +71,9 @@ export default function HomePage() {
 
       <RingkasanPenduduk />
 
-      <section className={`${WADAH} py-16`}>
+      <section className={`${WADAH} py-10 sm:py-16`}>
         <JudulBagian judul="PETA PADUKUHAN" className="uppercase" />
-        <PetaPadukuhan className="w-full aspect-[1600/514] min-h-[14rem]" />
+        <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1600/514] min-h-[11rem] sm:min-h-[14rem]" />
       </section>
 
       <BeritaTerkini />

@@ -41,7 +41,7 @@ export function PublicLandingLayout({
           <div className="my-auto w-full">{children}</div>
         </main>
 
-        <BarKredit className="min-h-20 shrink-0 px-6 py-2 lg:px-12" />
+        <BarKredit className="min-h-14 shrink-0 px-6 py-1.5 lg:px-12" />
       </div>
     </div>
   );

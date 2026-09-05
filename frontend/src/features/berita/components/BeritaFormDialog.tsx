@@ -95,7 +95,7 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
             {...register('penulis')}
           />
           <Input
-            label="Tanggal Terbit"
+            label="Tanggal Kejadian / Berita"
             type="date"
             error={errors.tanggalTerbit?.message}
             {...register('tanggalTerbit')}

@@ -24,37 +24,6 @@
     --slate-950: 2 6 23;
   }
 
-  /* Bukan cerminan matematis ramp terang — dibalik menurut PERAN. 400 & 500
-     dipakai sebagai teks redup, jadi di sini keduanya harus terang; 100–300
-     dipakai sebagai latar & garis, jadi tetap gelap. Membalik angkanya
-     mentah-mentah (500 → 500) menghasilkan teks abu di atas kartu abu.
-
-     Ramp warna literal (brand/green/amber/red) TIDAK ikut dibalik: brand-700
-     dipakai ganda sebagai teks DAN `hover:bg-brand-700`, jadi membaliknya
-     merusak tombol. Chip bernuansa menyiasatinya dengan tint transparan
-     (`bg-brand-600/20`) yang menumpang latar apa pun. `Badge` berhenti di
-     situ — teksnya mewarisi warna sekitarnya, jadi nol `dark:`. Yang teksnya
-     memang harus berwarna (`Alert`, `SOROT_BRAND` di `lib/colors.ts`)
-     menambah `dark:` di teks saja.
-     `bg-*-50` untuk chip selalu salah di mode gelap: hasilnya tambalan
-     hampir putih di atas kartu gelap. */
-  :root.dark {
-    color-scheme: dark;
-
-    --surface: 15 23 42;
-    --slate-50: 2 6 23;
-    --slate-100: 30 41 59;
-    --slate-200: 30 41 59;
-    --slate-300: 51 65 85;
-    --slate-400: 148 163 184;
-    --slate-500: 148 163 184;
-    --slate-600: 203 213 225;
-    --slate-700: 203 213 225;
-    --slate-800: 226 232 240;
-    --slate-900: 241 245 249;
-    --slate-950: 248 250 252;
-  }
-
   html,
   body,
   #root {
@@ -71,34 +40,18 @@
   .focus-ring {
     @apply outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-brand-600;
   }
-}
 
-/* Peralihan tema. Kelas ini ditempel sebentar di <html> oleh `TombolTema`
-   supaya perpindahan terang↔gelap meluncur, bukan berkedip.
+  /* Utilitas animasi hover modern & taktil */
+  .hover-lift {
+    @apply transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
 
-   Sengaja SEMENTARA, bukan dipasang permanen di `*`: transisi warna yang
-   selalu menyala membuat setiap hover, fokus, dan keadaan aktif di seluruh
-   situs ikut tertahan 300ms — mode gelap jadi terasa halus dengan ongkos
-   seluruh aplikasi terasa lamban.
+  .hover-card {
+    @apply transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-slate-300 motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
 
-   WAJIB di luar @layer: Tailwind membuang isi @layer yang dianggap tak
-   terpakai, dan kelas ini cuma muncul saat runtime — di dalam @layer ia hilang
-   diam-diam dari bundle.
-
-   Angka 300ms kembar dengan `DURASI_MS` di `TombolTema.tsx` — ubah keduanya
-   kalau salah satu diubah, kalau tidak kelasnya lepas sebelum animasinya
-   selesai (atau menggantung sesudahnya). */
-@media (prefers-reduced-motion: no-preference) {
-  .tema-beralih,
-  .tema-beralih *,
-  .tema-beralih *::before,
-  .tema-beralih *::after {
-    transition:
-      background-color 300ms ease,
-      border-color 300ms ease,
-      color 300ms ease,
-      fill 300ms ease,
-      stroke 300ms ease !important;
+  .hover-scale {
+    @apply transition-transform duration-200 ease-out hover:scale-105 active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100;
   }
 }
 
@@ -110,9 +63,7 @@
 
    CSS biasa, bukan utilitas Tailwind: tag-tag ini tidak pernah muncul di
    berkas sumber, ia lahir saat runtime dari string HTML, jadi tidak ada yang
-   bisa dipindai Tailwind. Di luar @layer karena alasan yang sama seperti
-   `.tema-beralih` di atas. Warnanya lewat CSS variable, jadi mode gelap ikut
-   sendiri. */
+   bisa dipindai Tailwind. */
 .isi-berita > * + * {
   margin-top: 1rem;
 }

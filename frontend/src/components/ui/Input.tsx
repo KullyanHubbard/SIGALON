@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              'focus-ring h-10 w-full rounded-lg border-1 border-slate-300 bg-surface px-3 text-sm text-slate-900 transition-colors placeholder:text-slate-400 focus:border-brand-600 focus-visible:ring-brand-600/20',
+              'focus-ring h-10 w-full rounded-lg border-1 border-slate-300 bg-surface px-3 text-sm text-slate-900 transition-all duration-150 placeholder:text-slate-400 hover:border-slate-400 focus:border-brand-600 focus-visible:ring-brand-600/20',
               icon && 'pl-10',
               trailing && 'pr-11',
               error &&

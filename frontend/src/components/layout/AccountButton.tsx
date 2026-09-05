@@ -17,7 +17,7 @@ export function AccountButton({ className }: AccountButtonProps) {
     <Link
       to={isAuthenticated ? homePathForRole(user?.role) : paths.login}
       className={cn(
-        'flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-700',
+        'focus-ring flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-150 ease-out hover:bg-brand-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0',
         className,
       )}
     >

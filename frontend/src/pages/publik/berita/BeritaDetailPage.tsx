@@ -24,8 +24,8 @@ export default function BeritaDetailPage() {
     .slice(0, JUMLAH_TERKINI);
 
   return (
-    <div className={`${WADAH} py-10`}>
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem]">
+    <div className={`${WADAH} py-6 sm:py-10`}>
+      <div className="grid gap-6 sm:gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-10">
         <article className="min-w-0">
           <QueryBoundary
             isLoading={isLoading}
@@ -38,17 +38,17 @@ export default function BeritaDetailPage() {
           >
             {(berita) => (
               <>
-                <h1 className="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
+                <h1 className="text-2xl font-bold leading-tight text-slate-900 sm:text-3xl lg:text-4xl">
                   {berita.judul}
                 </h1>
 
-                <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-500">
-                  <span className="inline-flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4" aria-hidden />
+                <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 text-xs sm:text-sm text-slate-500">
+                  <span className="inline-flex items-center gap-1.5 sm:gap-2">
+                    <CalendarDays className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
                     {formatTanggal(berita.tanggalTerbit)}
                   </span>
-                  <span className="inline-flex items-center gap-2">
-                    <UserRound className="h-4 w-4" aria-hidden />
+                  <span className="inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-slate-800">
+                    <UserRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
                     {berita.penulis}
                   </span>
                 </div>

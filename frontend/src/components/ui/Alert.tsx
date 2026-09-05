@@ -8,16 +8,16 @@ const config: Record<Tone, { icon: typeof Info; className: string }> = {
   info: {
     icon: Info,
     className:
-      'bg-brand-600/10 text-brand-800 border-brand-600/20 dark:text-brand-200',
+      'bg-brand-600/10 text-brand-800 border-brand-600/20',
   },
   success: {
     icon: CheckCircle2,
     className:
-      'bg-green-600/10 text-green-800 border-green-600/20 dark:text-green-200',
+      'bg-green-600/10 text-green-800 border-green-600/20',
   },
   error: {
     icon: AlertCircle,
-    className: 'bg-red-600/10 text-red-800 border-red-600/20 dark:text-red-200',
+    className: 'bg-red-600/10 text-red-800 border-red-600/20',
   },
 };
 

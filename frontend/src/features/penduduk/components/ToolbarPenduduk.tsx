@@ -80,7 +80,7 @@ function PilihanRingkas({
       className={cn(
         'focus-ring h-10 rounded-lg border-1 bg-surface px-3 text-sm transition-colors',
         nilai
-          ? 'border-brand-600 font-medium text-brand-700 dark:text-brand-300'
+          ? 'border-brand-600 font-medium text-brand-700'
           : 'border-slate-300 text-slate-700',
       )}
     >

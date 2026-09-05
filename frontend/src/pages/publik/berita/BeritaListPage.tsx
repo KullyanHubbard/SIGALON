@@ -12,18 +12,18 @@ export default function BeritaListPage() {
 
   return (
     <div className="flex flex-col">
-      <section className="bg-brand-950 py-14 text-white">
+      <section className="bg-brand-950 py-8 sm:py-12 lg:py-14 text-white">
         <div className={WADAH}>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-300">
+          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-brand-300">
             Berita
           </p>
-          <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+          <h1 className="mt-2 sm:mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold">
             Kabar & Kegiatan Warga
           </h1>
         </div>
       </section>
 
-      <section className={`${WADAH} py-12`}>
+      <section className={`${WADAH} py-8 sm:py-12`}>
         <QueryBoundary
           isLoading={isLoading}
           isError={isError}

@@ -62,7 +62,7 @@ export default function KelolaBeritaPage() {
               <thead>
                 <tr>
                   <Th>Berita</Th>
-                  <Th>Tanggal Terbit</Th>
+                  <Th>Tanggal Kejadian</Th>
                   <Th>Penulis</Th>
                   <Th className="text-right">Aksi</Th>
                 </tr>

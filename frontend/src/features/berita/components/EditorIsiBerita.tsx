@@ -208,8 +208,8 @@ function TombolAlat({
       aria-label={label}
       title={label}
       className={cn(
-        'focus-ring rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-200 dark:hover:bg-white/10',
-        aktif && 'bg-brand-600/20 text-brand-700 dark:text-brand-300',
+        'focus-ring rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-200',
+        aktif && 'bg-brand-600/20 text-brand-700',
       )}
     >
       {children}

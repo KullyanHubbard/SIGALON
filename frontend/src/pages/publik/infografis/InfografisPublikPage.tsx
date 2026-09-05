@@ -54,10 +54,10 @@ export default function InfografisPublikPage() {
                 setParams(t.id === 'demografi' ? {} : { tab: t.id })
               }
               className={cn(
-                'whitespace-nowrap border-b-2 px-4 py-4 text-sm font-semibold transition-colors',
+                'whitespace-nowrap border-b-2 px-4 py-4 text-sm font-bold transition-colors',
                 tabAktif === t.id
                   ? 'border-brand-600 text-brand-700'
-                  : 'border-transparent text-slate-500 hover:text-slate-800',
+                  : 'border-transparent text-black hover:text-brand-700',
               )}
             >
               {t.label}
@@ -111,7 +111,7 @@ export default function InfografisPublikPage() {
         ) : (
           <div className="space-y-6">
             {}
-            <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-5 py-4 text-sm text-amber-900 dark:text-amber-200">
+            <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-5 py-4 text-sm text-amber-900">
               <p className="font-semibold">Data contoh</p>
               <p className="mt-1">
                 Status penerima bantuan sosial belum termasuk yang didata pada

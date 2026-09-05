@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { WADAH } from '@/components/layout/wadah';
-import { buttonClass } from '@/components/ui/button-class';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { paths } from '@/routes/paths';
 import latarHero from '@/assets/hero-beranda.webp';
@@ -24,39 +23,30 @@ export function HeroBeranda() {
       />
 
       {}
-      <div className={`${WADAH} relative py-14 sm:py-20 lg:py-28`}>
+      <div className={`${WADAH} relative py-12 sm:py-20 lg:py-28`}>
         <div className="max-w-2xl text-center lg:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-200 sm:text-sm">
             {padukuhan.desa} · {padukuhan.kapanewon}
           </p>
-          <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:mt-4 sm:text-4xl lg:text-5xl">
+          <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
             Selamat Datang di Website Resmi{' '}
             <span className="text-amber-300">{padukuhan.namaLengkap}</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-brand-100 sm:mt-5 sm:text-base lg:mx-0">
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-brand-100 sm:mt-5 sm:text-base lg:mx-0">
             Pusat informasi resmi layanan kependudukan, statistik wilayah, dan
             kabar kegiatan masyarakat {padukuhan.namaLengkap}, {padukuhan.desa}.
           </p>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 lg:justify-start">
             <Link
               to={paths.profil}
-              className={buttonClass({
-                size: 'lg',
-                className:
-                  'w-full bg-white text-brand-800 hover:bg-brand-50 sm:w-auto',
-              })}
+              className="inline-flex items-center justify-center rounded-lg font-semibold shadow-sm bg-white text-brand-800 transition-all duration-150 ease-out hover:bg-brand-50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 h-10 px-4 text-sm sm:h-12 sm:px-6 sm:text-base"
             >
               Jelajahi Padukuhan
             </Link>
             <Link
               to={paths.statistik}
-              className={buttonClass({
-                size: 'lg',
-                variant: 'outline',
-                className:
-                  'w-full border-white/70 bg-transparent text-white hover:bg-white/10 sm:w-auto',
-              })}
+              className="inline-flex items-center justify-center rounded-lg font-semibold border border-white/70 bg-transparent text-white transition-all duration-150 ease-out hover:bg-white/10 hover:border-white hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 h-10 px-4 text-sm sm:h-12 sm:px-6 sm:text-base"
             >
               Statistik
             </Link>

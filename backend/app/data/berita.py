@@ -125,11 +125,11 @@ def _slug_unik(conn: sqlite3.Connection, judul: str, kecuali_id: str | None) -> 
 
 
 def daftar() -> list[Berita]:
-    """Semua berita, terbaru dulu. Tanggal sama diurutkan menurut `id` supaya
-    urutannya tidak berubah-ubah antar permintaan."""
+    """Semua berita, terbaru menurut tanggal kejadian/berita (tanggalTerbit DESC).
+    Tanggal sama diurutkan menurut `rowid DESC` (yang ditulis belakangan lebih dulu)."""
     with db.koneksi(settings.DATABASE_FILE) as conn:
         rows = conn.execute(
-            f"SELECT {_KOLOM} FROM berita ORDER BY tanggalTerbit DESC, id DESC"
+            f"SELECT {_KOLOM} FROM berita ORDER BY tanggalTerbit DESC, rowid DESC"
         ).fetchall()
     return [Berita(**dict(r)) for r in rows]
 

@@ -46,15 +46,15 @@ export function AksesibilitasWidget() {
         aria-label="Pengaturan aksesibilitas"
         aria-haspopup="menu"
         aria-expanded={open}
-        className="focus-ring flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-colors hover:bg-brand-700"
+        className="focus-ring flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white shadow-md transition-all duration-200 hover:scale-110 hover:shadow-lg hover:bg-brand-700 active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100"
       >
-        <Accessibility className="h-6 w-6" />
+        <Accessibility className="h-5 w-5" />
       </button>
 
       {open && (
         <div
           role="menu"
-          className="absolute bottom-14 right-0 w-52 rounded-xl border border-slate-200 bg-surface p-3 shadow-xl"
+          className="absolute bottom-11 right-0 w-52 rounded-xl border border-slate-200 bg-surface p-3 shadow-xl"
         >
           <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
             Ukuran Teks
@@ -67,10 +67,10 @@ export function AksesibilitasWidget() {
                 onClick={() => pilih(s.persen)}
                 aria-pressed={persen === s.persen}
                 className={cn(
-                  'flex-1 rounded-lg border py-2 font-bold transition-colors',
+                  'flex-1 rounded-lg border py-2 font-bold transition-all duration-150 active:scale-95',
                   persen === s.persen
-                    ? 'border-brand-600 text-brand-600 dark:text-brand-300'
-                    : 'border-slate-200 text-slate-700 hover:bg-slate-50 dark:hover:bg-white/10',
+                    ? 'border-brand-600 text-brand-600 shadow-sm'
+                    : 'border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300',
                 )}
                 style={{ fontSize: `${0.8 + (s.persen - 100) / 200}rem` }}
               >

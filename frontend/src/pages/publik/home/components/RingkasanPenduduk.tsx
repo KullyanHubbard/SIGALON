@@ -16,7 +16,7 @@ export function RingkasanPenduduk() {
   const statistik = useStatistikPublik();
 
   return (
-    <section className="border-y border-slate-200 bg-surface py-16">
+    <section className="border-y border-slate-200 bg-surface py-10 sm:py-16">
       <div className={WADAH}>
         <JudulBagian judul="ADMINISTRASI PENDUDUK" className="uppercase" />
 
@@ -29,7 +29,7 @@ export function RingkasanPenduduk() {
         >
           {(data) => (
             <>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
                 <StatCard
                   label="Total Penduduk"
                   value={formatAngka(data.totalPenduduk)}

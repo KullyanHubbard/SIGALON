@@ -69,6 +69,7 @@ export function DistribusiPieChart({
   labelIrisan,
   warna = CHART_KATEGORI_COLORS,
 }: DistribusiPieChartProps) {
+  const [terpasang, setTerpasang] = useState(false);
   const [sempit, setSempit] = useState(
     () => window.matchMedia('(max-width: 639px)').matches,
   );
@@ -80,6 +81,13 @@ export function DistribusiPieChart({
     mq.addEventListener('change', ikuti);
     return () => mq.removeEventListener('change', ikuti);
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTerpasang(true);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [data]);
 
   const sisi = sempit ? Math.min(height, 320) : height;
   const pusat = sisi / 2;
@@ -102,6 +110,14 @@ export function DistribusiPieChart({
           height={sisi}
           preserveAspectRatio="xMidYMid meet"
           aria-hidden
+          className="transition-all duration-700 ease-out motion-reduce:transition-none"
+          style={{
+            transform: terpasang
+              ? 'scale(1) rotate(0deg)'
+              : 'scale(0.85) rotate(-35deg)',
+            opacity: terpasang ? 1 : 0,
+            transformOrigin: '50% 50%',
+          }}
         >
           {penuh ? (
             <circle
@@ -158,7 +174,12 @@ export function DistribusiPieChart({
 
         {center && (
           <div
-            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
+            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center transition-all duration-500 ease-out motion-reduce:transition-none"
+            style={{
+              opacity: terpasang ? 1 : 0,
+              transform: terpasang ? 'scale(1)' : 'scale(0.85)',
+              transitionDelay: '150ms',
+            }}
             aria-hidden
           >
             {center}

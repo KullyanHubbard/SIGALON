@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { CHART_KATEGORI_COLORS } from '@/lib/colors';
 import type { Distribusi } from '@/types/statistik';
 
@@ -10,6 +10,15 @@ function lebarBar(nilai: number, maks: number): string {
 }
 
 export function DistribusiBarChart({ data }: { data: Distribusi[] }) {
+  const [terpasang, setTerpasang] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTerpasang(true);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [data]);
+
   if (data.length === 0) {
     return <p className="text-sm text-slate-500">Belum ada data.</p>;
   }
@@ -25,17 +34,23 @@ export function DistribusiBarChart({ data }: { data: Distribusi[] }) {
             className="h-2.5 overflow-hidden rounded-sm bg-slate-100"
             aria-hidden
           >
-            {}
             <div
-              className="h-full rounded-sm transition-[width] duration-500 ease-out motion-reduce:transition-none"
+              className="h-full rounded-sm transition-[width] duration-700 ease-out motion-reduce:transition-none"
               style={{
-                width: lebarBar(d.value, maks),
+                width: terpasang ? lebarBar(d.value, maks) : '0%',
+                transitionDelay: `${Math.min(i * 45, 350)}ms`,
                 backgroundColor:
                   CHART_KATEGORI_COLORS[i % CHART_KATEGORI_COLORS.length],
               }}
             />
           </dd>
-          <dd className="text-right text-sm font-semibold tabular-nums text-slate-900">
+          <dd
+            className="text-right text-sm font-semibold tabular-nums text-slate-900 transition-opacity duration-500 ease-out motion-reduce:transition-none"
+            style={{
+              opacity: terpasang ? 1 : 0,
+              transitionDelay: `${Math.min(i * 45 + 100, 450)}ms`,
+            }}
+          >
             {d.value}
           </dd>
         </Fragment>

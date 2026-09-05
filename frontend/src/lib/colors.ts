@@ -11,4 +11,4 @@ export const CHART_KATEGORI_COLORS = [
 
 export const CHART_SLICE_LABEL_COLOR = '#ffffff';
 
-export const SOROT_BRAND = 'font-bold text-brand-600 dark:text-brand-300';
+export const SOROT_BRAND = 'font-bold text-brand-600';

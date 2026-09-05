@@ -53,7 +53,7 @@ export function AuthLayout({ title, description, children }: AuthLayoutProps) {
       </div>
 
       {}
-      <BarKredit className="min-h-20 shrink-0 px-4 py-2 sm:px-6" />
+      <BarKredit className="min-h-14 shrink-0 px-4 py-1.5 sm:px-6" />
     </div>
   );
 }

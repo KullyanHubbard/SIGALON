@@ -7,9 +7,9 @@ export function TombolPengaduan() {
   return (
     <a
       href={`mailto:${padukuhan.email}?subject=${encodeURIComponent('Pengaduan Warga')}`}
-      className="focus-ring flex items-center gap-2 rounded-full bg-rose-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-rose-700"
+      className="focus-ring flex h-9 items-center gap-1.5 rounded-full bg-rose-600 px-3.5 text-xs font-semibold text-white shadow-md transition-colors hover:bg-rose-700 sm:text-sm"
     >
-      <Headset className="h-5 w-5" aria-hidden />
+      <Headset className="h-4 w-4" aria-hidden />
       Pengaduan
     </a>
   );

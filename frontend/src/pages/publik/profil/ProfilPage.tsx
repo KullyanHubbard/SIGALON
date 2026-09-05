@@ -15,24 +15,24 @@ export default function ProfilPage() {
 
   return (
     <div className="flex flex-col">
-      <section className="bg-brand-950 py-14 text-white">
+      <section className="bg-brand-950 py-8 sm:py-12 lg:py-14 text-white">
         <div className={WADAH}>
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-300">
+          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-brand-300">
             Profil
           </p>
-          <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+          <h1 className="mt-2 sm:mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold">
             {padukuhan.namaLengkap}
           </h1>
         </div>
       </section>
 
-      <section className={`${WADAH} py-14`}>
-        <div className="grid gap-8 lg:grid-cols-3">
+      <section className={`${WADAH} py-8 sm:py-12 lg:py-14`}>
+        <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
               Sejarah & Gambaran Umum
             </h2>
-            <div className="mt-4 space-y-4 text-slate-700">
+            <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-700">
               {paragrafSejarah(padukuhan.sejarah).map((paragraf) => (
                 <p key={paragraf.slice(0, 24)}>{paragraf}</p>
               ))}
@@ -82,25 +82,25 @@ export default function ProfilPage() {
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-surface py-14">
+      <section className="border-y border-slate-200 bg-surface py-8 sm:py-12 lg:py-14">
         <div className={WADAH}>
-          <h2 className="text-2xl font-bold text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
             Struktur Organisasi Padukuhan
           </h2>
-          <div className="mt-8">
+          <div className="mt-5 sm:mt-8">
             <BaganOrganisasi />
           </div>
         </div>
       </section>
 
-      <section className={`${WADAH} py-14`}>
-        <h2 className="mb-6 text-2xl font-bold text-slate-900">
+      <section className={`${WADAH} py-8 sm:py-12 lg:py-14`}>
+        <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-slate-900">
           Peta & Letak Wilayah
         </h2>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2">
-            <PetaPadukuhan className="w-full aspect-[1600/514] lg:h-full lg:aspect-auto min-h-[18rem]" />
+            <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] lg:aspect-auto lg:h-full min-h-[11rem] sm:min-h-[14rem] lg:min-h-full" />
           </div>
 
           <Card className="h-fit">

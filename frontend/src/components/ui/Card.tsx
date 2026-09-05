@@ -5,7 +5,7 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-slate-200 bg-surface shadow-sm',
+        'rounded-xl border-1 border-black bg-surface shadow-sm',
         className,
       )}
       {...props}
@@ -23,11 +23,11 @@ export function CardHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-slate-100 px-6 py-5">
+    <div className="flex items-center justify-between gap-3 sm:gap-4 border-b border-slate-100 px-4 py-3.5 sm:px-6 sm:py-5">
       <div>
-        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        <h3 className="text-base sm:text-lg font-bold text-slate-900">{title}</h3>
         {description && (
-          <p className="mt-1 text-sm text-slate-500">{description}</p>
+          <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-slate-500">{description}</p>
         )}
       </div>
       {action}
@@ -39,5 +39,5 @@ export function CardContent({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('px-5 py-4', className)} {...props} />;
+  return <div className={cn('px-4 py-3 sm:px-5 sm:py-4', className)} {...props} />;
 }

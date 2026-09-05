@@ -16,10 +16,10 @@ const TAUTAN = [
 
 const tautanClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'rounded-lg px-3.5 py-2 text-sm transition-colors',
+    'rounded-lg px-3.5 py-2 text-sm transition-all duration-150 ease-out active:scale-95 motion-reduce:transition-none',
     isActive
-      ? 'font-bold text-brand-600 dark:text-brand-300'
-      : 'font-medium text-slate-600 hover:bg-slate-100 dark:hover:bg-white/10 dark:hover:text-white hover:text-slate-900',
+      ? 'font-bold text-brand-700'
+      : 'font-bold text-black hover:bg-slate-100 hover:text-brand-700',
   );
 
 export function PublicNavbar() {
@@ -45,7 +45,7 @@ export function PublicNavbar() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="ml-auto rounded-md p-2 text-slate-600 hover:bg-slate-100 dark:hover:bg-white/10 lg:hidden"
+          className="ml-auto rounded-md p-2 text-slate-900 hover:bg-slate-100 lg:hidden"
           aria-label={open ? 'Tutup menu' : 'Buka menu'}
           aria-expanded={open}
         >
