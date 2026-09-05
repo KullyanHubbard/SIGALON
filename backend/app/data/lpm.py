@@ -17,21 +17,21 @@ from app.data import db
 
 def nama() -> str:
     """Nama Ketua LPM saat ini. String kosong berarti belum diisi."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute("SELECT nama FROM lpm WHERE id = 1").fetchone()
         return row["nama"] if row else ""
 
 
 def warga_id() -> str | None:
     """Kode Warga pemegang LPM saat ini. `None` berarti kosong."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute("SELECT warga_id FROM lpm WHERE id = 1").fetchone()
         return row["warga_id"] if row else None
 
 
 def info() -> tuple[str, str | None]:
     """(nama, warga_id) Ketua LPM saat ini."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute(
             "SELECT nama, warga_id FROM lpm WHERE id = 1"
         ).fetchone()
@@ -40,7 +40,7 @@ def info() -> tuple[str, str | None]:
 
 def ubah(nama_baru: str, warga_id_baru: str | None = None) -> str:
     """Ganti nama + warga_id Ketua LPM, kembalikan nama barunya."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         conn.execute(
             """
             INSERT INTO lpm (id, nama, warga_id) VALUES (1, ?, ?)
@@ -54,23 +54,30 @@ def ubah(nama_baru: str, warga_id_baru: str | None = None) -> str:
 
 
 def demo() -> None:
-    """Self-check. Jalankan:
-    DATABASE_PATH=/tmp/uji-lpm.db .venv/bin/python -m app.data.lpm
-    """
-    assert nama() == "", "DB uji harus mulai kosong"
-    assert warga_id() is None, "warga_id harus None di awal"
+    """Self-check menggunakan DB sementara yang terisolasi."""
+    import tempfile
+    from pathlib import Path
 
-    assert ubah("Masjkuri", "W001") == "Masjkuri"
-    assert nama() == "Masjkuri"
-    assert warga_id() == "W001"
+    jalur_lama = settings.PORTAL_DATABASE_PATH
+    with tempfile.TemporaryDirectory() as tmp:
+        settings.PORTAL_DATABASE_PATH = str(Path(tmp) / "portal_uji.db")
+        try:
+            assert nama() == "", "DB uji harus mulai kosong"
+            assert warga_id() is None, "warga_id harus None di awal"
 
-    n, w = info()
-    assert n == "Masjkuri" and w == "W001", "info() tidak cocok"
+            assert ubah("Masjkuri", "W001") == "Masjkuri"
+            assert nama() == "Masjkuri"
+            assert warga_id() == "W001"
 
-    assert ubah("", None) == "", "mengosongkan lagi harus tetap boleh"
-    assert nama() == ""
-    assert warga_id() is None
-    print("OK: app/data/lpm.py")
+            n, w = info()
+            assert n == "Masjkuri" and w == "W001", "info() tidak cocok"
+
+            assert ubah("", None) == "", "mengosongkan lagi harus tetap boleh"
+            assert nama() == ""
+            assert warga_id() is None
+            print("OK: app/data/lpm.py")
+        finally:
+            settings.PORTAL_DATABASE_PATH = jalur_lama
 
 
 if __name__ == "__main__":

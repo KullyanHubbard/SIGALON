@@ -28,10 +28,6 @@ export function daftarPeriode(terawal: string, sampai: string): string[] {
   return hasil;
 }
 
-export function tanggalHariIni(): string {
-  return format(new Date(), 'EEEE, d MMMM yyyy', { locale: localeId });
-}
-
 export const NAMA_BULAN: string[] = (() => {
   const format = new Intl.DateTimeFormat('id-ID', { month: 'long' });
   return Array.from({ length: 12 }, (_, i) =>

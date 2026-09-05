@@ -56,12 +56,16 @@ def format_rt(rt: str) -> str:
 
 
 def umur(tanggal_lahir_iso: str) -> int:
-    lahir = date.fromisoformat(tanggal_lahir_iso)
+    try:
+        tgl_str = str(tanggal_lahir_iso).strip().split()[0].split("T")[0]
+        lahir = date.fromisoformat(tgl_str)
+    except (ValueError, TypeError, IndexError):
+        return 0
     hari_ini = date.today()
     tahun = hari_ini.year - lahir.year
     if (hari_ini.month, hari_ini.day) < (lahir.month, lahir.day):
         tahun -= 1
-    return tahun
+    return max(0, tahun)
 
 
 def kelompok_umur(tahun: int) -> str:

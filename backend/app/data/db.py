@@ -31,6 +31,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Iterable, Iterator
 
+from app.core.config import settings
 from app.schemas.penduduk import Alamat, Penduduk
 
 _PREFIKS_ALAMAT = "alamat_"
@@ -38,7 +39,7 @@ _PREFIKS_ALAMAT = "alamat_"
 # Semua TEXT: `alamat_rt`, `alamat_rw`, dan `alamat_kodePos` berawalan angka 0,
 # jadi menyimpannya sebagai INTEGER akan memakan nol di depan diam-diam — bug
 # yang sama persis dengan yang dilakukan Excel pada kolom-kolom itu.
-SKEMA = """
+SKEMA_KEPENDUDUKAN = """
 CREATE TABLE IF NOT EXISTS penduduk (
     id                     TEXT PRIMARY KEY,
     kodeKeluarga           TEXT,
@@ -161,15 +162,6 @@ CREATE TABLE IF NOT EXISTS sesi (
 
 CREATE INDEX IF NOT EXISTS idx_sesi_pengurus ON sesi(pengurus_id);
 
--- Penghitung kunjungan portal publik. Satu baris per tanggal; frontend
--- menjaga "sekali per browser per hari" lewat `localStorage`, jadi ini BUKAN
--- pengunjung unik — dua orang berbagi satu komputer balai desa terhitung satu.
--- Cukup untuk angka hiasan di footer (lihat `app/data/kunjungan.py`).
-CREATE TABLE IF NOT EXISTS kunjungan (
-    tanggal TEXT PRIMARY KEY,
-    jumlah  INTEGER NOT NULL DEFAULT 0
-);
-
 -- Buku mutasi warga: satu baris tiap kali `statusKependudukan` berubah, plus
 -- satu baris saat warga baru masuk (`dari IS NULL`). TIDAK PERNAH DIHAPUS.
 --
@@ -188,23 +180,28 @@ CREATE TABLE IF NOT EXISTS mutasi (
 );
 
 CREATE INDEX IF NOT EXISTS idx_mutasi_pada ON mutasi(pada);
+"""
+
+SKEMA_PORTAL = """
+-- Penghitung kunjungan portal publik. Satu baris per tanggal; frontend
+-- menjaga "sekali per browser per hari" lewat `localStorage`, jadi ini BUKAN
+-- pengunjung unik — dua orang berbagi satu komputer balai desa terhitung satu.
+-- Cukup untuk angka hiasan di footer (lihat `app/data/kunjungan.py`).
+CREATE TABLE IF NOT EXISTS kunjungan (
+    tanggal TEXT PRIMARY KEY,
+    jumlah  INTEGER NOT NULL DEFAULT 0
+);
 
 -- Nama Ketua LPM untuk bagan struktur organisasi publik — satu baris
 -- tunggal (id selalu 1). LPM bukan salah satu dari empat peran akun, jadi
 -- tidak punya baris di `pengurus` dan tidak ikut sistem ganti-jabatan yang
 -- disetujui. Lihat `app/data/lpm.py`.
 CREATE TABLE IF NOT EXISTS lpm (
-    id   INTEGER PRIMARY KEY CHECK (id = 1),
-    nama TEXT NOT NULL DEFAULT ''
+    id       INTEGER PRIMARY KEY CHECK (id = 1),
+    nama     TEXT NOT NULL DEFAULT '',
+    warga_id TEXT
 );
 
--- Berita padukuhan: ditulis Admin di `/admin/berita`, dibaca siapa saja di
--- `/berita`. Sebelumnya tinggal di `localStorage` peramban penulisnya, yang
--- artinya tidak satu pun pengunjung lain bisa membacanya.
--- `slug` UNIQUE: dialah URL `/berita/:slug`, dan dua baris berslug sama berarti
--- salah satunya tidak bisa dibuka sama sekali.
--- `foto` menyimpan data URL gambarnya utuh, bukan path berkas — alasannya di
--- `app/data/berita.py`.
 -- Keterangan tetap padukuhan: nama wilayah, luas, kontak, sejarah, batas.
 -- Satu baris tunggal (id selalu 1), sama polanya dengan `lpm`.
 --
@@ -235,6 +232,11 @@ CREATE TABLE IF NOT EXISTS padukuhan (
     batasBarat   TEXT NOT NULL
 );
 
+-- Berita padukuhan: ditulis Admin di `/admin/berita`, dibaca siapa saja di
+-- `/berita`.
+-- `slug` UNIQUE: dialah URL `/berita/:slug`, dan dua baris berslug sama berarti
+-- salah satunya tidak bisa dibuka sama sekali.
+-- `foto` menyimpan path berkas webp di disk (`/uploads/berita/...`).
 CREATE TABLE IF NOT EXISTS berita (
     id            TEXT PRIMARY KEY,
     slug          TEXT NOT NULL UNIQUE,
@@ -246,32 +248,49 @@ CREATE TABLE IF NOT EXISTS berita (
 );
 """
 
+# Kompatibilitas mundur jika ada yang membaca `db.SKEMA`
+SKEMA = SKEMA_KEPENDUDUKAN + "\n" + SKEMA_PORTAL
+
 
 def buka(path: Path) -> sqlite3.Connection:
     """Buka koneksi, bikin file & skema kalau belum ada."""
     path.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
-    # Tanpa ini SQLite mengabaikan FOREIGN KEY diam-diam. Belum ada FK sekarang,
-    # tapi menyalakannya di satu tempat lebih murah daripada mencari tahu kenapa
-    # constraint tidak jalan nanti.
+    # Tanpa ini SQLite mengabaikan FOREIGN KEY diam-diam.
     conn.execute("PRAGMA foreign_keys = ON")
-    # Penggantian nama kolom WAJIB sebelum `SKEMA`: skema baru memasang indeks
-    # di atas nama kolom yang baru, dan itu gagal selama kolomnya masih bernama
-    # lama di instalasi yang sudah jalan.
-    _ganti_nama_kolom(conn)
-    conn.executescript(SKEMA)
-    _tambal_kolom(conn)
-    _migrasi_data(conn)
+
+    is_portal = False
+    try:
+        is_portal = (
+            path.resolve() == settings.PORTAL_DATABASE_FILE.resolve()
+            or "portal" in path.stem.lower()
+        )
+    except Exception:
+        is_portal = "portal" in str(path).lower()
+
+    if is_portal:
+        conn.executescript(SKEMA_PORTAL)
+    else:
+        # Penggantian nama kolom WAJIB sebelum `SKEMA`: skema baru memasang indeks
+        # di atas nama kolom yang baru, dan itu gagal selama kolomnya masih bernama
+        # lama di instalasi yang sudah jalan.
+        _ganti_nama_kolom(conn)
+        conn.executescript(SKEMA_KEPENDUDUKAN)
+        _tambal_kolom(conn)
+        _migrasi_data(conn)
+
     return conn
 
 
 def _migrasi_data(conn: sqlite3.Connection) -> None:
     """Migrasi nilai data lama yang berubah di skema baru."""
-    conn.execute(
-        "UPDATE penduduk SET pendidikan = 'TIDAK_BELUM_SEKOLAH' WHERE pendidikan = 'TIDAK_SEKOLAH'"
-    )
-    conn.commit()
+    ada = {r["name"] for r in conn.execute("PRAGMA table_info(penduduk)")}
+    if "pendidikan" in ada:
+        conn.execute(
+            "UPDATE penduduk SET pendidikan = 'TIDAK_BELUM_SEKOLAH' WHERE pendidikan = 'TIDAK_SEKOLAH'"
+        )
+        conn.commit()
 
 
 # Kolom yang ditambahkan setelah ada instalasi berjalan. `CREATE TABLE IF NOT
@@ -294,7 +313,7 @@ _TAMBALAN: list[tuple[str, str, str]] = [
 def _tambal_kolom(conn: sqlite3.Connection) -> None:
     for tabel, kolom, tipe in _TAMBALAN:
         ada = {r["name"] for r in conn.execute(f"PRAGMA table_info({tabel})")}
-        if kolom not in ada:
+        if ada and kolom not in ada:
             conn.execute(f"ALTER TABLE {tabel} ADD COLUMN {kolom} {tipe}")
             conn.commit()
 
@@ -649,7 +668,18 @@ def _self_check() -> None:
         assert len(muat(conn)) == len(asli), "impor ulang tidak selamat lewat restart"
         conn.close()
 
-    print(f"OK: {len(hasil)} baris selamat lewat tutup-buka SQLite, impor menimpa bersih")
+        # Uji inisialisasi skema portal
+        path_portal = Path(tmp) / "portal_uji.db"
+        conn_portal = buka(path_portal)
+        tabel_portal = {
+            r[0]
+            for r in conn_portal.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+        }
+        assert "berita" in tabel_portal and "kunjungan" in tabel_portal and "padukuhan" in tabel_portal and "lpm" in tabel_portal
+        assert "penduduk" not in tabel_portal
+        conn_portal.close()
+
+    print(f"OK: {len(hasil)} baris selamat lewat tutup-buka SQLite, impor menimpa bersih, skema portal teruji")
 
 
 if __name__ == "__main__":

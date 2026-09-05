@@ -1,6 +1,6 @@
 """Pembangun berkas ekspor data penduduk (.xlsx dan .csv).
 
-Bentuk kolom dan tampilannya disamakan dengan `docs/template-data-penduduk.xlsx`
+Bentuk kolom dan tampilannya disamakan dengan format data penduduk padukuhan
 supaya hasil unduhan pengurus bisa langsung dibaca rapi di Excel atau diimpor
 kembali ke sistem jika dibutuhkan.
 """

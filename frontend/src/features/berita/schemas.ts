@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { keRingkasan } from './utils';
 
-export const MAKS_ISI = 4_000_000;
+const MAKS_ISI = 4_000_000;
 
 export const beritaSchema = z.object({
   judul: z.string().trim().min(4, 'Judul minimal 4 huruf'),

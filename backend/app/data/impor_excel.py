@@ -24,9 +24,10 @@ langsung kelihatan di API tanpa restart.
 
 Pakai:
     .venv/bin/pip install openpyxl   # sekali, alat ini saja yang butuh
-    .venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx
+    .venv/bin/python -m app.data.impor_excel ../docs/DataPendudukGadingKulon-6-09-2026.xlsx
 """
 
+from datetime import date, datetime
 import sys
 
 from openpyxl import load_workbook
@@ -39,8 +40,7 @@ NAMA_SHEET = "Data Penduduk"
 BARIS_HEADER = 2  # baris 1 = judul
 
 # Satu-satunya definisi kolom: (field Pydantic, label di Excel, lebar kolom).
-# Pembangkit file Excel di `backend/tools/` membaca daftar ini juga, supaya
-# bentuk file dan pembacanya tidak mungkin melenceng sendiri-sendiri.
+# Menjadi acuan tunggal struktur data Excel kependudukan padukuhan.
 KOLOM: list[tuple[str, str, int]] = [
     ("kodeKeluarga", "Kode Keluarga", 14),
     ("id", "Kode Warga", 14),
@@ -130,10 +130,20 @@ def baca_xlsx(path: str) -> list[Penduduk]:
     for nomor, r in enumerate(baris[1:], start=BARIS_HEADER + 1):
         if not r[peta["nama"]] and not r[peta["id"]]:
             continue  # dua-duanya kosong = baris belum diisi, lewati
-        nilai = {
-            field: ("" if r[i] is None else str(r[i]).strip())
-            for field, i in peta.items()
-        }
+        nilai = {}
+        for field, i in peta.items():
+            val = r[i]
+            if val is None:
+                nilai[field] = ""
+            elif isinstance(val, (datetime, date)):
+                nilai[field] = val.strftime("%Y-%m-%d")
+            else:
+                s = str(val).strip()
+                if field == "tanggalLahir" and (" " in s or "T" in s):
+                    s = s.split(" ")[0].split("T")[0]
+                nilai[field] = s
+        if nilai.get("pendidikan") in ("TIDAK_SEKOLAH", "BELUM_SEKOLAH"):
+            nilai["pendidikan"] = "TIDAK_BELUM_SEKOLAH"
         baris_ke_nomor.setdefault(nilai["id"], []).append(nomor)
         if not nilai["id"]:
             kosong.append(nomor)

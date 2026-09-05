@@ -7,6 +7,7 @@ from app.api.routers.auth import current_pengurus
 from app.data.agregat import kelompok_umur, umur
 from app.data.ekspor import bikin_csv, bikin_excel
 from app.data.padukuhan import ambil as ambil_padukuhan
+from app.data.pengurus import _samakan_wilayah
 from app.data import store
 from app.data.store import penduduk_untuk
 from app.schemas.auth import AuthUser
@@ -62,9 +63,9 @@ def saring(
     if pekerjaan:
         hasil = [p for p in hasil if p.pekerjaan == pekerjaan]
     if rt:
-        hasil = [p for p in hasil if p.alamat.rt == rt]
+        hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rt, rt)]
     if rw:
-        hasil = [p for p in hasil if p.alamat.rw == rw]
+        hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rw, rw)]
     if kelompokUmur:
         hasil = [
             p for p in hasil if kelompok_umur(umur(p.tanggalLahir)) == kelompokUmur

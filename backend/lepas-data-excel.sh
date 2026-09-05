@@ -2,7 +2,7 @@
 set -e
 cd "$(dirname "$0")"
 
-DB="data/siduk.db"
+DB="data/sigalon.db"
 
 echo "=== Lepas data Excel dari SIGALON ==="
 echo
@@ -37,7 +37,7 @@ if [ "$JAWAB" != "y" ] && [ "$JAWAB" != "Y" ]; then
     exit 0
 fi
 
-CADANGAN="data/siduk-sebelum-lepas-$(date +%Y%m%d-%H%M%S).db"
+CADANGAN="data/sigalon-sebelum-lepas-$(date +%Y%m%d-%H%M%S).db"
 cp "$DB" "$CADANGAN"
 rm "$DB"
 

@@ -31,14 +31,14 @@ def _pangkas_kunjungan_lama() -> None:
     hari, jadi overhead-nya nyaris tidak terasa.
     """
     batas = (dt.date.today() - dt.timedelta(days=RETENSI_KUNJUNGAN_HARI)).isoformat()
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         with conn:
             conn.execute("DELETE FROM kunjungan WHERE tanggal < ?", (batas,))
 
 
 def tambah() -> int:
     """Tambah 1 ke hitungan hari ini, kembalikan total setelahnya."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         conn.execute(
             """
             INSERT INTO kunjungan (tanggal, jumlah) VALUES (?, 1)
@@ -57,7 +57,7 @@ def tambah() -> int:
 def hari_ini() -> int:
     """Hitungan hari ini tanpa menambah — dipakai saat browser sudah
     menghitung kunjungannya untuk hari yang sama."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute(
             "SELECT jumlah FROM kunjungan WHERE tanggal = ?", (_hari_ini(),)
         ).fetchone()
@@ -65,14 +65,21 @@ def hari_ini() -> int:
 
 
 def demo() -> None:
-    """Self-check. Jalankan:
-    DATABASE_PATH=/tmp/uji.db .venv/bin/python -m app.data.kunjungan
-    """
-    assert hari_ini() == 0, "DB uji harus mulai kosong"
-    assert tambah() == 1
-    assert tambah() == 2
-    assert hari_ini() == 2, "membaca tidak boleh ikut menambah"
-    print("OK: app/data/kunjungan.py")
+    """Self-check menggunakan DB sementara yang terisolasi."""
+    import tempfile
+    from pathlib import Path
+
+    jalur_lama = settings.PORTAL_DATABASE_PATH
+    with tempfile.TemporaryDirectory() as tmp:
+        settings.PORTAL_DATABASE_PATH = str(Path(tmp) / "portal_uji.db")
+        try:
+            assert hari_ini() == 0, "DB uji harus mulai kosong"
+            assert tambah() == 1
+            assert tambah() == 2
+            assert hari_ini() == 2, "membaca tidak boleh ikut menambah"
+            print("OK: app/data/kunjungan.py")
+        finally:
+            settings.PORTAL_DATABASE_PATH = jalur_lama
 
 
 if __name__ == "__main__":

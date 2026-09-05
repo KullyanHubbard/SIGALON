@@ -18,7 +18,8 @@ ADMIN_USERNAME=
 ADMIN_PASSWORD=
 
 # Path file SQLite, relatif dari folder backend/. Jangan pernah di-commit.
-DATABASE_PATH=./data/siduk.db
+DATABASE_PATH=./data/sigalon.db
+PORTAL_DATABASE_PATH=./data/portal.db
 
 # Umur sesi login, dalam jam.
 SESI_TTL_JAM=12

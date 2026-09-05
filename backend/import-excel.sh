@@ -2,7 +2,7 @@
 set -e
 cd "$(dirname "$0")"
 
-DEFAULT="../docs/data-penduduk-contoh.xlsx"
+DEFAULT="../docs/DataPendudukGadingKulon-6-09-2026.xlsx"
 
 echo "=== Impor data Excel ke SIGALON ==="
 echo
@@ -20,7 +20,7 @@ fi
 .venv/bin/pip install -q openpyxl
 
 echo
-.venv/bin/python -m app.data.impor_excel "$FILE"
+.venv/bin/python -m app.data.impor_excel "$FILE" --timpa-semua
 
 echo
 echo "Selesai. Restart backend (Ctrl+C lalu jalankan start.sh lagi) supaya data ini kepakai."

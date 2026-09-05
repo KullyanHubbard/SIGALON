@@ -19,7 +19,7 @@ _KOLOM = (
 
 def ambil() -> Padukuhan | None:
     """Keterangan yang tersimpan, atau `None` kalau Admin belum pernah menyimpan."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute(f"SELECT {_KOLOM} FROM padukuhan WHERE id = 1").fetchone()
     return Padukuhan(**dict(row)) if row else None
 
@@ -28,7 +28,7 @@ def ubah(baru: Padukuhan) -> Padukuhan:
     """Simpan seluruh keterangan sekaligus — formnya memang mengirim semuanya,
     jadi tidak ada perpaduan sebagian yang bisa menyisakan kolom setengah lama."""
     kolom = [k.strip() for k in _KOLOM.split(",")]
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         conn.execute(
             f"INSERT INTO padukuhan (id, {_KOLOM}) VALUES"
             f" (1, {', '.join(':' + k for k in kolom)})"
@@ -41,43 +41,50 @@ def ubah(baru: Padukuhan) -> Padukuhan:
 
 
 def demo() -> None:
-    """Self-check. Jalankan:
-    DATABASE_PATH=/tmp/uji-padukuhan.db .venv/bin/python -m app.data.padukuhan
-    """
-    assert ambil() is None, "DB uji harus mulai tanpa baris padukuhan"
+    """Self-check menggunakan DB sementara yang terisolasi."""
+    import tempfile
+    from pathlib import Path
 
-    def contoh(**ganti: str) -> Padukuhan:
-        dasar = dict(
-            nama="Gading Kulon", namaLengkap="Padukuhan Gading Kulon",
-            desa="Donokerto", kapanewon="Kapanewon Turi", kabupaten="Sleman",
-            provinsi="Daerah Istimewa Yogyakarta", luasWilayah="162,4 ha",
-            telepon="+62 812-2761-391", email="gadingkulon@gmail.com",
-            sejarah="Padukuhan di lereng Merapi yang hidup dari pertanian.",
-            batasUtara="Gading Lor", batasTimur="Gading Wetan",
-            batasSelatan="Ngipak", batasBarat="Banyusoco",
-        )
-        return Padukuhan(**{**dasar, **ganti})
-
-    assert ubah(contoh()).telepon == "+62 812-2761-391"
-    tersimpan = ambil()
-    assert tersimpan is not None and tersimpan.desa == "Donokerto"
-
-    # Menyimpan lagi menimpa baris yang sama, bukan menambah baris kedua.
-    ubah(contoh(telepon="+62 811-0000-000"))
-    with db.koneksi(settings.DATABASE_FILE) as conn:
-        (cacah,) = conn.execute("SELECT COUNT(*) FROM padukuhan").fetchone()
-    assert cacah == 1, cacah
-    assert ambil().telepon == "+62 811-0000-000"
-
-    for salah in ({"nama": "   "}, {"email": "bukan-surel"}, {"sejarah": "pendek"}):
+    jalur_lama = settings.PORTAL_DATABASE_PATH
+    with tempfile.TemporaryDirectory() as tmp:
+        settings.PORTAL_DATABASE_PATH = str(Path(tmp) / "portal_uji.db")
         try:
-            contoh(**salah)
-        except ValueError:
-            pass
-        else:
-            raise AssertionError(f"seharusnya ditolak: {salah}")
+            assert ambil() is None, "DB uji harus mulai tanpa baris padukuhan"
 
-    print("OK: app/data/padukuhan.py")
+            def contoh(**ganti: str) -> Padukuhan:
+                dasar = dict(
+                    nama="Gading Kulon", namaLengkap="Padukuhan Gading Kulon",
+                    desa="Donokerto", kapanewon="Kapanewon Turi", kabupaten="Sleman",
+                    provinsi="Daerah Istimewa Yogyakarta", luasWilayah="162,4 ha",
+                    telepon="+62 812-2761-391", email="gadingkulon@gmail.com",
+                    sejarah="Padukuhan di lereng Merapi yang hidup dari pertanian.",
+                    batasUtara="Gading Lor", batasTimur="Gading Wetan",
+                    batasSelatan="Ngipak", batasBarat="Banyusoco",
+                )
+                return Padukuhan(**{**dasar, **ganti})
+
+            assert ubah(contoh()).telepon == "+62 812-2761-391"
+            tersimpan = ambil()
+            assert tersimpan is not None and tersimpan.desa == "Donokerto"
+
+            # Menyimpan lagi menimpa baris yang sama, bukan menambah baris kedua.
+            ubah(contoh(telepon="+62 811-0000-000"))
+            with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
+                (cacah,) = conn.execute("SELECT COUNT(*) FROM padukuhan").fetchone()
+            assert cacah == 1, cacah
+            assert ambil().telepon == "+62 811-0000-000"
+
+            for salah in ({"nama": "   "}, {"email": "bukan-surel"}, {"sejarah": "pendek"}):
+                try:
+                    contoh(**salah)
+                except ValueError:
+                    pass
+                else:
+                    raise AssertionError(f"seharusnya ditolak: {salah}")
+
+            print("OK: app/data/padukuhan.py")
+        finally:
+            settings.PORTAL_DATABASE_PATH = jalur_lama
 
 
 if __name__ == "__main__":

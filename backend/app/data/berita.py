@@ -20,7 +20,6 @@ import io
 import re
 import sqlite3
 import uuid
-from pathlib import Path
 from PIL import Image
 
 from app.core.config import settings
@@ -85,7 +84,7 @@ def migrasi_foto_ke_disk() -> None:
 
     Di-run saat startup agar file .db yang membengkak langsung mengecil.
     """
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         rows = conn.execute("SELECT id, foto FROM berita WHERE foto LIKE 'data:image/%'").fetchall()
         for r in rows:
             foto_baru = _simpan_foto_disk(r["foto"])
@@ -127,7 +126,7 @@ def _slug_unik(conn: sqlite3.Connection, judul: str, kecuali_id: str | None) -> 
 def daftar() -> list[Berita]:
     """Semua berita, terbaru menurut tanggal kejadian/berita (tanggalTerbit DESC).
     Tanggal sama diurutkan menurut `rowid DESC` (yang ditulis belakangan lebih dulu)."""
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         rows = conn.execute(
             f"SELECT {_KOLOM} FROM berita ORDER BY tanggalTerbit DESC, rowid DESC"
         ).fetchall()
@@ -135,7 +134,7 @@ def daftar() -> list[Berita]:
 
 
 def by_slug(slug: str) -> Berita | None:
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute(
             f"SELECT {_KOLOM} FROM berita WHERE slug = ?", (slug,)
         ).fetchone()
@@ -143,7 +142,7 @@ def by_slug(slug: str) -> Berita | None:
 
 
 def by_id(id: str) -> Berita | None:
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         row = conn.execute(f"SELECT {_KOLOM} FROM berita WHERE id = ?", (id,)).fetchone()
     return Berita(**dict(row)) if row else None
 
@@ -151,7 +150,7 @@ def by_id(id: str) -> Berita | None:
 def tambah(baru: BeritaBaru) -> Berita:
     foto_disk = _simpan_foto_disk(baru.foto)
     data_baru = baru.model_copy(update={"foto": foto_disk})
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         berita = Berita(
             id=uuid.uuid4().hex,
             slug=_slug_unik(conn, data_baru.judul, None),
@@ -182,7 +181,7 @@ def ubah(id: str, isi: BeritaBaru) -> Berita | None:
 
     data_baru = isi.model_copy(update={"foto": foto_disk})
 
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         berita = Berita(id=id, slug=_slug_unik(conn, data_baru.judul, id), **data_baru.model_dump())
         cur = conn.execute(
             "UPDATE berita SET slug = :slug, judul = :judul, foto = :foto,"
@@ -201,62 +200,69 @@ def hapus(id: str) -> bool:
     if lama and lama.foto:
         _hapus_foto_disk(lama.foto)
 
-    with db.koneksi(settings.DATABASE_FILE) as conn:
+    with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         cur = conn.execute("DELETE FROM berita WHERE id = ?", (id,))
         conn.commit()
         return cur.rowcount > 0
 
 
 def demo() -> None:
-    """Self-check. Jalankan:
-    DATABASE_PATH=/tmp/uji-berita.db .venv/bin/python -m app.data.berita
-    """
+    """Self-check menggunakan DB sementara yang terisolasi."""
+    import tempfile
+    from pathlib import Path
+
     assert ke_slug("Kerja Bakti RW 01!") == "kerja-bakti-rw-01"
     assert ke_slug("  --Halo, Dunia--  ") == "halo-dunia"
     assert ke_slug("!!!") == ""
 
-    assert daftar() == [], "DB uji harus mulai kosong"
+    jalur_lama = settings.PORTAL_DATABASE_PATH
+    with tempfile.TemporaryDirectory() as tmp:
+        settings.PORTAL_DATABASE_PATH = str(Path(tmp) / "portal_uji.db")
+        try:
+            assert daftar() == [], "DB uji harus mulai kosong"
 
-    def contoh(judul: str, tanggal: str = "2026-09-01") -> BeritaBaru:
-        return BeritaBaru(
-            judul=judul,
-            penulis="Sekretariat",
-            tanggalTerbit=tanggal,
-            isi="Isi berita percobaan yang panjangnya cukup.",
-            foto="",
-        )
+            def contoh(judul: str, tanggal: str = "2026-09-01") -> BeritaBaru:
+                return BeritaBaru(
+                    judul=judul,
+                    penulis="Sekretariat",
+                    tanggalTerbit=tanggal,
+                    isi="Isi berita percobaan yang panjangnya cukup.",
+                    foto="",
+                )
 
-    satu = tambah(contoh("Kerja Bakti", "2026-08-01"))
-    assert satu.slug == "kerja-bakti"
+            satu = tambah(contoh("Kerja Bakti", "2026-08-01"))
+            assert satu.slug == "kerja-bakti"
 
-    # Judul sama tidak ditolak; slugnya yang diberi akhiran.
-    dua = tambah(contoh("Kerja Bakti", "2026-08-20"))
-    assert dua.slug == "kerja-bakti-2", dua.slug
-    # Judul yang seluruhnya tanda baca tetap menghasilkan slug yang bisa dibuka.
-    tiga = tambah(contoh("!!!!", "2026-08-10"))
-    assert tiga.slug == "berita", tiga.slug
+            # Judul sama tidak ditolak; slugnya yang diberi akhiran.
+            dua = tambah(contoh("Kerja Bakti", "2026-08-20"))
+            assert dua.slug == "kerja-bakti-2", dua.slug
+            # Judul yang seluruhnya tanda baca tetap menghasilkan slug yang bisa dibuka.
+            tiga = tambah(contoh("!!!!", "2026-08-10"))
+            assert tiga.slug == "berita", tiga.slug
 
-    # Terbaru dulu.
-    assert [b.id for b in daftar()] == [dua.id, tiga.id, satu.id]
-    assert by_slug("kerja-bakti-2") is not None
-    assert by_slug("tidak-ada") is None
+            # Terbaru dulu.
+            assert [b.id for b in daftar()] == [dua.id, tiga.id, satu.id]
+            assert by_slug("kerja-bakti-2") is not None
+            assert by_slug("tidak-ada") is None
 
-    # Menyunting tanpa mengganti judul TIDAK menaikkan akhiran slugnya sendiri.
-    tetap = ubah(satu.id, contoh("Kerja Bakti", "2026-08-02"))
-    b_satu = by_id(satu.id)
-    assert b_satu is not None and b_satu.tanggalTerbit == "2026-08-02"
+            # Menyunting tanpa mengganti judul TIDAK menaikkan akhiran slugnya sendiri.
+            tetap = ubah(satu.id, contoh("Kerja Bakti", "2026-08-02"))
+            b_satu = by_id(satu.id)
+            assert b_satu is not None and b_satu.tanggalTerbit == "2026-08-02"
 
-    # Judul baru menggeser slug, dan yang lama benar-benar hilang.
-    pindah = ubah(satu.id, contoh("Rapat RT", "2026-08-02"))
-    assert pindah is not None and pindah.slug == "rapat-rt"
-    assert by_slug("kerja-bakti") is None
+            # Judul baru menggeser slug, dan yang lama benar-benar hilang.
+            pindah = ubah(satu.id, contoh("Rapat RT", "2026-08-02"))
+            assert pindah is not None and pindah.slug == "rapat-rt"
+            assert by_slug("kerja-bakti") is None
 
-    assert ubah("bukan-id", contoh("Apa Saja")) is None
-    assert hapus(satu.id) is True
-    assert hapus(satu.id) is False
-    assert len(daftar()) == 2
+            assert ubah("bukan-id", contoh("Apa Saja")) is None
+            assert hapus(satu.id) is True
+            assert hapus(satu.id) is False
+            assert len(daftar()) == 2
 
-    print("OK: app/data/berita.py")
+            print("OK: app/data/berita.py")
+        finally:
+            settings.PORTAL_DATABASE_PATH = jalur_lama
 
 
 if __name__ == "__main__":

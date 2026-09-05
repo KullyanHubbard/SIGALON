@@ -90,6 +90,14 @@ def kode_jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
     return role
 
 
+def _samakan_wilayah(a: str | None, b: str | None) -> bool:
+    if a == b:
+        return True
+    if a is None or b is None:
+        return False
+    return (a.strip().lstrip("0") or "0") == (b.strip().lstrip("0") or "0")
+
+
 def cocok_wilayah(
     role: str, rw: str | None, rt: str | None, warga_rw: str, warga_rt: str
 ) -> bool:
@@ -101,9 +109,9 @@ def cocok_wilayah(
     tidak boleh berbeda di antara keduanya.
     """
     if role == ROLE_RT:
-        return warga_rw == rw and warga_rt == rt
+        return _samakan_wilayah(warga_rw, rw) and _samakan_wilayah(warga_rt, rt)
     if role == ROLE_RW:
-        return warga_rw == rw
+        return _samakan_wilayah(warga_rw, rw)
     # Dukuh dan LPM boleh dari wilayah mana pun di padukuhan.
     return True
 

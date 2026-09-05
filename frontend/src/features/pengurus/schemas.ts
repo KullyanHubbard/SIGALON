@@ -14,7 +14,3 @@ export type IsiJabatanFormValues = z.infer<typeof isiJabatanSchema>;
 export const passwordBaruSchema = z.object({ password });
 export type PasswordBaruFormValues = z.infer<typeof passwordBaruSchema>;
 
-export const namaLpmSchema = z.object({
-  nama: z.string().trim().max(100, 'Maksimal 100 karakter'),
-});
-export type NamaLpmFormValues = z.infer<typeof namaLpmSchema>;

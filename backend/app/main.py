@@ -99,6 +99,5 @@ def _startup() -> None:
     if jumlah:
         print(f"  Data penduduk: {jumlah} jiwa terbaca dari DB")
     else:
-        print("  Data penduduk: KOSONG — impor dulu:")
-        print("    .venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx")
+        print("  Data penduduk: KOSONG — impor dulu dengan ./import-excel.sh")
     print("=====================")

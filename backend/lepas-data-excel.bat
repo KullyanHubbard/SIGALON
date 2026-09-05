@@ -2,9 +2,9 @@
 setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
-set "DB=data\siduk.db"
+set "DB=data\sigalon.db"
 
-echo === Lepas data Excel dari SIDUK ===
+echo === Lepas data Excel dari SIGALON ===
 echo.
 
 if not exist "%DB%" (
@@ -36,7 +36,7 @@ if /i not "%JAWAB%"=="y" (
 for /f "tokens=1-4 delims=/. " %%a in ("%date%") do set "TGL=%%c%%b%%a"
 set "JAM=%time::=%"
 set "JAM=%JAM: =0%"
-set "CADANGAN=data\siduk-sebelum-lepas-%TGL%-%JAM:~0,6%.db"
+set "CADANGAN=data\sigalon-sebelum-lepas-%TGL%-%JAM:~0,6%.db"
 copy "%DB%" "%CADANGAN%" >nul
 del "%DB%"
 

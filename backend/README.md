@@ -65,7 +65,8 @@ berhenti jadi contoh dan berubah jadi password Admin yang sungguhan.
 | -------- | ----- | ---- |
 | `ADMIN_USERNAME` | ✅ | Username akun Admin pertama. Dipakai sekali, saat tabel `pengurus` masih kosong. |
 | `ADMIN_PASSWORD` | ✅ | Passwordnya. **Mengubahnya setelah akunnya terbentuk tidak berpengaruh apa-apa** — isi yang benar sejak awal. |
-| `DATABASE_PATH` | — | Path file SQLite, relatif dari `backend/`. Bawaan `./data/siduk.db`. |
+| `DATABASE_PATH` | — | Path file SQLite data penduduk & pengurus, relatif dari `backend/`. Bawaan `./data/sigalon.db`. |
+| `PORTAL_DATABASE_PATH` | — | Path file SQLite portal publik (berita, padukuhan, lpm, kunjungan), relatif dari `backend/`. Bawaan `./data/portal.db`. |
 | `SESI_TTL_JAM` | — | Umur sesi login. Bawaan 12. |
 | `CORS_ORIGINS` | — | Asal yang boleh memanggil API, dipisah koma. Tidak terpakai kalau frontend diproksikan lewat Vite (`/api`). |
 
@@ -97,13 +98,15 @@ Database kosong tetap kosong — tidak ada seeding otomatis. Data masuk dari fil
 Excel pendataan:
 
 ```bash
-.venv/bin/python -m app.data.impor_excel ../docs/data-penduduk-contoh.xlsx
+./import-excel.sh
+# atau:
+.venv/bin/python -m app.data.impor_excel ../docs/DataPendudukGadingKulon-6-09-2026.xlsx --timpa-semua
 ```
 
 **Setiap impor MENIMPA seluruh tabel penduduk**, jadi skrip ini **menolak jalan
 kalau database sudah berisi** — sejak Tahap 3b sumber kebenaran data warga
 adalah aplikasi, bukan file ini. Kalau memang mau membuang isi database dan
-menggantinya, ulangi dengan `--timpa-semua`.
+menggantinya, gunakan opsi `--timpa-semua`.
 
 Kolom **Kode Warga** wajib diisi, unik, dan tidak boleh berubah: nilainya jadi
 `id` penduduk. Impor berhenti dengan menyebutkan nomor barisnya kalau ada yang
@@ -114,18 +117,11 @@ Dibaca **hanya untuk jabatan yang masih kosong** — begitu terisi, kolom
 itu diabaikan, sehingga impor tidak pernah membatalkan pergantian yang sudah
 disetujui. Dua orang ditandai memegang jabatan yang sama menghentikan impor.
 
-Restart backend setelah impor: `store.py` membaca tabel sekali saat start.
+Restart backend setelah impor jika sebelumnya backend sedang berjalan.
 
 Kolom baru pada tabel yang sudah ada dipasang otomatis saat backend membuka
 database (`db._TAMBALAN`) — **file `.db` tidak perlu dihapus**, dan akun yang
 sudah ada selamat.
-
-Formulir kosong untuk pengurus dibangkitkan dari definisi kolom yang sama:
-
-```bash
-.venv/bin/python -m tools.buat_template_excel   # -> docs/template-data-penduduk.xlsx
-.venv/bin/python -m tools.buat_data_contoh      # -> docs/data-penduduk-contoh.xlsx (data karangan)
-```
 
 ## Sambungkan ke frontend
 
@@ -202,7 +198,7 @@ DATABASE_PATH=/tmp/uji3.db .venv/bin/python -m app.data.sesi        # sesi login
 dipakai. Uji ujung-ke-ujung: jalankan uvicorn di port lain dengan
 `DATABASE_PATH` sementara, lalu panggil pakai `urllib` stdlib.
 
-File `data/siduk.db` di-gitignore — **jangan pernah di-commit.** Backup-nya
+File `data/sigalon.db` dan `data/portal.db` di-gitignore — **jangan pernah di-commit.** Backup-nya
 menyalin file, bukan commit.
 
 **Audit log tersimpan permanen** di tabel `audit_log` — siapa mengubah apa,

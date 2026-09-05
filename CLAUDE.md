@@ -82,12 +82,11 @@ menggantinya cuma bikin diff besar tanpa manfaat. Yang penting konsisten adalah
 nama yang **dibaca user** — itu selalu SIGALON (berganti dari SIDUK pada
 3 September 2026, mengikuti logo yang sudah terpasang).
 
-**Dua nama lama sengaja TIDAK ikut berganti**, dan keduanya bukan kelalaian:
-berkas basis data `data/siduk.db` (menggantinya berarti instalasi berjalan
-kehilangan seluruh isinya) dan kunci `localStorage` berawalan `siduk.`
-(tema, ukuran teks, penanda kunjungan — menggantinya mengosongkan pilihan
-setiap pengunjung yang sudah ada). Keduanya identitas data, tidak pernah
-dibaca user.
+Kunci `localStorage` berawalan `siduk.`
+(tema, ukuran teks, penanda kunjungan) sengaja tidak berganti agar tidak
+mengosongkan preferensi pengunjung yang sudah ada. Nama berkas basis data
+telah dipisah rapi menjadi `data/sigalon.db` (data kependudukan & administrasi)
+dan `data/portal.db` (portal berita & profil publik).
 
 ## 2. Tech Stack
 
@@ -432,8 +431,8 @@ backend/
 │                          # + pergantian.py (usulan)
 │                          # + agregat.py
 │                          # + impor_excel.py (isi tabel dari Excel)
-├── tools/                 # pembangkit template & data contoh Excel (bukan bagian app)
-├── data/siduk.db          # di-gitignore — jangan pernah di-commit
+├── data/sigalon.db        # data kependudukan & akun (di-gitignore — jangan di-commit)
+├── data/portal.db         # portal berita & profil publik (di-gitignore — jangan di-commit)
 └── requirements.txt
 ```
 

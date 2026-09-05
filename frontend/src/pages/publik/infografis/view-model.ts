@@ -10,7 +10,7 @@ import type {
 } from '@/features/statistik-publik/types';
 import type { Distribusi, PanelDistribusi } from '@/types/statistik';
 
-export function gabungDistribusi(
+function gabungDistribusi(
   perRw: RincianRw[],
   ambil: (rw: RincianRw) => Distribusi[],
 ): Distribusi[] {

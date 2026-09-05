@@ -33,7 +33,8 @@ class Settings(BaseSettings):
     # Path file SQLite, bukan URL — yang membacanya `sqlite3` stdlib, dan itu
     # cuma mau path. Relatif dihitung dari `backend/`, jadi hasilnya sama dari
     # direktori kerja mana pun uvicorn dijalankan; lihat `DATABASE_FILE`.
-    DATABASE_PATH: str = "./data/siduk.db"
+    DATABASE_PATH: str = "./data/sigalon.db"
+    PORTAL_DATABASE_PATH: str = "./data/portal.db"
     # Umur sesi login. Tidak ada rahasia yang perlu dipasang: sejak sesi
     # tersimpan di server, token cuma nomor acak dan tidak ada yang
     # ditandatangani — jadi tidak ada nilai bawaan yang bisa salah terpakai.
@@ -58,6 +59,11 @@ class Settings(BaseSettings):
     @property
     def DATABASE_FILE(self) -> Path:
         path = Path(self.DATABASE_PATH)
+        return path if path.is_absolute() else _BACKEND_DIR / path
+
+    @property
+    def PORTAL_DATABASE_FILE(self) -> Path:
+        path = Path(self.PORTAL_DATABASE_PATH)
         return path if path.is_absolute() else _BACKEND_DIR / path
 
     @property

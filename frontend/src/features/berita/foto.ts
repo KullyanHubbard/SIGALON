@@ -1,8 +1,8 @@
 const MAKS_SISI = 1600;
 
-export const MAKS_FOTO_BYTE = 600_000;
+const MAKS_FOTO_BYTE = 600_000;
 
-export const MAKS_FOTO_KB = Math.round(MAKS_FOTO_BYTE / 1000);
+const MAKS_FOTO_KB = Math.round(MAKS_FOTO_BYTE / 1000);
 
 const MAKS_SUMBER_BYTE = 12_000_000;
 

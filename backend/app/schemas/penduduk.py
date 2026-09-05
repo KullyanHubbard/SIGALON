@@ -5,7 +5,18 @@ berubah, ubah dua-duanya.
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+
+
+def _normalisasi_tgl(v: object) -> str:
+    if not v:
+        return ""
+    s = str(v).strip()
+    if " " in s:
+        s = s.split(" ")[0]
+    elif "T" in s:
+        s = s.split("T")[0]
+    return s
 
 JenisKelamin = Literal["LAKI_LAKI", "PEREMPUAN"]
 
@@ -78,6 +89,11 @@ class Penduduk(BaseModel):
     # tidak pernah ikut daftar maupun statistik (disaring di `data/store.py`).
     deletedAt: Optional[str] = None
 
+    @field_validator("tanggalLahir", mode="before")
+    @classmethod
+    def validasi_tanggal_lahir(cls, v: object) -> str:
+        return _normalisasi_tgl(v)
+
 
 class PaginatedPenduduk(BaseModel):
     items: list[Penduduk]
@@ -122,6 +138,13 @@ class PendudukUbah(BaseModel):
     statusKependudukan: Optional[StatusKependudukan] = None
     alamat: Optional[AlamatUbah] = None
 
+    @field_validator("tanggalLahir", mode="before")
+    @classmethod
+    def validasi_tanggal_lahir(cls, v: object) -> str | None:
+        if v is None:
+            return None
+        return _normalisasi_tgl(v)
+
 
 class PendudukBaru(BaseModel):
     """Warga baru. `id` (Kode Warga) TIDAK ada di sini — dibangkitkan aplikasi,
@@ -139,6 +162,11 @@ class PendudukBaru(BaseModel):
     statusHubunganKeluarga: StatusHubunganKeluarga
     kewarganegaraan: str = "WNI"
     alamat: Alamat
+
+    @field_validator("tanggalLahir", mode="before")
+    @classmethod
+    def validasi_tanggal_lahir(cls, v: object) -> str:
+        return _normalisasi_tgl(v)
 
 
 class FilterOpsi(BaseModel):

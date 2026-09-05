@@ -38,7 +38,7 @@ export const PADUKUHAN_BAWAAN: Padukuhan = {
   batasBarat: 'Kalurahan Banyusoco',
 };
 
-export const PETA = {
+const PETA = {
   koordinat: { lat: -7.656826, lon: 110.363111 },
 
   radiusPeta: 0.012,
