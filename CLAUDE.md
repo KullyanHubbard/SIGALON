@@ -682,10 +682,9 @@ tambahan di luar footer statis biasa:
 Kontak (`PADUKUHAN.telepon`/`.email` di `lib/padukuhan.ts`) sudah data asli dari
 desa — bukan placeholder seperti nama di bagan organisasi.
 
-**Angka bantuan sosial di `/infografis` adalah CONTOH**
-(`pages/publik/infografis/bansos.ts`) — status penerima bantuan tidak ada di
-tabel `penduduk`, jadi tidak ada yang bisa diagregasi. Halamannya memasang
-peringatan "Data contoh" secara menyolok; jangan dicabut sebelum datanya nyata.
+**Fitur bantuan sosial telah dicabut dari `/infografis`** — status penerima
+bantuan tidak didata pada sistem ini sehingga tidak ada data riil yang bisa
+diagregasikan. Halaman infografis kini berfokus penuh pada data demografi riil.
 
 **Keterangan padukuhan (nama wilayah, luas, kontak, sejarah, batas) tinggal di
 tabel `padukuhan`** sejak 3 September 2026, disunting ADMIN di `/admin/profil`

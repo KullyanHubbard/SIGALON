@@ -43,7 +43,7 @@ Terdapat 4 peran pengurus dengan batas kewenangan yang tegas:
 | **Styling** | Tailwind CSS | Utility-first styling dengan mode gelap/terang otomatis |
 | **State & Fetching** | TanStack Query, Zustand | Pengelolaan server state & auth state client |
 | **Form Validation** | React Hook Form + Zod | Validasi skema input form |
-| **Visualisasi Data** | Recharts | Grafik agregat infografis kependudukan |
+| **Visualisasi Data** | SVG & Tailwind CSS | Grafik agregat infografis kependudukan |
 | **Backend** | Python, FastAPI | RESTful API performa tinggi |
 | **Database** | SQLite (`sqlite3` stdlib) | Penyimpanan data lokal tanpa server database terpisah |
 | **Autentikasi** | Sesi Server-Side & Bcrypt | Keamanan token sesi di tabel SQLite & hash password |
@@ -57,7 +57,7 @@ NIA-WEB/
 ├── CLAUDE.md               # Panduan utama konvensi kode & arsitektur
 ├── start-all.sh            # Skrip otomatis jalankan backend + frontend + ngrok (Linux/macOS)
 ├── start-all.bat           # Skrip otomatis jalankan backend + frontend + ngrok (Windows)
-├── docs/                   # Dokumen spesifikasi & file template Excel
+├── docs/                   # Dokumen prosedur & file template Excel
 ├── frontend/               # Aplikasi React + TypeScript + Vite
 │   ├── src/
 │   │   ├── features/       # Kode per-domain (auth, penduduk, pengurus, dll)
@@ -69,7 +69,6 @@ NIA-WEB/
     │   ├── api/            # Endpoint routers
     │   ├── core/           # Security, ratelimit, audit
     │   └── data/           # Database SQLite, impor excel, & agregat
-    ├── tools/              # Tool generator template & dummy Excel
     └── README.md           # Panduan khusus backend
 ```
 

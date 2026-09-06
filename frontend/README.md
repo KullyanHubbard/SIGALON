@@ -33,20 +33,18 @@ npm install
 npm run dev   # http://localhost:5173
 ```
 
-## Akun Demo (data dummy backend)
+## Peran & Hak Akses Pengurus
 
-| Peran                   | Kredensial                                          |
-| ------------------------ | --------------------------------------------------- |
-| Dukuh                     | `dukuh` / `dukuh123`                                |
-| Ketua RW 019               | `rw019` / `rw123`                                    |
-| Ketua RT 03                | `rt03` / `rt123`                                     |
-| Warga (sudah aktif)       | NIK `3204120210750001` / PIN `112233`                |
-| Warga (belum aktivasi)    | NIK `3204124205790001`, lahir `02-05-1979`            |
+Aplikasi ini ditujukan khusus untuk **Perangkat Desa** (warga tidak memiliki akun). Terdapat 4 peran:
 
-Daftar ini juga tercetak di terminal saat backend dinyalakan.
+| Peran | Hak Akses |
+| ----- | --------- |
+| **`ADMIN`** | Kelola akun pengurus, ajukan pergantian jabatan, reset password. **Nol akses ke data warga**. |
+| **`DUKUH`** | Akses penuh membaca, menambah, dan mengubah data warga seluruh padukuhan. |
+| **`RW`** | Akses data warga terbatas hanya untuk wilayah RW bersangkutan. |
+| **`RT`** | Akses data warga terbatas hanya untuk wilayah RT bersangkutan. |
 
-- **Warga** hanya melihat data NIK & Kartu Keluarganya sendiri.
-- **Admin** melihat dashboard, seluruh data penduduk (cari + paginasi), dan infografis.
+Portal publik (`/`, `/profil`, `/infografis`, `/berita`, `/statistik`) terbuka bebas tanpa autentikasi.
 
 ## Skrip
 

@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router-dom';
 import { PanelDistribusiCard } from '@/components/ui/PanelDistribusiCard';
 import ikonKeluarga from '@/assets/icons/keluarga.png';
 import ikonLakiLaki from '@/assets/icons/laki-laki.png';
@@ -8,24 +7,12 @@ import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { StatCard } from '@/components/ui/StatCard';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
-import { cn, formatAngka } from '@/lib/utils';
-import { PANEL_BANSOS, TOTAL_PENERIMA_BANSOS } from './bansos';
+import { formatAngka } from '@/lib/utils';
 import { toPanelDemografi } from './view-model';
 import { WADAH } from '@/components/layout/wadah';
 
-const TAB = [
-  { id: 'demografi', label: 'Demografi Penduduk' },
-  { id: 'bansos', label: 'Bantuan Sosial' },
-] as const;
-
-type TabId = (typeof TAB)[number]['id'];
-
 export default function InfografisPublikPage() {
   const padukuhan = usePadukuhan();
-  const [params, setParams] = useSearchParams();
-  const tabAktif: TabId =
-    params.get('tab') === 'bansos' ? 'bansos' : 'demografi';
-
   const { data, isLoading, isError } = useStatistikPublik();
 
   return (
@@ -41,100 +28,47 @@ export default function InfografisPublikPage() {
         </div>
       </section>
 
-      {}
-      <div className="sticky top-16 z-20 border-b border-slate-200 bg-surface">
-        <div className={`${WADAH} flex gap-1 overflow-x-auto`} role="tablist">
-          {TAB.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={tabAktif === t.id}
-              onClick={() =>
-                setParams(t.id === 'demografi' ? {} : { tab: t.id })
-              }
-              className={cn(
-                'whitespace-nowrap border-b-2 px-4 py-4 text-sm font-bold transition-colors',
-                tabAktif === t.id
-                  ? 'border-brand-600 text-brand-700'
-                  : 'border-transparent text-black hover:text-brand-700',
-              )}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <section className={`${WADAH} py-10`}>
-        {tabAktif === 'demografi' ? (
-          <QueryBoundary
-            isLoading={isLoading}
-            isError={isError}
-            data={data}
-            loadingLabel="Memuat infografis"
-            errorMessage="Infografis belum bisa ditampilkan."
-          >
-            {(statistik) => (
-              <div className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <StatCard
-                    label="Total Penduduk"
-                    value={formatAngka(statistik.totalPenduduk)}
-                    icon={ikonPenduduk}
-                  />
-                  <StatCard
-                    label="Jumlah Kartu Keluarga"
-                    value={formatAngka(statistik.totalKepalaKeluarga)}
-                    icon={ikonKeluarga}
-                  />
-                  <StatCard
-                    label="Laki-laki"
-                    value={formatAngka(statistik.totalLakiLaki)}
-                    icon={ikonLakiLaki}
-                  />
-                  <StatCard
-                    label="Perempuan"
-                    value={formatAngka(statistik.totalPerempuan)}
-                    icon={ikonPerempuan}
-                  />
-                </div>
-
-                <div className="grid gap-6 lg:grid-cols-2">
-                  {toPanelDemografi(statistik).map((panel) => (
-                    <PanelDistribusiCard key={panel.id} panel={panel} />
-                  ))}
-                </div>
+        <QueryBoundary
+          isLoading={isLoading}
+          isError={isError}
+          data={data}
+          loadingLabel="Memuat infografis"
+          errorMessage="Infografis belum bisa ditampilkan."
+        >
+          {(statistik) => (
+            <div className="space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <StatCard
+                  label="Total Penduduk"
+                  value={formatAngka(statistik.totalPenduduk)}
+                  icon={ikonPenduduk}
+                />
+                <StatCard
+                  label="Jumlah Kartu Keluarga"
+                  value={formatAngka(statistik.totalKepalaKeluarga)}
+                  icon={ikonKeluarga}
+                />
+                <StatCard
+                  label="Laki-laki"
+                  value={formatAngka(statistik.totalLakiLaki)}
+                  icon={ikonLakiLaki}
+                />
+                <StatCard
+                  label="Perempuan"
+                  value={formatAngka(statistik.totalPerempuan)}
+                  icon={ikonPerempuan}
+                />
               </div>
-            )}
-          </QueryBoundary>
-        ) : (
-          <div className="space-y-6">
-            {}
-            <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-5 py-4 text-sm text-amber-900">
-              <p className="font-semibold">Data contoh</p>
-              <p className="mt-1">
-                Status penerima bantuan sosial belum termasuk yang didata pada
-                sistem ini. Angka di bawah adalah contoh tampilan, bukan data
-                penerima yang sebenarnya.
-              </p>
-            </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard
-                label="Total Penerima"
-                value={formatAngka(TOTAL_PENERIMA_BANSOS)}
-                icon={ikonKeluarga}
-              />
+              <div className="grid gap-6 lg:grid-cols-2">
+                {toPanelDemografi(statistik).map((panel) => (
+                  <PanelDistribusiCard key={panel.id} panel={panel} />
+                ))}
+              </div>
             </div>
-
-            <div className="grid gap-6 lg:grid-cols-2">
-              {PANEL_BANSOS.map((panel) => (
-                <PanelDistribusiCard key={panel.id} panel={panel} />
-              ))}
-            </div>
-          </div>
-        )}
+          )}
+        </QueryBoundary>
       </section>
     </div>
   );

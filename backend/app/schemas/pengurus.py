@@ -69,15 +69,6 @@ class PengurusBaru(BaseModel):
     rt: Optional[str] = None
 
 
-class PengurusUbah(BaseModel):
-    """Field yang tidak dikirim tidak diubah. `rw`/`rt` bernilai null berarti
-    dikosongkan — bedanya ditangkap lewat `model_fields_set`."""
-
-    nama: Optional[str] = None
-    rw: Optional[str] = None
-    rt: Optional[str] = None
-    aktif: Optional[bool] = None
-
 
 class PasswordBaru(BaseModel):
     password: str = Field(min_length=8)

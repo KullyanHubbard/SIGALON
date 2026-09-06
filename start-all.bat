@@ -19,8 +19,8 @@ if not exist frontend\node_modules (
     cmd /c "cd frontend && npm install"
 )
 
-start "SIDUK backend" cmd /k "backend\start.bat"
-start "SIDUK frontend" cmd /k "cd frontend && npm run dev"
+start "SIGALON backend" cmd /k "backend\start.bat"
+start "SIGALON frontend" cmd /k "cd frontend && npm run dev"
 
 REM Beri dev server waktu bind ke 5173 sebelum ngrok menyambung.
 timeout /t 5 /nobreak >nul
