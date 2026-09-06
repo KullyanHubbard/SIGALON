@@ -83,7 +83,7 @@ nama yang **dibaca user** — itu selalu SIGALON (berganti dari SIDUK pada
 3 September 2026, mengikuti logo yang sudah terpasang).
 
 Kunci `localStorage` berawalan `siduk.`
-(tema, ukuran teks, penanda kunjungan) sengaja tidak berganti agar tidak
+(ukuran teks, penanda kunjungan) sengaja tidak berganti agar tidak
 mengosongkan preferensi pengunjung yang sudah ada. Nama berkas basis data
 telah dipisah rapi menjadi `data/sigalon.db` (data kependudukan & administrasi)
 dan `data/portal.db` (portal berita & profil publik).
@@ -210,31 +210,6 @@ Komponen tidak pernah memanggil `apiClient` langsung — selalu lewat `pendudukA
 - Tailwind utility-first. Hindari file CSS terpisah kecuali untuk global (`styles/index.css`).
 - Kelas panjang: urutkan otomatis oleh `prettier-plugin-tailwindcss` (jalankan `npm run format`).
 
-**Mode gelap: JANGAN menulis `dark:` untuk warna netral.** Ramp `slate-*` dan
-`bg-surface` dibaca dari CSS variable yang dibalik satu kali di `:root.dark`
-(`styles/index.css`), jadi komponen baru ikut gelap sendiri asal memakai kelas
-netral yang sudah ada. Dua aturan yang mengikat:
-- **Latar kartu/panel = `bg-surface`, bukan `bg-white`.** `white` sengaja tidak
-  ikut dibalik supaya `text-white` di atas tombol brand/rose tetap putih —
-  `bg-white` cuma untuk elemen yang memang duduk di atas latar ungu (hero).
-- **Tirai/overlay = `bg-black/40`, bukan `bg-slate-900/40`** — slate-900 jadi
-  terang di mode gelap dan tirainya berubah putih.
-
-Ramp gelapnya dibalik menurut PERAN, bukan angka: 400/500 (teks redup) jadi
-terang, 100–300 (latar & garis) tetap gelap. Ramp warna literal
-(brand/green/amber/red) TIDAK ikut dibalik — brand-700 dipakai ganda sebagai
-teks DAN `hover:bg-brand-700`, jadi membaliknya merusak tombol. Konsekuensinya
-**`bg-*-50` untuk chip selalu salah di mode gelap** (jadi tambalan hampir
-putih di atas kartu gelap): pakai tint transparan `bg-*-600/20` yang menumpang
-latar apa pun. `Badge` cukup sampai situ — teksnya mewarisi warna sekitarnya
-(nada = latar saja), jadi tidak ada `dark:` sama sekali. Yang teksnya memang
-harus berwarna, `Alert` dan `SOROT_BRAND` (`lib/colors.ts`), menambah `dark:`
-di teksnya saja.
-Tombol temanya `components/layout/TombolTema.tsx`
-(pojok kanan-bawah `PublicShell`, setelah ukuran teks); kelas awal dipasang
-skrip kecil di `index.html` supaya tidak berkedip putih saat muat. Halaman
-`/statistik` memakai kerangka lain, jadi tidak punya tombol itu — temanya tetap
-ikut pilihan yang tersimpan.
 
 ### Data fetching (React Query)
 

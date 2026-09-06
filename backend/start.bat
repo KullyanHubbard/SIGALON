@@ -10,8 +10,8 @@ if not exist .env (
     >> .env echo.
     >> .env echo # Akun Admin pertama. WAJIB diisi sebelum backend pertama kali dijalankan.
     >> .env echo # Dipakai sekali — setelah akunnya terbentuk, mengubahnya tidak berpengaruh.
-    >> .env echo ADMIN_USERNAME=
-    >> .env echo ADMIN_PASSWORD=
+    >> .env echo ADMIN_USERNAME=admin
+    >> .env echo ADMIN_PASSWORD=admin
     >> .env echo.
     >> .env echo # Path file SQLite, relatif dari folder backend/. Jangan pernah di-commit.
     >> .env echo DATABASE_PATH=./data/sigalon.db
@@ -22,12 +22,8 @@ if not exist .env (
     >> .env echo.
     >> .env echo # Asal yang boleh memanggil API, dipisah koma ^(bukan JSON^).
     >> .env echo CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-    echo backend\.env baru saja dibuatkan, tapi ADMIN_USERNAME dan ADMIN_PASSWORD
-    echo masih kosong — backend tidak akan jalan sebelum keduanya diisi.
+    echo backend\.env baru saja dibuatkan dengan default ADMIN_USERNAME=admin dan ADMIN_PASSWORD=admin.
     echo.
-    echo Buka backend\.env, isi dua baris itu, lalu jalankan lagi.
-    pause
-    exit /b 1
 )
 
 if not exist .venv\Scripts\python.exe python -m venv .venv
