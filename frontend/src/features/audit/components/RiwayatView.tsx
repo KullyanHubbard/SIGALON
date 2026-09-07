@@ -38,7 +38,7 @@ export function RiwayatView({
           }
         >
           {(daftar) => (
-            <Table>
+            <Table className="min-w-[520px]">
               <thead>
                 <tr>
                   <Th>Waktu</Th>

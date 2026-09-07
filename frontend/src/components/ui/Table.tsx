@@ -6,7 +6,7 @@ export function Table({
   ...props
 }: HTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full overflow-x-auto [webkit-overflow-scrolling:touch]">
       <table
         className={cn('w-full border-collapse text-sm', className)}
         {...props}
@@ -22,7 +22,7 @@ export function Th({
   return (
     <th
       className={cn(
-        'whitespace-nowrap border-b-1 border-slate-200 bg-slate-50/80 px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-slate-500',
+        'whitespace-nowrap border-b-1 border-slate-200 bg-slate-50/80 px-3.5 py-2.5 sm:px-6 sm:py-3.5 text-left text-xs font-bold uppercase tracking-wider text-slate-500',
         className,
       )}
       {...props}
@@ -37,7 +37,7 @@ export function Td({
   return (
     <td
       className={cn(
-        'whitespace-nowrap border-b-1 border-slate-100 px-6 py-3.5 text-sm text-slate-700',
+        'whitespace-nowrap border-b-1 border-slate-100 px-3.5 py-2.5 sm:px-6 sm:py-3.5 text-sm text-slate-700',
         className,
       )}
       {...props}

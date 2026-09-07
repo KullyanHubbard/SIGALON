@@ -12,7 +12,7 @@ interface TabelPendudukProps {
 
 export function TabelPenduduk({ rows, onPilih, onUbah }: TabelPendudukProps) {
   return (
-    <Table>
+    <Table className="min-w-[620px]">
       <thead>
         <tr>
           <Th>Nama</Th>

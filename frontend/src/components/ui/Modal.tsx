@@ -56,7 +56,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
       <div
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
@@ -67,9 +67,9 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        className="relative z-10 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-surface shadow-xl"
+        className="relative z-10 flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-surface shadow-xl"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5">
           <h2 className="text-base font-semibold text-slate-900">{title}</h2>
           <button
             onClick={onClose}
@@ -79,7 +79,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="p-5">{children}</div>
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5">{children}</div>
       </div>
     </div>
   );

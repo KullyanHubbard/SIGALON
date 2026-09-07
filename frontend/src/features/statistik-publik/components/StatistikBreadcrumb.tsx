@@ -16,11 +16,11 @@ export function StatistikBreadcrumb({
 
   return (
     <nav aria-label="Jalur wilayah">
-      <ol className="flex flex-wrap items-center text-base">
+      <ol className="flex flex-wrap items-center text-sm sm:text-base">
         {jalur.map(({ label, tujuan }, i) => (
           <li key={label} className="flex items-center">
             {i > 0 && (
-              <span className="px-2 text-slate-900" aria-hidden>
+              <span className="px-1.5 sm:px-2 text-slate-900" aria-hidden>
                 /
               </span>
             )}

@@ -23,12 +23,12 @@ export function PaginasiPenduduk({
   onNext,
 }: PaginasiPendudukProps) {
   return (
-    <div className="flex items-center justify-between px-5 py-3 text-sm text-slate-500">
+    <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-5 py-3 text-xs sm:text-sm text-slate-500">
       <span>
         {paginasi.ringkasan}
         {paginasi.sedangMenyegarkan && ' · memperbarui…'}
       </span>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center justify-between sm:justify-end gap-1 w-full sm:w-auto">
         <Button
           size="sm"
           variant="outline"

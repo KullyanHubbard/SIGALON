@@ -1,5 +1,6 @@
 import type { RefObject } from 'react';
 import { Link } from 'react-router-dom';
+import { Logo } from '@/components/ui/Logo';
 import ikonMenu from '@/assets/icons/nav/menu.svg';
 import ikonUserCircle from '@/assets/icons/nav/user-circle.svg';
 import ikonKeyRound from '@/assets/icons/nav/key-round.svg';
@@ -31,21 +32,24 @@ export function NavbarView({
   const samaPeran = nama.trim().toLowerCase() === peran.trim().toLowerCase();
 
   return (
-    <header className="sticky top-0 z-20 flex h-20 items-center justify-between border-b border-slate-200 bg-surface/80 px-4 backdrop-blur lg:px-6">
-      <button
-        className="rounded-md p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
-        onClick={onOpenSidebar}
-        aria-label="Buka menu"
-      >
-        <span
-          aria-hidden
-          className="block h-5 w-5 bg-current"
-          style={{
-            mask: `url("${ikonMenu}") center / contain no-repeat`,
-            WebkitMask: `url("${ikonMenu}") center / contain no-repeat`,
-          }}
-        />
-      </button>
+    <header className="sticky top-0 z-20 flex h-16 sm:h-20 items-center justify-between border-b border-slate-200 bg-surface/80 px-4 backdrop-blur lg:px-6">
+      <div className="flex items-center gap-2 lg:hidden">
+        <button
+          className="-ml-1 rounded-md p-2 text-slate-500 hover:bg-slate-100"
+          onClick={onOpenSidebar}
+          aria-label="Buka menu"
+        >
+          <span
+            aria-hidden
+            className="block h-5 w-5 bg-current"
+            style={{
+              mask: `url("${ikonMenu}") center / contain no-repeat`,
+              WebkitMask: `url("${ikonMenu}") center / contain no-repeat`,
+            }}
+          />
+        </button>
+        <Logo className="h-7" />
+      </div>
 
       <div className="ml-auto flex items-center gap-3">
         <div className="hidden text-right sm:block">

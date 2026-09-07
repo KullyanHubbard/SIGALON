@@ -38,7 +38,7 @@ export function Alert({
       role={tone === 'error' ? 'alert' : 'status'}
     >
       <Icon className="mt-0.5 h-4 w-4 shrink-0" />
-      <div>{children}</div>
+      <div className="min-w-0 flex-1 break-words">{children}</div>
     </div>
   );
 }

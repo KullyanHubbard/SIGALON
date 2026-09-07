@@ -148,8 +148,8 @@ export function BaganOrganisasi() {
       errorMessage="Struktur organisasi belum bisa ditampilkan."
     >
       {(struktur) => (
-        <figure className="m-0 overflow-x-auto pb-2">
-          <div className="mx-auto flex min-w-[280px] max-w-5xl flex-col items-center">
+        <figure className="m-0 overflow-x-auto pb-2 [webkit-overflow-scrolling:touch]">
+          <div className="mx-auto flex min-w-[320px] max-w-5xl flex-col items-center">
             <div className="w-48 sm:w-64">
               <Kotak label="Dukuh" nama={struktur.dukuh} tingkat="dukuh" />
             </div>
@@ -169,7 +169,7 @@ export function BaganOrganisasi() {
                 className={cn('block h-5 w-px md:hidden', GARIS)}
               />
               <div className="hidden flex-1 md:block" />
-              <div className="flex w-full items-center md:w-1/2">
+              <div className="flex w-full items-center justify-center md:justify-start md:w-1/2">
                 <span
                   aria-hidden
                   className={cn('hidden flex-1 h-px md:block', GARIS)}

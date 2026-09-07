@@ -18,10 +18,10 @@ export function AuthLayout({ title, description, children }: AuthLayoutProps) {
         <Logo className="h-6" />
       </header>
 
-      <div className="flex flex-1 flex-col px-4 py-8 sm:px-6">
+      <div className="flex flex-1 flex-col px-3.5 py-6 sm:px-6 sm:py-8">
         <div className="my-auto w-full max-w-lg self-center">
           {}
-          <div className="rounded-2xl border-1 border-slate-200 bg-surface p-8 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)] sm:p-10">
+          <div className="rounded-2xl border-1 border-slate-200 bg-surface p-5 sm:p-10 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)]">
             <Link
               to={paths.landing}
               className="focus-ring -ml-3 mb-2 inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-base font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-brand-700"

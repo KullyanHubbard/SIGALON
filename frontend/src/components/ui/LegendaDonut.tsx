@@ -24,7 +24,7 @@ export function LegendaDonut({
       {data.map((d, i) => (
         <li
           key={d.label}
-          className="flex items-center gap-3 border-t border-slate-100 py-2 text-sm first:border-t-0 sm:[&:nth-child(2)]:border-t-0 transition-all duration-500 ease-out motion-reduce:transition-none"
+          className="flex items-center gap-2 sm:gap-3 border-t border-slate-100 py-2 text-xs sm:text-sm first:border-t-0 sm:[&:nth-child(2)]:border-t-0 transition-all duration-500 ease-out motion-reduce:transition-none"
           style={{
             opacity: terpasang ? 1 : 0,
             transform: terpasang ? 'translateY(0)' : 'translateY(8px)',

@@ -30,7 +30,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full max-h-dvh min-h-0 w-80 flex-col border-r border-slate-200 bg-surface transition-transform lg:static lg:h-full lg:max-h-full lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 flex h-full max-h-dvh min-h-0 w-72 sm:w-80 max-w-[85vw] flex-col border-r border-slate-200 bg-surface transition-transform lg:static lg:h-full lg:max-h-full lg:w-80 lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >

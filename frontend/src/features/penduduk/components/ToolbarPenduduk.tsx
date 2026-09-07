@@ -78,7 +78,7 @@ function PilihanRingkas({
       value={nilai ?? ''}
       onChange={(e) => onPilih(e.target.value)}
       className={cn(
-        'focus-ring h-10 rounded-lg border-1 bg-surface px-3 text-sm transition-colors',
+        'focus-ring h-10 w-full sm:w-auto rounded-lg border-1 bg-surface px-3 text-sm transition-colors',
         nilai
           ? 'border-brand-600 font-medium text-brand-700'
           : 'border-slate-300 text-slate-700',
@@ -156,8 +156,8 @@ export function ToolbarPenduduk({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="min-w-[12rem] flex-1 sm:max-w-xs">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <div className="w-full sm:w-auto sm:min-w-[12rem] sm:flex-1 sm:max-w-xs">
           <Input
             icon={<Search className="h-4 w-4" />}
             placeholder="Cari nama warga…"
@@ -167,21 +167,23 @@ export function ToolbarPenduduk({
           />
         </div>
 
-        <PilihanRingkas
-          label="RW"
-          nilai={value.rw}
-          opsi={dariData(opsi?.rw)}
-          onPilih={(v) => set('rw', v)}
-        />
-        <PilihanRingkas
-          label="RT"
-          nilai={value.rt}
-          opsi={dariData(opsi?.rt)}
-          onPilih={(v) => set('rt', v)}
-        />
+        <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:w-auto sm:items-center">
+          <PilihanRingkas
+            label="RW"
+            nilai={value.rw}
+            opsi={dariData(opsi?.rw)}
+            onPilih={(v) => set('rw', v)}
+          />
+          <PilihanRingkas
+            label="RT"
+            nilai={value.rt}
+            opsi={dariData(opsi?.rt)}
+            onPilih={(v) => set('rt', v)}
+          />
+        </div>
 
         {}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:ml-auto justify-between sm:justify-end">
           {onEkspor && (
             <div className="relative" ref={eksporRef}>
               <Button
@@ -273,7 +275,7 @@ export function ToolbarPenduduk({
             <div
               role="dialog"
               aria-label="Filter lanjutan"
-              className="absolute right-0 top-full z-30 mt-2 w-[min(26rem,calc(100vw-3rem))] rounded-xl border-1 border-slate-200 bg-surface p-4 shadow-lg"
+              className="absolute right-0 top-full z-30 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:max-w-md rounded-xl border-1 border-slate-200 bg-surface p-4 shadow-lg"
             >
               <div className="mb-3 flex items-center justify-between gap-2">
                 <p className="text-sm font-bold text-slate-900">

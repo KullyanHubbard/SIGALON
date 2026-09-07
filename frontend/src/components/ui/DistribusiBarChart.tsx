@@ -26,10 +26,15 @@ export function DistribusiBarChart({ data }: { data: Distribusi[] }) {
   const maks = Math.max(...data.map((d) => d.value), 1);
 
   return (
-    <dl className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-3.5">
+    <dl className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2.5 sm:gap-x-4 gap-y-3 sm:gap-y-3.5">
       {data.map((d, i) => (
         <Fragment key={d.label}>
-          <dt className="text-sm font-semibold text-slate-600">{d.label}</dt>
+          <dt
+            className="text-xs sm:text-sm font-semibold text-slate-600 max-w-[130px] sm:max-w-none truncate sm:whitespace-normal"
+            title={d.label}
+          >
+            {d.label}
+          </dt>
           <dd
             className="h-2.5 overflow-hidden rounded-sm bg-slate-100"
             aria-hidden
@@ -45,7 +50,7 @@ export function DistribusiBarChart({ data }: { data: Distribusi[] }) {
             />
           </dd>
           <dd
-            className="text-right text-sm font-semibold tabular-nums text-slate-900 transition-opacity duration-500 ease-out motion-reduce:transition-none"
+            className="text-right text-xs sm:text-sm font-semibold tabular-nums text-slate-900 transition-opacity duration-500 ease-out motion-reduce:transition-none"
             style={{
               opacity: terpasang ? 1 : 0,
               transitionDelay: `${Math.min(i * 45 + 100, 450)}ms`,

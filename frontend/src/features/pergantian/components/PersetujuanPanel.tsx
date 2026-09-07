@@ -22,7 +22,7 @@ export function PersetujuanPanel() {
         {data.map((p) => (
           <div
             key={p.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-amber-500/[9%] px-4 py-3"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg bg-amber-500/[9%] px-4 py-3"
           >
             <div className="text-sm">
               <p className="font-medium text-slate-900">
@@ -33,7 +33,7 @@ export function PersetujuanPanel() {
                 {p.kandidatRw}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2 w-full sm:w-auto">
               <Button
                 size="sm"
                 variant="outline"

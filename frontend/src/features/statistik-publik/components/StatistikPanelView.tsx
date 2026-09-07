@@ -48,7 +48,7 @@ export function StatistikPanelView({
                     {}
                     <CountUp
                       value={data.total}
-                      className="text-6xl font-bold tabular-nums leading-none text-slate-900"
+                      className="text-4xl sm:text-5xl lg:text-6xl font-bold tabular-nums leading-none text-slate-900"
                     />
                     <span className="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">
                       jiwa
@@ -61,7 +61,7 @@ export function StatistikPanelView({
 
           {}
           <div className="flex flex-col gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
               {data.stat.map((stat) => (
                 <StatCard
                   key={stat.id}

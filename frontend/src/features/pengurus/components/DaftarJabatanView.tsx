@@ -40,7 +40,7 @@ export function DaftarJabatanView({
           errorMessage="Gagal memuat daftar akun pengurus."
         >
           {(daftar) => (
-            <Table>
+            <Table className="min-w-[580px]">
               <thead>
                 <tr>
                   <Th>Jabatan</Th>

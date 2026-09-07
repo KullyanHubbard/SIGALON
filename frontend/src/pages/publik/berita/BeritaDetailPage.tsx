@@ -55,12 +55,12 @@ export default function BeritaDetailPage() {
 
                 <FotoBerita
                   berita={berita}
-                  className="mt-6 h-64 w-full rounded-xl sm:h-96"
+                  className="mt-6 aspect-[16/9] w-full rounded-xl object-cover sm:aspect-auto sm:h-96"
                 />
 
                 {}
                 <div
-                  className="isi-berita mt-8 text-base text-slate-700"
+                  className="isi-berita mt-8 text-base text-slate-700 overflow-hidden break-words"
                   dangerouslySetInnerHTML={{ __html: berita.isi }}
                 />
               </>

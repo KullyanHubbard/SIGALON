@@ -78,12 +78,13 @@ export function AjukanPergantianDialog({
         />
 
         {jabatan?.kode === 'LPM' && (
-          <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700">
             <span>Ingin mencopot Ketua LPM tanpa memilih pengganti?</span>
             <Button
               type="button"
               variant="outline"
               size="sm"
+              className="w-full sm:w-auto shrink-0"
               isLoading={ajukan.isPending}
               onClick={kirimKosongkan}
             >

@@ -49,7 +49,7 @@ export default function BeritaListPage() {
                 </div>
 
                 {totalHalaman > 1 && (
-                  <div className="flex items-center justify-between border-t border-slate-200 pt-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-200 pt-6">
                     <p className="text-sm text-slate-600">
                       Menampilkan{' '}
                       <span className="font-semibold text-slate-900">
@@ -66,7 +66,7 @@ export default function BeritaListPage() {
                       berita
                     </p>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
                       <button
                         type="button"
                         onClick={() => setHalaman((h) => Math.max(1, h - 1))}

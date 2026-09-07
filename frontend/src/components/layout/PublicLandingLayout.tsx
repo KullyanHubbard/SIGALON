@@ -30,14 +30,14 @@ export function PublicLandingLayout({
 
       {}
       <div className="flex flex-1 flex-col lg:col-start-2 lg:row-start-1 lg:min-h-0">
-        <div className="flex h-16 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-surface px-4 sm:h-20 sm:px-6 lg:px-12">
+        <div className="flex min-h-12 sm:h-20 shrink-0 items-center justify-between gap-4 border-b border-slate-200 bg-surface px-4 py-2 sm:py-0 sm:px-6 lg:px-12">
           {breadcrumb}
           {}
           <AccountButton className="hidden shrink-0 lg:flex" />
         </div>
 
         {}
-        <main className="flex flex-1 flex-col px-4 py-6 sm:px-6 sm:py-10 lg:overflow-y-auto lg:px-12">
+        <main className="flex flex-1 flex-col px-3.5 py-4 sm:px-6 sm:py-10 lg:overflow-y-auto lg:px-12">
           <div className="my-auto w-full">{children}</div>
         </main>
 

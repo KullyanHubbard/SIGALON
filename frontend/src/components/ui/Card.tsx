@@ -24,13 +24,13 @@ export function CardHeader({
 }) {
   return (
     <div className="flex items-center justify-between gap-3 sm:gap-4 border-b border-slate-100 px-4 py-3.5 sm:px-6 sm:py-5">
-      <div>
-        <h3 className="text-base sm:text-lg font-bold text-slate-900">{title}</h3>
+      <div className="min-w-0 flex-1">
+        <h3 className="text-base sm:text-lg font-bold text-slate-900 truncate sm:whitespace-normal">{title}</h3>
         {description && (
           <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-slate-500">{description}</p>
         )}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

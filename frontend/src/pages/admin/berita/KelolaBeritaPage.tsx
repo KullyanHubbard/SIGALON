@@ -58,7 +58,7 @@ export default function KelolaBeritaPage() {
           emptyDescription="Mulai dengan menekan Tulis Berita."
         >
           {(daftar) => (
-            <Table>
+            <Table className="min-w-[540px]">
               <thead>
                 <tr>
                   <Th>Berita</Th>

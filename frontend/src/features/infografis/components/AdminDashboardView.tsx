@@ -41,7 +41,7 @@ export function AdminDashboardView({
       >
         {(daftarStat) => (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
               {daftarStat.map((stat) => (
                 <StatCard
                   key={stat.id}
@@ -58,8 +58,8 @@ export function AdminDashboardView({
                   description="Jumlah penduduk per kelompok umur"
                   action={
                     <Link to={paths.admin.infografis}>
-                      <Button variant="ghost" size="sm">
-                        Lihat semua <ArrowRight className="h-4 w-4" />
+                      <Button variant="ghost" size="sm" className="text-xs sm:text-sm px-2 sm:px-3">
+                        Lihat semua <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                     </Link>
                   }
