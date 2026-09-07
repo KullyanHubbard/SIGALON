@@ -43,8 +43,14 @@ export default function BeritaListPage() {
             return (
               <div className="flex flex-col gap-8">
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {daftarTampil.map((b) => (
-                    <BeritaCard key={b.id} berita={b} />
+                  {daftarTampil.map((b, idx) => (
+                    <div
+                      key={b.id}
+                      data-apple-fade
+                      data-apple-delay={Math.min(idx + 1, 4)}
+                    >
+                      <BeritaCard berita={b} />
+                    </div>
                   ))}
                 </div>
 

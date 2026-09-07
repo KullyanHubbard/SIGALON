@@ -28,7 +28,7 @@ export default function ProfilPage() {
 
       <section className={`${WADAH} py-8 sm:py-12 lg:py-14`}>
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+          <div data-apple-fade className="lg:col-span-2">
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
               Sejarah & Gambaran Umum
             </h2>
@@ -39,75 +39,82 @@ export default function ProfilPage() {
             </div>
           </div>
 
-          <Card className="h-fit">
-            <CardHeader title="Data Wilayah" />
-            <CardContent>
-              <dl>
-                <BarisKeterangan
-                  label="Luas wilayah"
-                  nilai={padukuhan.luasWilayah}
-                />
-                <QueryBoundary
-                  isLoading={statistik.isLoading}
-                  isError={statistik.isError}
-                  data={statistik.data}
-                  loadingLabel="Memuat"
-                  errorMessage="Jumlah penduduk belum bisa ditampilkan."
-                >
-                  {(data) => (
-                    <>
-                      <BarisKeterangan
-                        label="Total populasi"
-                        nilai={`${formatAngka(data.totalPenduduk)} jiwa`}
-                      />
-                      <BarisKeterangan
-                        label="Jumlah RW"
-                        nilai={`${data.perRw.length} RW`}
-                      />
-                      <BarisKeterangan
-                        label="Jumlah RT"
-                        nilai={`${data.perRw.reduce((n, rw) => n + rw.perRt.length, 0)} RT`}
-                      />
-                    </>
-                  )}
-                </QueryBoundary>
-                <BarisKeterangan label="Kalurahan" nilai={padukuhan.desa} />
-                <BarisKeterangan
-                  label="Kapanewon"
-                  nilai={padukuhan.kapanewon}
-                />
-              </dl>
-            </CardContent>
-          </Card>
+          <div data-apple-fade data-apple-delay="1">
+            <Card className="h-fit">
+              <CardHeader title="Data Wilayah" />
+              <CardContent>
+                <dl>
+                  <BarisKeterangan
+                    label="Luas wilayah"
+                    nilai={padukuhan.luasWilayah}
+                  />
+                  <QueryBoundary
+                    isLoading={statistik.isLoading}
+                    isError={statistik.isError}
+                    data={statistik.data}
+                    loadingLabel="Memuat"
+                    errorMessage="Jumlah penduduk belum bisa ditampilkan."
+                  >
+                    {(data) => (
+                      <>
+                        <BarisKeterangan
+                          label="Total populasi"
+                          nilai={`${formatAngka(data.totalPenduduk)} jiwa`}
+                        />
+                        <BarisKeterangan
+                          label="Jumlah RW"
+                          nilai={`${data.perRw.length} RW`}
+                        />
+                        <BarisKeterangan
+                          label="Jumlah RT"
+                          nilai={`${data.perRw.reduce((n, rw) => n + rw.perRt.length, 0)} RT`}
+                        />
+                      </>
+                    )}
+                  </QueryBoundary>
+                  <BarisKeterangan label="Kalurahan" nilai={padukuhan.desa} />
+                  <BarisKeterangan
+                    label="Kapanewon"
+                    nilai={padukuhan.kapanewon}
+                  />
+                </dl>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
       <section className="border-y border-slate-200 bg-surface py-8 sm:py-12 lg:py-14">
         <div className={WADAH}>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-            Struktur Organisasi Padukuhan
-          </h2>
-          <div className="mt-5 sm:mt-8">
+          <div data-apple-fade>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+              Struktur Organisasi Padukuhan
+            </h2>
+          </div>
+          <div data-apple-fade className="mt-5 sm:mt-8">
             <BaganOrganisasi />
           </div>
         </div>
       </section>
 
       <section className={`${WADAH} py-8 sm:py-12 lg:py-14`}>
-        <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-slate-900">
-          Peta & Letak Wilayah
-        </h2>
+        <div data-apple-fade>
+          <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-slate-900">
+            Peta & Letak Wilayah
+          </h2>
+        </div>
 
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+          <div data-apple-fade className="lg:col-span-2">
             <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] lg:aspect-auto lg:h-full min-h-[11rem] sm:min-h-[14rem] lg:min-h-full" />
           </div>
 
-          <Card className="h-fit">
-            <CardHeader
-              title="Batas Wilayah"
-              description="Wilayah yang berbatasan langsung"
-            />
+          <div data-apple-fade data-apple-delay="1">
+            <Card className="h-fit">
+              <CardHeader
+                title="Batas Wilayah"
+                description="Wilayah yang berbatasan langsung"
+              />
             <CardContent>
               <dl>
                 {batasWilayah(padukuhan).map((b) => (
@@ -121,7 +128,8 @@ export default function ProfilPage() {
             </CardContent>
           </Card>
         </div>
-      </section>
+      </div>
+    </section>
     </div>
   );
 }

@@ -16,64 +16,76 @@ export default function HomePage() {
       <HeroBeranda />
 
       <section className={`${WADAH} py-8 sm:py-16`}>
-        <JudulBagian judul="JELAJAHI PADUKUHAN" className="uppercase" />
+        <div data-apple-fade>
+          <JudulBagian judul="JELAJAHI PADUKUHAN" className="uppercase" />
+        </div>
         <div className="grid gap-2.5 sm:gap-6 md:grid-cols-3">
-          <KartuJelajah
-            ke={paths.profil}
-            judul="Profil Padukuhan"
-            deskripsi="Struktur kelembagaan dan informasi wilayah."
-            ikon={
-              <img
-                src={ikonProfil}
-                alt=""
-                width={144}
-                height={144}
-                loading="lazy"
-                decoding="async"
-                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
-              />
-            }
-          />
-          <KartuJelajah
-            ke={paths.infografis}
-            judul="Statistik Kependudukan"
-            deskripsi="Visualisasi data demografi dan sebaran warga."
-            ikon={
-              <img
-                src={ikonStatistik}
-                alt=""
-                width={144}
-                height={144}
-                loading="lazy"
-                decoding="async"
-                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
-              />
-            }
-          />
-          <KartuJelajah
-            ke={paths.berita}
-            judul="Kabar & Agenda Warga"
-            deskripsi="Informasi kegiatan terkini dan agenda masyarakat."
-            ikon={
-              <img
-                src={ikonKabar}
-                alt=""
-                width={144}
-                height={144}
-                loading="lazy"
-                decoding="async"
-                className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
-              />
-            }
-          />
+          <div data-apple-fade data-apple-delay="1">
+            <KartuJelajah
+              ke={paths.profil}
+              judul="Profil Padukuhan"
+              deskripsi="Struktur kelembagaan dan informasi wilayah."
+              ikon={
+                <img
+                  src={ikonProfil}
+                  alt=""
+                  width={144}
+                  height={144}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                />
+              }
+            />
+          </div>
+          <div data-apple-fade data-apple-delay="2">
+            <KartuJelajah
+              ke={paths.infografis}
+              judul="Statistik Kependudukan"
+              deskripsi="Visualisasi data demografi dan sebaran warga."
+              ikon={
+                <img
+                  src={ikonStatistik}
+                  alt=""
+                  width={144}
+                  height={144}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                />
+              }
+            />
+          </div>
+          <div data-apple-fade data-apple-delay="3">
+            <KartuJelajah
+              ke={paths.berita}
+              judul="Kabar & Agenda Warga"
+              deskripsi="Informasi kegiatan terkini dan agenda masyarakat."
+              ikon={
+                <img
+                  src={ikonKabar}
+                  alt=""
+                  width={144}
+                  height={144}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                />
+              }
+            />
+          </div>
         </div>
       </section>
 
       <RingkasanPenduduk />
 
       <section className={`${WADAH} py-10 sm:py-16`}>
-        <JudulBagian judul="PETA PADUKUHAN" className="uppercase" />
-        <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1600/514] min-h-[11rem] sm:min-h-[14rem]" />
+        <div data-apple-fade>
+          <JudulBagian judul="PETA PADUKUHAN" className="uppercase" />
+        </div>
+        <div data-apple-fade>
+          <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1600/514] min-h-[11rem] sm:min-h-[14rem]" />
+        </div>
       </section>
 
       <BeritaTerkini />

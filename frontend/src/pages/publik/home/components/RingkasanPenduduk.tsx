@@ -18,7 +18,9 @@ export function RingkasanPenduduk() {
   return (
     <section className="border-y border-slate-200 bg-surface py-10 sm:py-16">
       <div className={WADAH}>
-        <JudulBagian judul="ADMINISTRASI PENDUDUK" className="uppercase" />
+        <div data-apple-fade>
+          <JudulBagian judul="ADMINISTRASI PENDUDUK" className="uppercase" />
+        </div>
 
         <QueryBoundary
           isLoading={statistik.isLoading}
@@ -29,7 +31,10 @@ export function RingkasanPenduduk() {
         >
           {(data) => (
             <>
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
+              <div
+                data-apple-fade
+                className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4"
+              >
                 <StatCard
                   label="Total Penduduk"
                   value={formatAngka(data.totalPenduduk)}
@@ -52,7 +57,10 @@ export function RingkasanPenduduk() {
                 />
               </div>
 
-              <div className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 text-white shadow-2xl shadow-purple-950/50 sm:p-10 lg:p-12">
+              <div
+                data-apple-fade
+                className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 text-white shadow-2xl shadow-purple-950/50 sm:p-10 lg:p-12"
+              >
                 {}
                 <img
                   src={petaSatelit}

@@ -31,36 +31,38 @@ export function StatistikPanelView({
     >
       {(data) => (
         <div className="grid items-stretch gap-6 lg:grid-cols-2">
-          <Card className="flex flex-col">
-            <CardHeader title="Sebaran Warga per RW" />
-            <div className="flex-1 p-4">
-              <DistribusiPieChart
-                data={data.distribusi}
-                height={420}
-                showLegend={false}
-                warna={CHART_KATEGORI_COLORS}
-                labelIrisan={(i) => {
-                  const baris = data.baris[i];
-                  return baris ? [baris.label, baris.persenTeks] : [];
-                }}
-                center={
-                  <>
-                    {}
-                    <CountUp
-                      value={data.total}
-                      className="text-4xl sm:text-5xl lg:text-6xl font-bold tabular-nums leading-none text-slate-900"
-                    />
-                    <span className="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">
-                      jiwa
-                    </span>
-                  </>
-                }
-              />
-            </div>
-          </Card>
+          <div data-apple-fade>
+            <Card className="flex flex-col h-full">
+              <CardHeader title="Sebaran Warga per RW" />
+              <div className="flex-1 p-4">
+                <DistribusiPieChart
+                  data={data.distribusi}
+                  height={420}
+                  showLegend={false}
+                  warna={CHART_KATEGORI_COLORS}
+                  labelIrisan={(i) => {
+                    const baris = data.baris[i];
+                    return baris ? [baris.label, baris.persenTeks] : [];
+                  }}
+                  center={
+                    <>
+                      {/* Teks total warga di tengah donat */}
+                      <CountUp
+                        value={data.total}
+                        className="text-4xl sm:text-5xl lg:text-6xl font-bold tabular-nums leading-none text-slate-900"
+                      />
+                      <span className="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">
+                        jiwa
+                      </span>
+                    </>
+                  }
+                />
+              </div>
+            </Card>
+          </div>
 
-          {}
-          <div className="flex flex-col gap-4">
+          {/* Kolom kanan: kartu ringkas + daftar RW */}
+          <div data-apple-fade data-apple-delay="1" className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
               {data.stat.map((stat) => (
                 <StatCard

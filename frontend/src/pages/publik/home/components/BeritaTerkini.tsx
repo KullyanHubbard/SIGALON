@@ -15,18 +15,20 @@ export function BeritaTerkini() {
   return (
     <section className="border-t border-slate-200 bg-surface py-10 sm:py-16">
       <div className={WADAH}>
-        <JudulBagian
-          judul="BERITA TERKINI"
-          className="uppercase"
-          aksi={
-            <Link
-              to={paths.berita}
-              className={buttonClass({ variant: 'primary' })}
-            >
-              Lihat Semua Berita
-            </Link>
-          }
-        />
+        <div data-apple-fade>
+          <JudulBagian
+            judul="BERITA TERKINI"
+            className="uppercase"
+            aksi={
+              <Link
+                to={paths.berita}
+                className={buttonClass({ variant: 'primary' })}
+              >
+                Lihat Semua Berita
+              </Link>
+            }
+          />
+        </div>
 
         <QueryBoundary
           isLoading={berita.isLoading}
@@ -40,8 +42,10 @@ export function BeritaTerkini() {
         >
           {(daftar) => (
             <div className="grid gap-6 md:grid-cols-3">
-              {daftar.slice(0, CACAH_TAMPIL).map((b) => (
-                <BeritaCard key={b.id} berita={b} />
+              {daftar.slice(0, CACAH_TAMPIL).map((b, idx) => (
+                <div key={b.id} data-apple-fade data-apple-delay={idx + 1}>
+                  <BeritaCard berita={b} />
+                </div>
               ))}
             </div>
           )}

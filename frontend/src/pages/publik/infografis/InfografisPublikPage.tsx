@@ -38,7 +38,10 @@ export default function InfografisPublikPage() {
         >
           {(statistik) => (
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
+              <div
+                data-apple-fade
+                className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4"
+              >
                 <StatCard
                   label="Total Penduduk"
                   value={formatAngka(statistik.totalPenduduk)}
@@ -62,8 +65,10 @@ export default function InfografisPublikPage() {
               </div>
 
               <div className="grid gap-6 lg:grid-cols-2">
-                {toPanelDemografi(statistik).map((panel) => (
-                  <PanelDistribusiCard key={panel.id} panel={panel} />
+                {toPanelDemografi(statistik).map((panel, idx) => (
+                  <div key={panel.id} data-apple-fade data-apple-delay={idx + 1}>
+                    <PanelDistribusiCard panel={panel} />
+                  </div>
                 ))}
               </div>
             </div>

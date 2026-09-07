@@ -53,13 +53,15 @@ export default function BeritaDetailPage() {
                   </span>
                 </div>
 
-                <FotoBerita
-                  berita={berita}
-                  className="mt-6 aspect-[16/9] w-full rounded-xl object-cover sm:aspect-auto sm:h-96"
-                />
+                <div data-apple-fade>
+                  <FotoBerita
+                    berita={berita}
+                    className="mt-6 aspect-[16/9] w-full rounded-xl object-cover sm:aspect-auto sm:h-96"
+                  />
+                </div>
 
-                {}
                 <div
+                  data-apple-fade
                   className="isi-berita mt-8 text-base text-slate-700 overflow-hidden break-words"
                   dangerouslySetInnerHTML={{ __html: berita.isi }}
                 />
@@ -67,8 +69,10 @@ export default function BeritaDetailPage() {
             )}
           </QueryBoundary>
 
-          {}
-          <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
+          <div
+            data-apple-fade
+            className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6"
+          >
             <Link
               to={paths.berita}
               className={buttonClass({ variant: 'outline' })}
@@ -81,7 +85,7 @@ export default function BeritaDetailPage() {
 
         {}
         {terkini.length > 0 && (
-          <aside className="lg:sticky lg:top-24 lg:h-fit">
+          <aside data-apple-fade className="lg:sticky lg:top-24 lg:h-fit">
             <Card>
               <CardHeader title="Berita Terkini" />
               <div className="space-y-1 p-3">

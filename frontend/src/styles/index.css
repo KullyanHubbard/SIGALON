@@ -111,3 +111,70 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875em;
 }
+
+/* ==========================================================================
+   Animasi Scroll Fade Gaya Apple (Eksklusif Mobile < 1024px)
+   Elemen meluncur naik 60px, membesar (scale 0.92 -> 1.0), memudar masuk,
+   serta transisi blur-to-crisp yang sangat jelas & nyata terlihat saat di-scroll.
+   Desktop (>= 1024px) DIJAMIN 100% NORMAL & TIDAK TERPENGARUH.
+   ========================================================================== */
+@media (max-width: 1023px) {
+  [data-apple-fade] {
+    opacity: 0;
+    transform: translateY(60px) scale(0.92);
+    filter: blur(8px);
+    transition:
+      opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform, filter;
+  }
+
+  [data-apple-fade].apple-fade-in,
+  [data-apple-fade][data-apple-revealed="true"] {
+    opacity: 1 !important;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+
+  /* Setelah transisi selesai, bebaskan transform & filter GPU agar tidak memakan memori tile HP */
+  [data-apple-fade].apple-fade-done {
+    transform: none !important;
+    filter: none !important;
+    will-change: auto !important;
+  }
+
+  /* Efek beruntun (stagger delay ala Apple) */
+  [data-apple-delay="1"] {
+    transition-delay: 0.08s;
+  }
+  [data-apple-delay="2"] {
+    transition-delay: 0.16s;
+  }
+  [data-apple-delay="3"] {
+    transition-delay: 0.24s;
+  }
+  [data-apple-delay="4"] {
+    transition-delay: 0.32s;
+  }
+}
+
+/* Proteksi ketat Desktop: Dinetralkan 100% normal */
+@media (min-width: 1024px) {
+  [data-apple-fade] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+/* Aksesibilitas: Preferensi reduced motion langsung tampil tanpa animasi */
+@media (prefers-reduced-motion: reduce) {
+  [data-apple-fade] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}

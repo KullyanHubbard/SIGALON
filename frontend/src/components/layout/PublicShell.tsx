@@ -1,5 +1,6 @@
 import { Mail, Phone } from 'lucide-react';
 import { Link, Outlet } from 'react-router-dom';
+import { useAppleScrollFade } from '@/hooks/use-apple-scroll-fade';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { paths } from '@/routes/paths';
 import { BarKredit } from './BarKredit';
@@ -15,6 +16,7 @@ const JELAJAHI = [
 
 export function PublicShell() {
   const padukuhan = usePadukuhan();
+  useAppleScrollFade();
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">

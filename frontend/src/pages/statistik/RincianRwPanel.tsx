@@ -35,7 +35,10 @@ export function RincianRwPanel({
       >
         {(vm) => (
           <div className="space-y-6">
-            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4">
+            <div
+              data-apple-fade
+              className="grid grid-cols-2 gap-2.5 sm:gap-4 xl:grid-cols-4"
+            >
               {vm.stat.map((stat) => (
                 <StatCard
                   key={stat.id}
@@ -46,8 +49,10 @@ export function RincianRwPanel({
             </div>
 
             <div className="grid gap-6 xl:grid-cols-2">
-              {vm.panels.map((panel) => (
-                <PanelDistribusiCard key={panel.id} panel={panel} />
+              {vm.panels.map((panel, idx) => (
+                <div key={panel.id} data-apple-fade data-apple-delay={idx + 1}>
+                  <PanelDistribusiCard panel={panel} />
+                </div>
               ))}
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { useAppleScrollFade } from '@/hooks/use-apple-scroll-fade';
 import { AccountButton } from './AccountButton';
 import { BarKredit } from './BarKredit';
 import { PublicSidebar } from './PublicSidebar';
@@ -18,6 +19,7 @@ export function PublicLandingLayout({
   children,
 }: PublicLandingLayoutProps) {
   const [navOpen, setNavOpen] = useState(false);
+  useAppleScrollFade();
 
   return (
     <div className="flex min-h-screen flex-col lg:grid lg:h-dvh lg:min-h-0 lg:grid-cols-[20rem_1fr] lg:overflow-hidden">
