@@ -43,7 +43,12 @@ export function BeritaTerkini() {
           {(daftar) => (
             <div className="grid gap-6 md:grid-cols-3">
               {daftar.slice(0, CACAH_TAMPIL).map((b, idx) => (
-                <div key={b.id} data-apple-fade data-apple-delay={idx + 1}>
+                <div
+                  key={b.id}
+                  data-apple-fade
+                  data-apple-delay={idx + 1}
+                  className="h-full flex flex-col"
+                >
                   <BeritaCard berita={b} />
                 </div>
               ))}

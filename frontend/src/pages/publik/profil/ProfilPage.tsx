@@ -1,6 +1,6 @@
 import { WADAH } from '@/components/layout/wadah';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
-import { PetaPadukuhan } from '@/components/ui/PetaPadukuhan';
+import { PetaOpenStreetMap } from '@/components/ui/PetaOpenStreetMap';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
@@ -106,7 +106,7 @@ export default function ProfilPage() {
 
         <div className="grid gap-6 lg:gap-8 lg:grid-cols-3">
           <div data-apple-fade className="lg:col-span-2">
-            <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] lg:aspect-auto lg:h-full min-h-[11rem] sm:min-h-[14rem] lg:min-h-full" />
+            <PetaOpenStreetMap className="w-full h-full min-h-[440px]" />
           </div>
 
           <div data-apple-fade data-apple-delay="1">

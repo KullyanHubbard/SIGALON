@@ -83,7 +83,7 @@ nama yang **dibaca user** — itu selalu SIGALON (berganti dari SIDUK pada
 3 September 2026, mengikuti logo yang sudah terpasang).
 
 Kunci `localStorage` berawalan `siduk.`
-(ukuran teks, penanda kunjungan) sengaja tidak berganti agar tidak
+(ukuran teks) sengaja tidak berganti agar tidak
 mengosongkan preferensi pengunjung yang sudah ada. Nama berkas basis data
 telah dipisah rapi menjadi `data/sigalon.db` (data kependudukan & administrasi)
 dan `data/portal.db` (portal berita & profil publik).
@@ -517,8 +517,6 @@ Kontrak endpoint yang **sudah diimplementasikan** (bentuknya sinkron dengan
 | PATCH  | `/penduduk/{id}`                 | ubah data warga; RT/RW hanya Dukuh — PENGURUS           |
 | GET    | `/infografis`                    | agregat lengkap — semua pengurus                        |
 | GET    | `/publik/statistik`              | cacah per RW + cacah kepala keluarga + 10 pekerjaan terbanyak; `?periode=YYYY-MM` memutar mundur ke bulan itu — **tanpa auth** |
-| POST   | `/publik/kunjungan`              | tambah 1 ke hitungan kunjungan hari ini, kembalikan totalnya — **tanpa auth** |
-| GET    | `/publik/kunjungan`              | hitungan kunjungan hari ini tanpa menambah — **tanpa auth** |
 | GET    | `/publik/struktur-organisasi`    | bagan Dukuh/RW/RT + nama pemegang jabatan aktif — **tanpa auth** |
 | GET    | `/publik/berita`                 | semua berita, terbaru dulu — **tanpa auth**            |
 | GET    | `/publik/berita/{slug}`          | satu berita menurut slug — **tanpa auth**              |
@@ -640,13 +638,8 @@ mengirim seluruh foto sekaligus, jadi pindahkan ke berkas + StaticFiles begitu
 beritanya puluhan. **Berita BOLEH dihapus lewat API**, beda dari warga dan akun:
 yang ini isi situs, bukan catatan kependudukan.
 
-**Footer publik** (`components/layout/PublicShell.tsx`) punya tiga bagian
+**Footer publik** (`components/layout/PublicShell.tsx`) punya dua bagian
 tambahan di luar footer statis biasa:
-- **Kunjungan hari ini** — badge kiri-bawah, dari tabel `kunjungan` (satu baris
-  per tanggal, `app/data/kunjungan.py`). Ditambah SEKALI per browser per hari
-  (dijaga `localStorage` di `features/kunjungan/hooks/use-kunjungan.ts`), jadi
-  ini cacah per-BROWSER, bukan pengunjung unik — dua orang berbagi satu
-  komputer balai desa terhitung satu.
 - **Tombol Aksesibilitas** (`AksesibilitasWidget.tsx`) — murni klien, menskalakan
   `font-size` akar dokumen (100/115/130%), tersimpan `localStorage`. Tidak ada
   toggle kontras; tambahkan kalau memang diminta.

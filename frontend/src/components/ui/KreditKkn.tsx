@@ -3,9 +3,7 @@ import { cn } from '@/lib/utils';
 
 interface KreditKknProps {
   className?: string;
-
   kiri?: ReactNode;
-
   kanan?: ReactNode;
 }
 
@@ -13,7 +11,7 @@ export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
   return (
     <footer
       className={cn(
-        'sticky bottom-0 z-30 flex flex-col items-center justify-between gap-2 border-t border-slate-200 bg-surface px-4 py-2 text-slate-600 sm:flex-row sm:gap-3 sm:py-2',
+        'sticky bottom-0 z-30 flex w-full flex-col items-center justify-between gap-2 border-t border-slate-200 bg-surface px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-slate-600 sm:flex-row sm:gap-3 sm:py-2 sm:pb-2 [transform:translate3d(0,0,0)]',
         className,
       )}
     >
@@ -21,7 +19,7 @@ export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
         {kiri}
         <div className="flex items-center gap-2 sm:hidden">{kanan}</div>
       </div>
-      <p className="text-center text-[14px] font-medium text-slate-600 sm:flex-1 sm:text-[15px]">
+      <p className="text-center text-[13px] sm:text-[15px] font-medium text-slate-600 sm:flex-1">
         Dikembangkan oleh{' '}
         <span className="font-bold text-slate-900">
           Tim KKNM-29228 UNY
@@ -32,3 +30,5 @@ export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
     </footer>
   );
 }
+
+

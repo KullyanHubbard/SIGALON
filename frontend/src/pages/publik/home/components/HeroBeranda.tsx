@@ -28,10 +28,12 @@ export function HeroBeranda() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-200 sm:text-sm">
             {padukuhan.desa} · {padukuhan.kapanewon}
           </p>
-          <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+          <h1 className="mt-2 text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
             Selamat Datang di Website Resmi{' '}
             <span className="text-amber-300">{padukuhan.namaLengkap}</span>
           </h1>
+
+
           <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-brand-100 sm:mt-5 sm:text-base lg:mx-0">
             Pusat informasi resmi layanan kependudukan, statistik wilayah, dan
             kabar kegiatan masyarakat {padukuhan.namaLengkap}, {padukuhan.desa}.

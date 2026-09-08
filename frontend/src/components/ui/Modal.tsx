@@ -1,17 +1,19 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
+  className?: string;
 }
 
 const BISA_FOKUS =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable="true"], [tabindex]:not([tabindex="-1"])';
 
-export function Modal({ open, onClose, title, children }: ModalProps) {
+export function Modal({ open, onClose, title, children, className }: ModalProps) {
   const kotak = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,7 +69,10 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        className="relative z-10 flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-surface shadow-xl"
+        className={cn(
+          'relative z-10 flex max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh] w-full max-w-2xl flex-col rounded-xl bg-surface shadow-xl',
+          className,
+        )}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5">
           <h2 className="text-base font-semibold text-slate-900">{title}</h2>

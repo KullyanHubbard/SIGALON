@@ -46,6 +46,11 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
         to: paths.admin.profil,
         aksen: CHART_KATEGORI_COLORS[7],
       },
+      {
+        label: 'Lokasi Fasilitas & Perangkat',
+        to: paths.admin.lokasi,
+        aksen: CHART_KATEGORI_COLORS[4],
+      },
       riwayat,
     ];
   }

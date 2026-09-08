@@ -11,6 +11,7 @@ interface QueryBoundaryProps<T> {
 
   isEmpty?: (data: T) => boolean;
   loadingLabel?: string;
+  loadingFallback?: ReactNode;
   errorMessage?: string;
   emptyTitle?: string;
   emptyDescription?: string;
@@ -25,15 +26,18 @@ export function QueryBoundary<T>({
   data,
   isEmpty,
   loadingLabel,
+  loadingFallback,
   errorMessage = 'Gagal memuat data. Silakan muat ulang halaman.',
   emptyTitle = 'Tidak ada data',
   emptyDescription,
   empty,
   children,
 }: QueryBoundaryProps<T>) {
-  if (isLoading) return <LoadingBlock label={loadingLabel} />;
+  if (isLoading)
+    return <>{loadingFallback ?? <LoadingBlock label={loadingLabel} />}</>;
   if (isError || data === undefined)
     return <Alert tone="error">{errorMessage}</Alert>;
+
 
   if (data === null || isEmpty?.(data)) {
     return (

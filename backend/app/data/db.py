@@ -183,15 +183,6 @@ CREATE INDEX IF NOT EXISTS idx_mutasi_pada ON mutasi(pada);
 """
 
 SKEMA_PORTAL = """
--- Penghitung kunjungan portal publik. Satu baris per tanggal; frontend
--- menjaga "sekali per browser per hari" lewat `localStorage`, jadi ini BUKAN
--- pengunjung unik — dua orang berbagi satu komputer balai desa terhitung satu.
--- Cukup untuk angka hiasan di footer (lihat `app/data/kunjungan.py`).
-CREATE TABLE IF NOT EXISTS kunjungan (
-    tanggal TEXT PRIMARY KEY,
-    jumlah  INTEGER NOT NULL DEFAULT 0
-);
-
 -- Nama Ketua LPM untuk bagan struktur organisasi publik — satu baris
 -- tunggal (id selalu 1). LPM bukan salah satu dari empat peran akun, jadi
 -- tidak punya baris di `pengurus` dan tidak ikut sistem ganti-jabatan yang
@@ -200,6 +191,29 @@ CREATE TABLE IF NOT EXISTS lpm (
     id       INTEGER PRIMARY KEY CHECK (id = 1),
     nama     TEXT NOT NULL DEFAULT '',
     warga_id TEXT
+);
+
+-- Tabel metadata portal (misal status inisialisasi titik lokasi)
+CREATE TABLE IF NOT EXISTS portal_meta (
+    kunci TEXT PRIMARY KEY,
+    nilai TEXT NOT NULL
+);
+
+-- Titik lokasi fasilitas dan perangkat desa untuk peta interaktif
+CREATE TABLE IF NOT EXISTS titik_lokasi (
+    id            TEXT PRIMARY KEY,
+    nama          TEXT NOT NULL,
+    kategori      TEXT NOT NULL,
+    peran         TEXT,
+    kategoriLabel TEXT NOT NULL,
+    deskripsi     TEXT NOT NULL DEFAULT '',
+    x             REAL NOT NULL,
+    y             REAL NOT NULL,
+    lat           REAL,
+    lon           REAL,
+    googleMapsUrl TEXT,
+    ikon          TEXT NOT NULL DEFAULT 'balai',
+    urutan        INTEGER NOT NULL DEFAULT 0
 );
 
 -- Keterangan tetap padukuhan: nama wilayah, luas, kontak, sejarah, batas.
@@ -675,7 +689,7 @@ def _self_check() -> None:
             r[0]
             for r in conn_portal.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
         }
-        assert "berita" in tabel_portal and "kunjungan" in tabel_portal and "padukuhan" in tabel_portal and "lpm" in tabel_portal
+        assert "berita" in tabel_portal and "padukuhan" in tabel_portal and "lpm" in tabel_portal and "titik_lokasi" in tabel_portal
         assert "penduduk" not in tabel_portal
         conn_portal.close()
 

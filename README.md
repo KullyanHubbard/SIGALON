@@ -31,7 +31,7 @@ Terdapat 4 peran pengurus dengan batas kewenangan yang tegas:
 ### 5. Portal Publik (Akses Bebas Tanpa Login)
 * **Statistik Publik per Periode:** Menampilkan jumlah penduduk per RW, jumlah kepala keluarga, dan distribusi pekerjaan. Dilengkapi fitur **Filter Periode (Bulan & Tahun)** yang memutar mundur riwayat mutasi warga secara presisi.
 * **Bagan Struktur Organisasi Dinamis:** Terhubung langsung dengan akun pengurus aktif (Dukuh, RW, RT) serta Ketua LPM.
-* **Fitur Pendukung:** Berita padukuhan, penghitung statistik kunjungan publik, widget pengatur ukuran font (aksesibilitas), dan tombol pengaduan via email.
+* **Fitur Pendukung:** Berita padukuhan, widget pengatur ukuran font (aksesibilitas), dan tombol pengaduan via email.
 
 ---
 

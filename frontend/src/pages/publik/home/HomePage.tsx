@@ -20,7 +20,7 @@ export default function HomePage() {
           <JudulBagian judul="JELAJAHI PADUKUHAN" className="uppercase" />
         </div>
         <div className="grid gap-2.5 sm:gap-6 md:grid-cols-3">
-          <div data-apple-fade data-apple-delay="1">
+          <div data-apple-fade data-apple-delay="1" className="h-full flex flex-col">
             <KartuJelajah
               ke={paths.profil}
               judul="Profil Padukuhan"
@@ -38,7 +38,7 @@ export default function HomePage() {
               }
             />
           </div>
-          <div data-apple-fade data-apple-delay="2">
+          <div data-apple-fade data-apple-delay="2" className="h-full flex flex-col">
             <KartuJelajah
               ke={paths.infografis}
               judul="Statistik Kependudukan"
@@ -56,11 +56,11 @@ export default function HomePage() {
               }
             />
           </div>
-          <div data-apple-fade data-apple-delay="3">
+          <div data-apple-fade data-apple-delay="3" className="h-full flex flex-col">
             <KartuJelajah
               ke={paths.berita}
               judul="Kabar & Agenda Warga"
-              deskripsi="Informasi kegiatan terkini dan agenda masyarakat."
+              deskripsi="Informasi kegiatan terkini dan agenda warga."
               ikon={
                 <img
                   src={ikonKabar}
@@ -84,7 +84,7 @@ export default function HomePage() {
           <JudulBagian judul="PETA PADUKUHAN" className="uppercase" />
         </div>
         <div data-apple-fade>
-          <PetaPadukuhan className="w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[1600/514] min-h-[11rem] sm:min-h-[14rem]" />
+          <PetaPadukuhan className="w-full aspect-[2432/832] sm:min-h-[14rem]" />
         </div>
       </section>
 

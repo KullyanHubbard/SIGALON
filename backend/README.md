@@ -66,7 +66,7 @@ berhenti jadi contoh dan berubah jadi password Admin yang sungguhan.
 | `ADMIN_USERNAME` | ✅ | Username akun Admin pertama. Dipakai sekali, saat tabel `pengurus` masih kosong. |
 | `ADMIN_PASSWORD` | ✅ | Passwordnya. **Mengubahnya setelah akunnya terbentuk tidak berpengaruh apa-apa** — isi yang benar sejak awal. |
 | `DATABASE_PATH` | — | Path file SQLite data penduduk & pengurus, relatif dari `backend/`. Bawaan `./data/sigalon.db`. |
-| `PORTAL_DATABASE_PATH` | — | Path file SQLite portal publik (berita, padukuhan, lpm, kunjungan), relatif dari `backend/`. Bawaan `./data/portal.db`. |
+| `PORTAL_DATABASE_PATH` | — | Path file SQLite portal publik (berita, padukuhan, lpm), relatif dari `backend/`. Bawaan `./data/portal.db`. |
 | `SESI_TTL_JAM` | — | Umur sesi login. Bawaan 12. |
 | `CORS_ORIGINS` | — | Asal yang boleh memanggil API, dipisah koma. Tidak terpakai kalau frontend diproksikan lewat Vite (`/api`). |
 

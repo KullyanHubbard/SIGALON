@@ -7,7 +7,7 @@ import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { StatCard } from '@/components/ui/StatCard';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
-import { formatAngka } from '@/lib/utils';
+import { cn, formatAngka } from '@/lib/utils';
 import { toPanelDemografi } from './view-model';
 import { WADAH } from '@/components/layout/wadah';
 
@@ -66,8 +66,16 @@ export default function InfografisPublikPage() {
 
               <div className="grid gap-6 lg:grid-cols-2">
                 {toPanelDemografi(statistik).map((panel, idx) => (
-                  <div key={panel.id} data-apple-fade data-apple-delay={idx + 1}>
-                    <PanelDistribusiCard panel={panel} />
+                  <div
+                    key={panel.id}
+                    data-apple-fade
+                    data-apple-delay={idx + 1}
+                    className={cn(
+                      'flex h-full flex-col',
+                      panel.lebarPenuh && 'lg:col-span-2',
+                    )}
+                  >
+                    <PanelDistribusiCard panel={panel} className="h-full" />
                   </div>
                 ))}
               </div>

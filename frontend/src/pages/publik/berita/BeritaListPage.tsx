@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
+import { GridBeritaSkeleton } from '@/components/ui/Skeleton';
 import { BeritaCard } from '@/features/berita/components/BeritaCard';
 import { useBeritaList } from '@/features/berita/hooks/use-berita';
 import { WADAH } from '@/components/layout/wadah';
@@ -28,12 +29,14 @@ export default function BeritaListPage() {
           isLoading={isLoading}
           isError={isError}
           data={data}
+          loadingFallback={<GridBeritaSkeleton />}
           isEmpty={(d) => d.length === 0}
           loadingLabel="Memuat berita"
           errorMessage="Berita belum bisa ditampilkan."
           emptyTitle="Belum ada berita"
           emptyDescription="Kabar kegiatan padukuhan akan muncul di sini."
         >
+
           {(daftar) => {
             const totalHalaman = Math.ceil(daftar.length / PER_HALAMAN);
             const halamanAktif = Math.min(halaman, Math.max(1, totalHalaman));

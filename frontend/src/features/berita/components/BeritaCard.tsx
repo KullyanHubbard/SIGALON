@@ -35,13 +35,22 @@ export function FotoBerita({
   );
 }
 
-export function BeritaCard({ berita }: { berita: Berita }) {
+export function BeritaCard({
+  berita,
+  className,
+}: {
+  berita: Berita;
+  className?: string;
+}) {
   const pembuka = keRingkasan(berita.isi);
 
   return (
     <Link
       to={paths.beritaDetail(berita.slug)}
-      className="focus-ring group flex flex-col overflow-hidden rounded-xl border-1 border-black bg-surface shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-brand-300 motion-reduce:hover:translate-y-0"
+      className={cn(
+        'focus-ring group flex h-full flex-col overflow-hidden rounded-xl border-1 border-black bg-surface shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-brand-300 motion-reduce:hover:translate-y-0',
+        className,
+      )}
     >
       <div className="overflow-hidden">
         <FotoBerita

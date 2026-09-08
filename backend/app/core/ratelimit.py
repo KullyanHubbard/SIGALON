@@ -19,8 +19,8 @@ jumlah proses.
 
 import time
 
-JENDELA_DETIK = 15 * 60
-BATAS_GAGAL = 5
+JENDELA_DETIK = 2 * 60
+BATAS_GAGAL = 10
 
 # username -> daftar waktu gagal (monotonic). Hanya percobaan GAGAL yang dicatat.
 _gagal: dict[str, list[float]] = {}

@@ -25,6 +25,8 @@ export const paths = {
 
     profil: '/admin/profil',
 
+    lokasi: '/admin/lokasi',
+
     riwayat: '/admin/riwayat',
   },
 } as const;

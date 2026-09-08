@@ -43,6 +43,9 @@ const KelolaBeritaPage = lazy(
 const ProfilPadukuhanPage = lazy(
   () => import('@/pages/admin/profil/ProfilPadukuhanPage'),
 );
+const LokasiWilayahPage = lazy(
+  () => import('@/pages/admin/lokasi/LokasiWilayahPage'),
+);
 const NotFoundPage = lazy(() => import('@/pages/not-found/NotFoundPage'));
 
 export function AppRoutes() {
@@ -85,6 +88,10 @@ export function AppRoutes() {
                 <Route
                   path={paths.admin.profil}
                   element={<ProfilPadukuhanPage />}
+                />
+                <Route
+                  path={paths.admin.lokasi}
+                  element={<LokasiWilayahPage />}
                 />
               </Route>
             </Route>

@@ -10,7 +10,6 @@ from app.data.agregat import (
     format_rt,
     format_rw,
 )
-from app.data import kunjungan
 from app.data import lpm as data_lpm
 from app.data import pengurus as data_pengurus
 from app.data.store import (
@@ -101,20 +100,6 @@ def statistik_publik(
             for rw, warga in _kelompokkan(semua, lambda p: p.alamat.rw)
         ],
     )
-
-
-@router.post("/publik/kunjungan")
-def catat_kunjungan() -> dict[str, int]:
-    """Tambah 1 ke hitungan kunjungan hari ini. Dipanggil frontend sekali per
-    browser per hari — lihat `app/data/kunjungan.py` untuk batasannya."""
-    return {"jumlah": kunjungan.tambah()}
-
-
-@router.get("/publik/kunjungan")
-def lihat_kunjungan() -> dict[str, int]:
-    """Hitungan hari ini tanpa menambah — dipanggil browser yang sudah
-    mencatat kunjungannya untuk hari yang sama."""
-    return {"jumlah": kunjungan.hari_ini()}
 
 
 @router.get("/publik/struktur-organisasi", response_model=StrukturOrganisasiPublik)

@@ -9,6 +9,7 @@ from app.api.routers import (
     auth,
     berita,
     infografis,
+    lokasi,
     padukuhan,
     penduduk,
     pergantian,
@@ -17,6 +18,7 @@ from app.api.routers import (
 )
 from app.core.config import settings
 from app.data.berita import migrasi_foto_ke_disk
+from app.data.lokasi import seed_bawaan as seed_titik_lokasi
 from app.data.pengurus import bootstrap
 from app.data.pengurus import daftar as daftar_pengurus
 from app.data.store import semua_penduduk
@@ -77,6 +79,7 @@ app.include_router(pergantian.router)
 app.include_router(audit.router)
 app.include_router(berita.router)
 app.include_router(padukuhan.router)
+app.include_router(lokasi.router)
 
 
 @app.get("/health")
@@ -93,6 +96,7 @@ def _startup() -> None:
     """
     bootstrap()
     migrasi_foto_ke_disk()
+    seed_titik_lokasi()
     print("=== SIGALON backend ===")
     print(f"  Akun pengurus: {len(daftar_pengurus())} akun terdaftar")
     jumlah = len(semua_penduduk())

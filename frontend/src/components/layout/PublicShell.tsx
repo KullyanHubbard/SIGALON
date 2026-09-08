@@ -19,7 +19,7 @@ export function PublicShell() {
   useAppleScrollFade();
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen min-h-dvh flex-col bg-slate-50">
       <PublicNavbar />
       <main className="flex-1">
         <Outlet />
@@ -82,7 +82,7 @@ export function PublicShell() {
       </div>
 
       {}
-      <BarKredit className="min-h-14 px-4 py-1.5 sm:px-6 lg:px-8" />
+      <BarKredit className="min-h-14 shrink-0 px-4 py-1.5 sm:px-6 lg:px-8" />
     </div>
   );
 }
