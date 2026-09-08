@@ -209,6 +209,24 @@ Komponen tidak pernah memanggil `apiClient` langsung — selalu lewat `pendudukA
 
 - Tailwind utility-first. Hindari file CSS terpisah kecuali untuk global (`styles/index.css`).
 - Kelas panjang: urutkan otomatis oleh `prettier-plugin-tailwindcss` (jalankan `npm run format`).
+- **Warna Tegas & Profesional**: Hindari warna fill samar-samar/pastel kusam (seperti `bg-purple-100`, `bg-slate-100` berlebih). Gunakan warna solid, kontras tinggi, dan rapi.
+- **Border**: Hindari `border` telanjang tanpa ukuran karena default Tailwind di proyek ini adalah 4px (`borderWidth: { DEFAULT: '4px' }`). Selalu gunakan `border-1` untuk garis halus 1px atau gunakan tombol borderless.
+- **Konvensi Titik Lokasi (`features/titik-lokasi`)**:
+  - Warna semantik terpusat di `features/titik-lokasi/warna.ts` (`dapatkanTemaTitik`):
+    - Masjid/Ibadah: Emerald Green (`bg-emerald-600` / `bg-emerald-700` / `text-emerald-600`)
+    - Pos Ronda/Keamanan: Cobalt Blue (`bg-blue-600` / `bg-blue-700` / `text-blue-600`)
+    - Posyandu/Sosial: Rose Red (`bg-rose-600` / `bg-rose-700` / `text-rose-600`)
+    - Balai Padukuhan: Warm Amber (`bg-amber-600` / `text-amber-600`)
+    - Perangkat RW: Ocean Cyan (`bg-cyan-700` / `text-cyan-700`)
+    - Perangkat RT: Sea Teal (`bg-teal-700` / `text-teal-700`)
+    - Kepala Dukuh: Royal Purple (`bg-purple-700` / `text-purple-700`)
+    - Pamong/Perangkat Umum: Royal Indigo (`bg-indigo-700` / `text-indigo-700`)
+  - Ikon lokasi pada baris daftar ditampilkan langsung (`h-6 w-6`) tanpa padding atau kotak pembungkus.
+  - Tombol **Edit**: teks ringkas "Edit", berlatar putih dengan border tipis (`border-1 border-slate-300 bg-white text-slate-800 hover:bg-slate-100`), tidak menggunakan warna hitam atau ungu.
+  - Tombol **Hapus** (sampah): berpasangan seimbang dengan `border-1 border-slate-300 bg-white text-rose-600 hover:bg-rose-50` agar tidak timpang secara visual.
+- **Konvensi Kelola Berita (`pages/admin/berita`)**:
+  - Tombol **Sunting**: Hitam solid (`bg-slate-900 hover:bg-slate-800 text-white font-bold`) dengan ikon `Pencil`.
+  - Tombol **Hapus**: Merah solid (`bg-rose-600 hover:bg-rose-700 text-white font-bold`) dengan ikon `Trash2`.
 
 
 ### Data fetching (React Query)

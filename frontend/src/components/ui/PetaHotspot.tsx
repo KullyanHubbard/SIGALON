@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { TitikLokasi } from '@/features/titik-lokasi/types';
+import { dapatkanTemaTitik } from '@/features/titik-lokasi/warna';
 
 export interface HotspotItem {
   id: string;
@@ -96,21 +97,8 @@ function tentukanWarna(item: HotspotItem | TitikLokasi): { warna: string; warnaR
   if ('warna' in item && item.warna && 'warnaRing' in item && item.warnaRing) {
     return { warna: item.warna, warnaRing: item.warnaRing };
   }
-  if (item.kategori === 'perangkat' || item.ikon === 'perangkat') {
-    return { warna: 'bg-purple-700', warnaRing: 'bg-purple-400' };
-  }
-  switch (item.ikon) {
-    case 'balai':
-      return { warna: 'bg-amber-500', warnaRing: 'bg-amber-400' };
-    case 'ibadah':
-      return { warna: 'bg-emerald-500', warnaRing: 'bg-emerald-400' };
-    case 'poskamling':
-      return { warna: 'bg-blue-500', warnaRing: 'bg-blue-400' };
-    case 'posyandu':
-      return { warna: 'bg-rose-500', warnaRing: 'bg-rose-400' };
-    default:
-      return { warna: 'bg-brand-600', warnaRing: 'bg-brand-400' };
-  }
+  const tema = dapatkanTemaTitik(item);
+  return { warna: tema.bgIkon, warnaRing: tema.ringHotspot };
 }
 
 function IkonHotspot({ jenis, className }: { jenis: string; className?: string }) {

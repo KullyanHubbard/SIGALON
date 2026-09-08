@@ -9,6 +9,7 @@ import { Modal } from '@/components/ui/Modal';
 import { Textarea } from '@/components/ui/Textarea';
 import { pesanError } from '@/lib/utils';
 import type { TitikLokasi, TitikLokasiBaru, TitikLokasiUbah } from '../types';
+import { dapatkanTemaTitik } from '../warna';
 import { useTambahTitikLokasi, useUbahTitikLokasi } from '../hooks/use-titik-lokasi';
 
 const PUSAT_PADUKUHAN: [number, number] = [-7.656826, 110.363111];
@@ -36,26 +37,7 @@ function xyKeLatLon(xVal: number, yVal: number): [number, number] {
   return [Number(latVal.toFixed(6)), Number(lonVal.toFixed(6))];
 }
 
-function dapatkanSimbolIkon(ikon: string): string {
-  switch (ikon) {
-    case 'balai':
-      return '🏛️';
-    case 'ibadah':
-      return '🕌';
-    case 'poskamling':
-      return '🛡️';
-    case 'posyandu':
-      return '🏥';
-    case 'perangkat':
-    default:
-      return '👤';
-  }
-}
-
-function buatMarkerIcon(simbol: string, kategori: string) {
-  const bgClass = kategori === 'perangkat' ? 'bg-purple-700' : 'bg-rose-600';
-  const ringClass = kategori === 'perangkat' ? 'bg-purple-400' : 'bg-rose-400';
-
+function buatMarkerIcon(simbol: string, bgClass: string, ringClass: string) {
   return L.divIcon({
     className: 'sigalon-picker-marker',
     html: `
@@ -193,8 +175,8 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }).addTo(map);
 
-    const simbol = dapatkanSimbolIkon(ikon);
-    const icon = buatMarkerIcon(simbol, kategori);
+    const tema = dapatkanTemaTitik({ kategori, ikon, nama, peran: null, kategoriLabel });
+    const icon = buatMarkerIcon(tema.simbol, tema.bgIkon, tema.ringHotspot);
     const marker = L.marker(centerCoord, { icon, draggable: true }).addTo(map);
 
     marker.bindTooltip(nama || 'Titik Terpilih', {
@@ -232,15 +214,15 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Update tooltip & ikon pin saat nama, ikon, atau kategori berubah
+  // Update tooltip & ikon pin saat nama, ikon, kategori, atau label berubah
   useEffect(() => {
     const marker = markerRef.current;
     if (!marker) return;
 
-    const simbol = dapatkanSimbolIkon(ikon);
-    marker.setIcon(buatMarkerIcon(simbol, kategori));
+    const tema = dapatkanTemaTitik({ kategori, ikon, nama, peran: null, kategoriLabel });
+    marker.setIcon(buatMarkerIcon(tema.simbol, tema.bgIkon, tema.ringHotspot));
     marker.setTooltipContent(nama || 'Titik Terpilih');
-  }, [nama, ikon, kategori]);
+  }, [nama, ikon, kategori, kategoriLabel]);
 
   // Tangani perubahan manual teks koordinat Lat/Lon
   const handleLatLonInputManual = (newLatStr: string, newLonStr: string) => {

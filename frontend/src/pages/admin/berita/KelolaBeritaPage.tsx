@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Pencil, Trash2 } from 'lucide-react';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -92,24 +93,28 @@ export default function KelolaBeritaPage() {
                     <Td>{formatTanggal(berita.tanggalTerbit)}</Td>
                     <Td>{berita.penulis}</Td>
                     <Td className="text-right">
-                      <div className="inline-flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          type="button"
                           onClick={() => setTarget(berita)}
+                          className="inline-flex items-center justify-center rounded-lg border-1 border-slate-300 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 text-slate-700 p-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
+                          title="Sunting berita"
+                          aria-label={`Sunting ${berita.judul}`}
                         >
-                          Sunting
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="danger"
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => onHapus(berita)}
-                          isLoading={
+                          disabled={
                             hapus.isPending && hapus.variables === berita.id
                           }
+                          className="inline-flex items-center justify-center rounded-lg border-1 border-slate-300 bg-white hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600 text-rose-600 p-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50 active:scale-95"
+                          title="Hapus berita"
+                          aria-label={`Hapus ${berita.judul}`}
                         >
-                          Hapus
-                        </Button>
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </Td>
                   </tr>

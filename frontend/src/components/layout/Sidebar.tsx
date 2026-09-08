@@ -97,6 +97,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                     backgroundColor: 'currentColor',
                     mask: `url("${item.icon}") center / contain no-repeat`,
                     WebkitMask: `url("${item.icon}") center / contain no-repeat`,
+                    maskSize: 'contain',
+                    WebkitMaskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    WebkitMaskRepeat: 'no-repeat',
                   }}
                 />
               )}
