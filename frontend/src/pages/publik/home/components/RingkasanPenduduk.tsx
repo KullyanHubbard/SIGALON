@@ -72,9 +72,9 @@ export function RingkasanPenduduk() {
 
               <div
                 data-apple-fade
-                className="relative mt-8 overflow-hidden rounded-2xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 sm:p-8 lg:p-10 text-white shadow-xl shadow-purple-950/20 border border-purple-800/40"
+                className="relative mt-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 sm:p-8 lg:p-10 text-white shadow-xl shadow-purple-950/20 border border-purple-800/40"
               >
-                {}
+                {/* Latar peta satelit monokrom halus */}
                 <img
                   src={petaSatelit}
                   alt=""
@@ -92,12 +92,8 @@ export function RingkasanPenduduk() {
                   className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand-500/20 blur-3xl"
                 />
 
-                {}
                 <div className="relative z-10 flex flex-col items-center gap-6 lg:flex-row lg:justify-between">
                   <div className="max-w-lg text-center lg:text-left">
-                    <span className="inline-block rounded-full bg-purple-500/30 px-3 py-1 text-[11px] font-semibold tracking-wider text-purple-200 uppercase border border-purple-400/30 mb-2">
-                      Transparansi Wilayah
-                    </span>
                     <h3 className="text-xl font-bold leading-snug tracking-tight sm:text-2xl lg:text-3xl">
                       Eksplorasi Data Kependudukan
                     </h3>
@@ -109,7 +105,7 @@ export function RingkasanPenduduk() {
 
                   <Link
                     to={paths.statistik}
-                    className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-center text-sm font-semibold text-purple-950 shadow-lg transition-all duration-200 hover:bg-purple-50 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
+                    className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FACC15] px-6 py-3 text-center text-sm font-bold text-[#4C1D95] shadow-lg transition-all duration-200 hover:bg-yellow-400 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
                   >
                     <span>Jelajahi Statistik Warga</span>
                     <ArrowRight className="h-4 w-4" />

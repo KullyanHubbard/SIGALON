@@ -42,7 +42,7 @@ export function HeroBeranda() {
           <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 lg:justify-start">
             <Link
               to={paths.profil}
-              className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg font-semibold shadow-sm bg-white text-brand-800 transition-all duration-150 ease-out hover:bg-brand-50 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 h-10 px-4 text-sm sm:h-12 sm:px-6 sm:text-base"
+              className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg font-bold shadow-sm bg-[#FACC15] text-[#4C1D95] transition-all duration-150 ease-out hover:bg-yellow-400 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 h-10 px-4 text-sm sm:h-12 sm:px-6 sm:text-base"
             >
               Jelajahi Padukuhan
             </Link>

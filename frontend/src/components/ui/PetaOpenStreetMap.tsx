@@ -274,7 +274,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
         {/* Kontainer Peta Leaflet OpenStreetMap */}
         <div
           className={cn(
-            'relative overflow-hidden rounded-xl sm:rounded-2xl border border-slate-300 shadow-sm min-h-[360px] sm:min-h-[440px] bg-slate-100 z-0',
+            'relative overflow-hidden rounded-xl border border-slate-300 shadow-sm min-h-[360px] sm:min-h-[440px] bg-slate-100 z-0',
             className,
           )}
         >
@@ -316,10 +316,10 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#FACC15] px-4 py-2 text-xs font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98]"
             >
               <span>Buka di Google Maps</span>
-              <ExternalLink className="h-3 w-3 opacity-75" />
+              <ExternalLink className="h-3.5 w-3.5" />
             </a>
           </div>
         </div>

@@ -7,6 +7,22 @@ import { WADAH } from '@/components/layout/wadah';
 
 const PER_HALAMAN = 6;
 
+function getDaftarHalaman(totalHalaman: number, halamanAktif: number): (number | string)[] {
+  if (totalHalaman <= 7) {
+    return Array.from({ length: totalHalaman }, (_, i) => i + 1);
+  }
+
+  if (halamanAktif <= 4) {
+    return [1, 2, 3, 4, 5, '...', totalHalaman];
+  }
+
+  if (halamanAktif >= totalHalaman - 3) {
+    return [1, '...', totalHalaman - 4, totalHalaman - 3, totalHalaman - 2, totalHalaman - 1, totalHalaman];
+  }
+
+  return [1, '...', halamanAktif - 1, halamanAktif, halamanAktif + 1, '...', totalHalaman];
+}
+
 export default function BeritaListPage() {
   const { data, isLoading, isError } = useBeritaList();
   const [halaman, setHalaman] = useState(1);
@@ -58,46 +74,59 @@ export default function BeritaListPage() {
                 </div>
 
                 {totalHalaman > 1 && (
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-200 pt-6">
-                    <p className="text-sm text-slate-600">
-                      Menampilkan{' '}
-                      <span className="font-semibold text-slate-900">
-                        {awal + 1}
-                      </span>{' '}
-                      –{' '}
-                      <span className="font-semibold text-slate-900">
-                        {Math.min(awal + PER_HALAMAN, daftar.length)}
-                      </span>{' '}
-                      dari{' '}
-                      <span className="font-semibold text-slate-900">
-                        {daftar.length}
-                      </span>{' '}
-                      berita
-                    </p>
-
-                    <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+                  <div className="flex items-center justify-center border-t border-slate-200 pt-6">
+                    <nav
+                      aria-label="Paginasi berita"
+                      className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2"
+                    >
                       <button
                         type="button"
                         onClick={() => setHalaman((h) => Math.max(1, h - 1))}
                         disabled={halamanAktif === 1}
-                        className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="h-9 rounded-lg border border-slate-300 px-3 sm:px-3.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
                       >
                         Sebelumnya
                       </button>
 
-                      <div className="flex items-center gap-1 px-2 text-sm font-semibold text-slate-800">
-                        Halaman {halamanAktif} dari {totalHalaman}
-                      </div>
+                      {getDaftarHalaman(totalHalaman, halamanAktif).map((item, idx) => {
+                        if (typeof item === 'string') {
+                          return (
+                            <span
+                              key={`ellipsis-${idx}`}
+                              className="px-1.5 sm:px-2 text-sm text-slate-400 select-none"
+                            >
+                              …
+                            </span>
+                          );
+                        }
+
+                        const aktif = item === halamanAktif;
+                        return (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => setHalaman(item)}
+                            aria-current={aktif ? 'page' : undefined}
+                            className={`min-w-[36px] h-9 px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                              aktif
+                                ? 'bg-brand-600 text-white font-bold shadow-sm'
+                                : 'border border-slate-300 text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            {item}
+                          </button>
+                        );
+                      })}
 
                       <button
                         type="button"
                         onClick={() => setHalaman((h) => Math.min(totalHalaman, h + 1))}
                         disabled={halamanAktif === totalHalaman}
-                        className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="h-9 rounded-lg border border-slate-300 px-3 sm:px-3.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
                       >
                         Selanjutnya
                       </button>
-                    </div>
+                    </nav>
                   </div>
                 )}
               </div>
