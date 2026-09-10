@@ -30,12 +30,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full max-h-dvh min-h-0 w-72 sm:w-80 max-w-[85vw] flex-col border-r border-slate-200 bg-surface transition-transform lg:static lg:h-full lg:max-h-full lg:w-80 lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 flex h-full max-h-dvh min-h-0 w-72 sm:w-80 max-w-[85vw] flex-col border-r-1 border-black bg-surface transition-transform lg:static lg:h-full lg:max-h-full lg:w-80 lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         {}
-        <div className="relative flex h-20 shrink-0 items-center justify-center border-b border-slate-100 px-5">
+        <div className="relative flex h-20 shrink-0 items-center justify-center border-b-1 border-black px-5">
           <Logo className="h-8" />
           <button
             className="absolute right-3 rounded-md p-1 text-slate-400 hover:bg-slate-100 lg:hidden"
@@ -109,7 +109,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        <p className="flex min-h-20 shrink-0 items-center border-t border-slate-100 px-4 text-sm text-slate-400">
+        <p className="flex h-14 min-h-14 shrink-0 items-center border-t-1 border-black px-4 text-xs sm:text-sm text-slate-400">
           {env.appName} · v0.1.0
         </p>
       </aside>

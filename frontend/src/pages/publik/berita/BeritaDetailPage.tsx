@@ -42,13 +42,13 @@ export default function BeritaDetailPage() {
                   {berita.judul}
                 </h1>
 
-                <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 text-xs sm:text-sm text-slate-500">
-                  <span className="inline-flex items-center gap-1.5 sm:gap-2">
-                    <CalendarDays className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
+                <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-1.5 sm:gap-y-2 text-xs sm:text-sm text-slate-900">
+                  <span className="inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-slate-900">
+                    <CalendarDays className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-900" aria-hidden />
                     {formatTanggal(berita.tanggalTerbit)}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-slate-800">
-                    <UserRound className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
+                  <span className="inline-flex items-center gap-1.5 sm:gap-2 font-semibold text-slate-900">
+                    <UserRound className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-900" aria-hidden />
                     {berita.penulis}
                   </span>
                 </div>
@@ -62,7 +62,7 @@ export default function BeritaDetailPage() {
 
                 <div
                   data-apple-fade
-                  className="isi-berita mt-8 text-base text-slate-700 overflow-hidden break-words"
+                  className="isi-berita mt-8 text-base text-slate-900 overflow-hidden break-words"
                   dangerouslySetInnerHTML={{ __html: berita.isi }}
                 />
               </>
@@ -71,7 +71,7 @@ export default function BeritaDetailPage() {
 
           <div
             data-apple-fade
-            className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6"
+            className="mt-10 flex flex-wrap gap-3 border-t-1 border-black pt-6"
           >
             <Link
               to={paths.berita}

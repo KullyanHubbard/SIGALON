@@ -150,7 +150,7 @@ export function ProporsiGenderBar({
         </div>
 
         {/* Indikator Rasio Jenis Kelamin (Pindah ke Sisi Kiri, Total Jiwa Dihapus) */}
-        <div className="flex items-center border-t-1 border-slate-200 pt-2.5 text-xs font-semibold text-slate-700">
+        <div className="flex items-center border-t-1 border-black pt-2.5 text-xs font-semibold text-slate-700">
           <span title="Perbandingan jumlah laki-laki per 100 perempuan">
             Rasio Jenis Kelamin:{' '}
             <span className="font-bold text-slate-900">

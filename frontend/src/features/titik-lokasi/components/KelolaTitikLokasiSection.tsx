@@ -81,7 +81,7 @@ export function KelolaTitikLokasiSection() {
   return (
     <Card className="overflow-hidden">
       {/* Toolbar: Tab Kategori di kiri & Tombol Tambah di kanan */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-6 sm:py-3.5 bg-white">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b-1 border-black px-4 py-3 sm:px-6 sm:py-3.5 bg-white">
         {/* Tab Navigasi Kategori */}
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -91,7 +91,7 @@ export function KelolaTitikLokasiSection() {
               'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
               tabAktif === 'semua'
                 ? 'bg-slate-900 text-white shadow-xs'
-                : 'border-1 border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
+                : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
             )}
           >
             Semua Titik
@@ -114,7 +114,7 @@ export function KelolaTitikLokasiSection() {
               'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
               tabAktif === 'fasilitas'
                 ? 'bg-teal-700 text-white shadow-xs'
-                : 'border-1 border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
+                : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
             )}
           >
             Fasilitas Umum
@@ -137,7 +137,7 @@ export function KelolaTitikLokasiSection() {
               'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
               tabAktif === 'perangkat'
                 ? 'bg-blue-700 text-white shadow-xs'
-                : 'border-1 border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
+                : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
             )}
           >
             Perangkat Desa
@@ -189,7 +189,7 @@ export function KelolaTitikLokasiSection() {
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-black">
           {titikTerfilter.map((item) => (
             <div
               key={item.id}
@@ -248,7 +248,7 @@ export function KelolaTitikLokasiSection() {
                 <button
                   type="button"
                   onClick={() => bukaUbah(item)}
-                  className="inline-flex items-center justify-center rounded-lg border-1 border-slate-300 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 text-slate-700 p-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
+                  className="inline-flex items-center justify-center rounded-lg border-1 border-black bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 text-slate-700 p-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
                   title="Edit titik lokasi"
                   aria-label={`Edit ${item.nama}`}
                 >
@@ -258,7 +258,7 @@ export function KelolaTitikLokasiSection() {
                   type="button"
                   onClick={() => konfirmasiHapus(item.id, item.nama)}
                   disabled={hapusId === item.id}
-                  className="inline-flex items-center justify-center rounded-lg border-1 border-slate-300 bg-white hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600 text-rose-600 p-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50 active:scale-95"
+                  className="inline-flex items-center justify-center rounded-lg border-1 border-black bg-white hover:bg-rose-50 hover:border-black hover:text-rose-600 text-rose-600 p-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50 active:scale-95"
                   title="Hapus titik lokasi"
                   aria-label={`Hapus ${item.nama}`}
                 >

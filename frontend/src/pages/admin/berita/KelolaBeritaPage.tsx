@@ -97,7 +97,7 @@ export default function KelolaBeritaPage() {
                         <button
                           type="button"
                           onClick={() => setTarget(berita)}
-                          className="inline-flex items-center justify-center rounded-lg border-1 border-slate-300 bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 text-slate-700 p-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
+                          className="inline-flex items-center justify-center rounded-lg border-1 border-black bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 text-slate-700 p-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
                           title="Sunting berita"
                           aria-label={`Sunting ${berita.judul}`}
                         >
@@ -109,7 +109,7 @@ export default function KelolaBeritaPage() {
                           disabled={
                             hapus.isPending && hapus.variables === berita.id
                           }
-                          className="inline-flex items-center justify-center rounded-lg border-1 border-slate-300 bg-white hover:bg-rose-50 hover:border-rose-300 hover:text-rose-600 text-rose-600 p-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50 active:scale-95"
+                          className="inline-flex items-center justify-center rounded-lg border-1 border-black bg-white hover:bg-rose-50 hover:border-black hover:text-rose-600 text-rose-600 p-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50 active:scale-95"
                           title="Hapus berita"
                           aria-label={`Hapus ${berita.judul}`}
                         >

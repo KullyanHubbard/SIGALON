@@ -59,7 +59,7 @@ export function DaftarPendudukView({
   return (
     <>
       <Card>
-        <CardContent className="border-b-1 border-slate-100">
+        <CardContent className="border-b-1 border-black">
           <ToolbarPenduduk
             search={search}
             onSearchChange={onSearchChange}

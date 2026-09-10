@@ -19,7 +19,7 @@ export function RingkasanPenduduk() {
   const statistik = useStatistikPublik();
 
   return (
-    <section className="border-y border-slate-200 bg-surface py-10 sm:py-16">
+    <section className="border-y-1 border-black bg-surface py-10 sm:py-16">
       <div className={WADAH}>
         <div data-apple-fade>
           <JudulBagian judul="ADMINISTRASI PENDUDUK" className="uppercase" />
@@ -72,7 +72,7 @@ export function RingkasanPenduduk() {
 
               <div
                 data-apple-fade
-                className="relative mt-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 sm:p-8 lg:p-10 text-white shadow-xl shadow-purple-950/20 border border-purple-800/40"
+                className="relative mt-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 sm:p-8 lg:p-10 text-white shadow-xl shadow-purple-950/20 border-1 border-black"
               >
                 {/* Latar peta satelit monokrom halus */}
                 <img

@@ -45,7 +45,7 @@ export function PilihWarga({
       )}
 
       {cukupPanjang && (
-        <div className="max-h-56 overflow-y-auto rounded-lg border-1 border-slate-200">
+        <div className="max-h-56 overflow-y-auto rounded-lg border-1 border-black">
           {sedangMencari && (
             <p className="px-3 py-2 text-sm text-slate-500">Mencari…</p>
           )}

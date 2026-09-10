@@ -11,7 +11,7 @@ export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
   return (
     <footer
       className={cn(
-        'sticky bottom-0 z-30 flex w-full flex-col items-center justify-between gap-2 border-t border-slate-200 bg-surface px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-slate-600 sm:flex-row sm:gap-3 sm:py-2 sm:pb-2 [transform:translate3d(0,0,0)]',
+        'sticky bottom-0 z-30 flex w-full flex-col items-center justify-between gap-2 border-t-1 border-black bg-surface px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-slate-600 sm:flex-row sm:gap-3 sm:py-2 sm:pb-2 [transform:translate3d(0,0,0)]',
         className,
       )}
     >

@@ -9,7 +9,7 @@ const variantStyles: Record<Variant, string> = {
   secondary:
     'bg-slate-100 text-slate-900 shadow-sm hover:bg-slate-200 hover:shadow hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]',
   outline:
-    'border border-slate-300 bg-surface text-slate-700 shadow-sm hover:bg-slate-50 hover:shadow hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]',
+    'border-1 border-black bg-surface text-slate-700 shadow-sm hover:bg-slate-50 hover:shadow hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]',
   ghost:
     'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95',
   danger:

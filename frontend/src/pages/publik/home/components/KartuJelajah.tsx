@@ -34,7 +34,7 @@ export function KartuJelajah({
           {deskripsi}
         </p>
       </div>
-      <div className="shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5 sm:hidden">
+      <div className="shrink-0 text-slate-700 transition-transform group-hover:translate-x-0.5 sm:hidden">
         <ChevronRight className="h-4 w-4" />
       </div>
       <span className="mt-4 hidden items-center gap-1 text-sm font-semibold text-brand-700 sm:mt-auto sm:pt-4 sm:inline-flex">

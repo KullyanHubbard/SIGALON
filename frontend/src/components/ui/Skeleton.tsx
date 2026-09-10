@@ -40,7 +40,7 @@ export function GridStatSkeleton({ count = 4 }: { count?: number }) {
 
 export function BeritaCardSkeleton() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-surface shadow-sm">
+    <div className="flex flex-col overflow-hidden rounded-xl border-1 border-black bg-surface shadow-sm">
       <Skeleton className="aspect-video w-full rounded-none" />
       <div className="p-4 sm:p-5 space-y-3">
         <Skeleton className="h-3 w-28" />

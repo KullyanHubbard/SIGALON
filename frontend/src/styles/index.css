@@ -47,7 +47,7 @@
   }
 
   .hover-card {
-    @apply transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-slate-300 motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+    @apply transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:border-black motion-reduce:transition-none motion-reduce:hover:translate-y-0;
   }
 
   .hover-scale {
@@ -64,11 +64,15 @@
    CSS biasa, bukan utilitas Tailwind: tag-tag ini tidak pernah muncul di
    berkas sumber, ia lahir saat runtime dari string HTML, jadi tidak ada yang
    bisa dipindai Tailwind. */
+.isi-berita {
+  color: rgb(var(--slate-900));
+}
 .isi-berita > * + * {
   margin-top: 1rem;
 }
 .isi-berita p {
   line-height: 1.75;
+  color: rgb(var(--slate-900));
 }
 .isi-berita h2 {
   margin-top: 2rem;
@@ -86,6 +90,7 @@
 .isi-berita ul,
 .isi-berita ol {
   padding-left: 1.5rem;
+  color: rgb(var(--slate-900));
 }
 .isi-berita ul {
   list-style: disc;
@@ -97,10 +102,23 @@
   margin-top: 0.25rem;
 }
 .isi-berita blockquote {
-  border-left: 3px solid rgb(var(--slate-300));
+  border-left: 3px solid #000000;
   padding-left: 1rem;
   font-style: italic;
-  color: rgb(var(--slate-600));
+  color: rgb(var(--slate-800));
+}
+.isi-berita strong,
+.isi-berita b {
+  font-weight: 700;
+  color: #000000;
+}
+.isi-berita a {
+  color: rgb(var(--slate-900));
+  text-decoration: underline;
+  font-weight: 600;
+}
+.isi-berita a:hover {
+  color: #000000;
 }
 .isi-berita img {
   max-width: 100%;
@@ -110,6 +128,7 @@
 .isi-berita code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875em;
+  color: rgb(var(--slate-900));
 }
 
 /* ==========================================================================

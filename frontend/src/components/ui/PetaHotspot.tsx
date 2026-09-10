@@ -140,7 +140,7 @@ function hitungPosisiPopover(x: number, y: number) {
 
   return {
     posisiClass: cn(
-      'absolute z-30 w-52 sm:w-64 rounded-xl border border-slate-200/95 bg-white/95 p-3 text-left shadow-2xl backdrop-blur-md transition-all animate-in fade-in zoom-in-95 duration-150',
+      'absolute z-30 w-52 sm:w-64 rounded-xl border-1 border-black bg-white/95 p-3 text-left shadow-2xl backdrop-blur-md transition-all animate-in fade-in zoom-in-95 duration-150',
       posisiYClass,
       posisiXClass,
     ),
@@ -263,7 +263,7 @@ export function PetaHotspotOverlay({
                       {item.kategoriLabel}
                     </span>
                     {item.peran && (
-                      <span className="rounded bg-slate-100 px-1 py-0.5 text-[9px] font-mono font-semibold text-slate-700 border border-slate-200">
+                      <span className="rounded bg-slate-100 px-1 py-0.5 text-[9px] font-mono font-semibold text-slate-700 border-1 border-black">
                         {item.peran}
                       </span>
                     )}
@@ -275,7 +275,7 @@ export function PetaHotspotOverlay({
                       setPinnedId(null);
                       setHoverId(null);
                     }}
-                    className="rounded p-0.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                    className="rounded p-0.5 text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
                     aria-label="Tutup info"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -302,7 +302,7 @@ export function PetaHotspotOverlay({
                   >
                     <MapPin className="h-3 w-3 shrink-0" />
                     <span>Petunjuk Arah (Maps)</span>
-                    <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                    <ExternalLink className="h-2.5 w-2.5" />
                   </a>
                 )}
 

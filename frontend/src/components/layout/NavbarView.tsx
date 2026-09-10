@@ -32,7 +32,7 @@ export function NavbarView({
   const samaPeran = nama.trim().toLowerCase() === peran.trim().toLowerCase();
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 sm:h-20 items-center justify-between border-b border-slate-200 bg-surface/80 px-4 backdrop-blur lg:px-6">
+    <header className="sticky top-0 z-20 flex h-16 sm:h-20 items-center justify-between border-b-1 border-black bg-surface/80 px-4 backdrop-blur lg:px-6">
       <div className="flex items-center gap-2 lg:hidden">
         <button
           className="-ml-1 rounded-md p-2 text-slate-500 hover:bg-slate-100"
@@ -76,7 +76,7 @@ export function NavbarView({
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-lg border border-slate-200 bg-surface p-1.5 shadow-lg">
+            <div className="absolute right-0 mt-2 w-56 rounded-lg border-1 border-black bg-surface p-1.5 shadow-lg">
               <div className="px-3 py-2">
                 <p className="text-sm font-medium text-slate-800">{nama}</p>
                 {}
@@ -84,7 +84,7 @@ export function NavbarView({
                   <p className="text-xs text-slate-500">{peran}</p>
                 )}
               </div>
-              <div className="my-1 h-px bg-slate-200" />
+              <div className="my-1 h-px bg-black" />
               {}
               <Link
                 to={paths.gantiPassword}

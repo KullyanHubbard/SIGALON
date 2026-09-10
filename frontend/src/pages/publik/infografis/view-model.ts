@@ -34,7 +34,6 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
     {
       id: 'umur',
       judul: 'Piramida Usia',
-      deskripsi: 'Sebaran penduduk menurut kelompok umur',
       jenis: 'bar',
       data: urutKelompokUmur(
         gabungDistribusi(data.perRw, (rw) => rw.perKelompokUmur),
@@ -43,7 +42,6 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
     {
       id: 'agama',
       judul: 'Distribusi Agama',
-      deskripsi: 'Islam, Kristen, Katolik, Hindu, Buddha, Konghucu',
       jenis: 'pie',
       data: relabel(
         gabungDistribusi(data.perRw, (rw) => rw.perAgama),
@@ -53,14 +51,12 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
     {
       id: 'pekerjaan',
       judul: 'Pekerjaan',
-      deskripsi: 'Sepuluh pekerjaan terbanyak di padukuhan',
       jenis: 'bar',
       data: data.perPekerjaan,
     },
     {
       id: 'perkawinan',
       judul: 'Status Perkawinan',
-      deskripsi: 'Komposisi status perkawinan penduduk',
       jenis: 'pie',
       data: relabel(
         gabungDistribusi(data.perRw, (rw) => rw.perStatusPerkawinan),
@@ -70,7 +66,6 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
     {
       id: 'pendidikan',
       judul: 'Tingkat Pendidikan',
-      deskripsi: 'Pendidikan terakhir penduduk',
       jenis: 'bar',
       data: relabel(
         gabungDistribusi(data.perRw, (rw) => rw.perPendidikan),

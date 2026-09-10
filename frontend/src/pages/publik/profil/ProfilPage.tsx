@@ -1,13 +1,38 @@
-import { ExternalLink } from 'lucide-react';
+import {
+  ExternalLink,
+  ArrowUp,
+  ArrowRight,
+  ArrowDown,
+  ArrowLeft,
+} from 'lucide-react';
 import { WADAH } from '@/components/layout/wadah';
 import { PetaOpenStreetMap } from '@/components/ui/PetaOpenStreetMap';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { batasWilayah, paragrafSejarah } from '@/lib/padukuhan';
-import { formatAngka } from '@/lib/utils';
+import { formatAngka, cn } from '@/lib/utils';
 import { BaganOrganisasi } from './components/BaganOrganisasi';
 import { BarisKeterangan } from './components/BarisKeterangan';
+
+const ARAH_CONFIG = {
+  Utara: {
+    icon: ArrowUp,
+    colorClass: 'text-sky-600',
+  },
+  Timur: {
+    icon: ArrowRight,
+    colorClass: 'text-amber-500',
+  },
+  Selatan: {
+    icon: ArrowDown,
+    colorClass: 'text-rose-600',
+  },
+  Barat: {
+    icon: ArrowLeft,
+    colorClass: 'text-violet-600',
+  },
+} as const;
 
 function IkonLuasSolid({ className = 'h-4 w-4' }: { className?: string }) {
   return (
@@ -80,7 +105,7 @@ export default function ProfilPage() {
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
               Sejarah & Gambaran Umum
             </h2>
-            <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4 text-sm sm:text-base text-slate-700">
+            <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4 text-sm sm:text-base font-medium text-slate-900 leading-relaxed">
               {paragrafSejarah(padukuhan.sejarah).map((paragraf) => (
                 <p key={paragraf.slice(0, 24)}>{paragraf}</p>
               ))}
@@ -89,19 +114,17 @@ export default function ProfilPage() {
 
           <div data-apple-fade data-apple-delay="1">
             <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm">
-              <div className="bg-[#7C3AED] px-4 py-3.5 sm:px-6 sm:py-4">
+              <div className="bg-[#7C3AED] px-4 py-3 sm:px-5 sm:py-3.5 border-b-1 border-black">
                 <h3 className="text-base sm:text-lg font-bold text-white">
                   Data Wilayah
                 </h3>
               </div>
-              <div className="px-4 py-3 sm:px-5 sm:py-4">
-                <dl>
+              <div className="p-3 sm:p-3.5 bg-surface">
+                <dl className="space-y-2">
                   <BarisKeterangan
-                    icon={<IkonLuasSolid className="h-4 w-4 shrink-0 text-[#7C3AED]" />}
+                    icon={<IkonLuasSolid className="h-4 w-4 shrink-0 text-emerald-600" />}
                     label="Luas wilayah"
                     nilai={padukuhan.luasWilayah}
-                    borderClass="border-[#F3E8FF]"
-                    nilaiClass="text-[#4C1D95]"
                   />
                   <QueryBoundary
                     isLoading={statistik.isLoading}
@@ -113,42 +136,32 @@ export default function ProfilPage() {
                     {(data) => (
                       <>
                         <BarisKeterangan
-                          icon={<IkonPopulasiSolid className="h-4 w-4 shrink-0 text-[#7C3AED]" />}
+                          icon={<IkonPopulasiSolid className="h-4 w-4 shrink-0 text-blue-600" />}
                           label="Total populasi"
                           nilai={`${formatAngka(data.totalPenduduk)} jiwa`}
-                          borderClass="border-[#F3E8FF]"
-                          nilaiClass="text-[#4C1D95]"
                         />
                         <BarisKeterangan
-                          icon={<IkonRwSolid className="h-4 w-4 shrink-0 text-[#7C3AED]" />}
+                          icon={<IkonRwSolid className="h-4 w-4 shrink-0 text-purple-600" />}
                           label="Jumlah RW"
                           nilai={`${data.perRw.length} RW`}
-                          borderClass="border-[#F3E8FF]"
-                          nilaiClass="text-[#4C1D95]"
                         />
                         <BarisKeterangan
-                          icon={<IkonRtSolid className="h-4 w-4 shrink-0 text-[#7C3AED]" />}
+                          icon={<IkonRtSolid className="h-4 w-4 shrink-0 text-amber-500" />}
                           label="Jumlah RT"
                           nilai={`${data.perRw.reduce((n, rw) => n + rw.perRt.length, 0)} RT`}
-                          borderClass="border-[#F3E8FF]"
-                          nilaiClass="text-[#4C1D95]"
                         />
                       </>
                     )}
                   </QueryBoundary>
                   <BarisKeterangan
-                    icon={<IkonKalurahanSolid className="h-4 w-4 shrink-0 text-[#7C3AED]" />}
+                    icon={<IkonKalurahanSolid className="h-4 w-4 shrink-0 text-teal-600" />}
                     label="Kalurahan"
                     nilai={padukuhan.desa}
-                    borderClass="border-[#F3E8FF]"
-                    nilaiClass="text-[#4C1D95]"
                   />
                   <BarisKeterangan
-                    icon={<IkonKapanewonSolid className="h-4 w-4 shrink-0 text-[#7C3AED]" />}
+                    icon={<IkonKapanewonSolid className="h-4 w-4 shrink-0 text-rose-600" />}
                     label="Kapanewon"
                     nilai={padukuhan.kapanewon}
-                    borderClass="border-[#F3E8FF]"
-                    nilaiClass="text-[#4C1D95]"
                   />
                 </dl>
               </div>
@@ -157,7 +170,7 @@ export default function ProfilPage() {
         </div>
       </section>
 
-      <section className="border-y border-slate-200 bg-surface py-8 sm:py-12 lg:py-14">
+      <section className="border-y-1 border-black bg-surface py-8 sm:py-12 lg:py-14">
         <div className={WADAH}>
           <div data-apple-fade>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
@@ -182,37 +195,40 @@ export default function ProfilPage() {
             <PetaOpenStreetMap className="w-full h-full min-h-[440px]" />
           </div>
 
-            <div data-apple-fade data-apple-delay="1">
-              <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm">
-                <div className="bg-[#7C3AED] px-4 py-3.5 sm:px-6 sm:py-4">
-                  <h3 className="text-base sm:text-lg font-bold text-white">
-                    Batas Wilayah
-                  </h3>
-                </div>
-                <div className="px-4 py-3 sm:px-5 sm:py-4">
-                  <dl>
-                    {batasWilayah(padukuhan).map((b) => (
+          <div data-apple-fade data-apple-delay="1">
+            <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm">
+              <div className="bg-[#7C3AED] px-4 py-3 sm:px-5 sm:py-3.5 border-b-1 border-black">
+                <h3 className="text-base sm:text-lg font-bold text-white">
+                  Batas Wilayah
+                </h3>
+              </div>
+              <div className="p-3 sm:p-3.5 bg-surface">
+                <dl className="space-y-2">
+                  {batasWilayah(padukuhan).map((b) => {
+                    const config = ARAH_CONFIG[b.arah];
+                    const IconArah = config.icon;
+                    return (
                       <BarisKeterangan
                         key={b.arah}
+                        icon={<IconArah className={cn('h-4 w-4 shrink-0', config.colorClass)} />}
                         label={`Sebelah ${b.arah}`}
                         nilai={b.wilayah}
-                        borderClass="border-[#F3E8FF]"
-                        nilaiClass="text-[#4C1D95]"
                       />
-                    ))}
-                  </dl>
-                  <div className="mt-4 pt-3.5 border-t border-[#F3E8FF]">
-                    <a
-                      href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-xs sm:text-sm font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98]"
-                    >
-                      <span>Buka di Google Maps</span>
-                      <ExternalLink className="h-4 w-4" />
-                    </a>
-                  </div>
+                    );
+                  })}
+                </dl>
+                <div className="mt-4 pt-3.5 border-t-1 border-black">
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-xs sm:text-sm font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98]"
+                  >
+                    <span>Buka di Google Maps</span>
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
                 </div>
+              </div>
             </div>
           </div>
         </div>

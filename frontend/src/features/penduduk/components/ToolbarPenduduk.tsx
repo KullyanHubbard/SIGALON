@@ -81,7 +81,7 @@ function PilihanRingkas({
         'focus-ring h-10 w-full sm:w-auto rounded-lg border-1 bg-surface px-3 text-sm transition-colors',
         nilai
           ? 'border-brand-600 font-medium text-brand-700'
-          : 'border-slate-300 text-slate-700',
+          : 'border-1 border-black text-slate-700',
       )}
     >
       <option value="">{label}: Semua</option>
@@ -205,7 +205,7 @@ export function ToolbarPenduduk({
               {eksporOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 top-full z-30 mt-2 w-48 rounded-xl border-1 border-slate-200 bg-surface p-1 shadow-lg"
+                  className="absolute right-0 top-full z-30 mt-2 w-48 rounded-xl border-1 border-black bg-surface p-1 shadow-lg"
                 >
                   <button
                     type="button"
@@ -275,7 +275,7 @@ export function ToolbarPenduduk({
             <div
               role="dialog"
               aria-label="Filter lanjutan"
-              className="absolute right-0 top-full z-30 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:max-w-md rounded-xl border-1 border-slate-200 bg-surface p-4 shadow-lg"
+              className="absolute right-0 top-full z-30 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:max-w-md rounded-xl border-1 border-black bg-surface p-4 shadow-lg"
             >
               <div className="mb-3 flex items-center justify-between gap-2">
                 <p className="text-sm font-bold text-slate-900">
@@ -357,7 +357,7 @@ export function ToolbarPenduduk({
           {chips.map((chip) => (
             <span
               key={chip.field}
-              className="inline-flex items-center gap-1.5 rounded-full border-1 border-slate-200 bg-slate-50 py-1 pl-3 pr-1.5 text-xs text-slate-700"
+              className="inline-flex items-center gap-1.5 rounded-full border-1 border-black bg-slate-50 py-1 pl-3 pr-1.5 text-xs text-slate-700"
             >
               <span className="text-slate-500">{chip.label}:</span>
               <span className="font-medium">{chip.nilai}</span>

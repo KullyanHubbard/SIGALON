@@ -33,13 +33,13 @@ export function PetaPadukuhan({ className }: { className?: string }) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="absolute left-2.5 top-2.5 sm:left-3 sm:top-3 z-10 flex items-center gap-1 sm:gap-1.5 rounded-lg border border-slate-200/80 bg-white/95 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-semibold text-slate-800 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:text-brand-600 hover:shadow-md"
+          className="absolute left-2.5 top-2.5 sm:left-3 sm:top-3 z-10 flex items-center gap-1 sm:gap-1.5 rounded-lg border-1 border-black bg-white/95 px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-semibold text-slate-800 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:text-brand-600 hover:shadow-md"
           title="Buka lokasi di Google Maps"
         >
           <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-rose-500 shrink-0" />
           <span className="sm:hidden">Google Maps</span>
           <span className="hidden sm:inline">Buka di Google Maps</span>
-          <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-slate-400 shrink-0" />
+          <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-slate-800 shrink-0" />
         </a>
 
         {/* Tombol Lihat Peta Penuh Eksplisit */}
@@ -71,7 +71,7 @@ export function PetaPadukuhan({ className }: { className?: string }) {
               className="h-full w-full object-contain"
             />
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-t border-slate-100 pt-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-t-1 border-black pt-3">
             <p className="text-xs text-slate-500">
               Koordinat pusat padukuhan: -7.656826, 110.363111
             </p>
@@ -83,7 +83,7 @@ export function PetaPadukuhan({ className }: { className?: string }) {
             >
               <MapPin className="h-3.5 w-3.5" />
               <span>Buka di Google Maps</span>
-              <ExternalLink className="h-3 w-3 opacity-75" />
+              <ExternalLink className="h-3 w-3" />
             </a>
           </div>
         </div>

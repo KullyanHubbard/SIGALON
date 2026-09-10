@@ -50,21 +50,20 @@ function dapatkanWarnaDanIkon(item: TitikLokasi) {
 }
 
 function buatDivIcon(item: TitikLokasi) {
-  const { bg, ring, simbol } = dapatkanWarnaDanIkon(item);
+  const { bg, simbol } = dapatkanWarnaDanIkon(item);
 
   return L.divIcon({
     className: 'sigalon-osm-marker',
     html: `
-      <div class="relative flex items-center justify-center cursor-pointer group" style="width: 32px; height: 32px;">
-        <span class="absolute h-8 w-8 rounded-full opacity-75 animate-ping ${ring}"></span>
-        <span class="relative flex h-6 w-6 items-center justify-center rounded-full text-white text-xs shadow-md ring-2 ring-white transition-transform duration-150 group-hover:scale-125 ${bg}">
+      <div class="relative flex items-center justify-center cursor-pointer group" style="width: 36px; height: 36px;">
+        <span class="relative flex h-8 w-8 items-center justify-center rounded-full text-white text-sm font-bold shadow-lg border-2 border-black ring-2 ring-white transition-transform duration-150 group-hover:scale-115 ${bg}">
           ${simbol}
         </span>
       </div>
     `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -18],
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -20],
   });
 }
 
@@ -81,7 +80,7 @@ function buatPopupHtml(item: TitikLokasi, lat: number, lon: number) {
         </span>
         ${
           item.peran
-            ? `<span style="padding: 1px 6px; font-size: 9px; font-family: monospace; font-weight: 600; border-radius: 3px; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;">${item.peran}</span>`
+            ? `<span style="padding: 1px 6px; font-size: 9px; font-family: monospace; font-weight: 600; border-radius: 3px; background: #f1f5f9; color: #334155; border: 1px solid #000000;">${item.peran}</span>`
             : ''
         }
       </div>
@@ -93,7 +92,7 @@ function buatPopupHtml(item: TitikLokasi, lat: number, lon: number) {
           ? `<p style="margin: 6px 0 0 0; font-size: 11px; color: #475569; line-height: 1.5;">${item.deskripsi}</p>`
           : ''
       }
-      <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #f1f5f9;">
+      <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #000000;">
         <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #4f46e5; text-decoration: none;">
           <span>Buka di Google Maps</span> ↗
         </a>
@@ -185,7 +184,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
                 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer',
                 tabAktif === 'semua'
                   ? 'bg-slate-900 text-white shadow-xs'
-                  : 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
+                  : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
               )}
             >
               Semua Titik
@@ -208,7 +207,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
                 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer',
                 tabAktif === 'fasilitas'
                   ? 'bg-teal-700 text-white shadow-xs'
-                  : 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
+                  : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
               )}
             >
               Fasilitas Umum
@@ -231,7 +230,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
                 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer',
                 tabAktif === 'perangkat'
                   ? 'bg-blue-700 text-white shadow-xs'
-                  : 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
+                  : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
               )}
             >
               Perangkat Desa
@@ -252,20 +251,20 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
             <button
               type="button"
               onClick={resetPusatPeta}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-lg border-1 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 shadow-xs hover:bg-slate-100 cursor-pointer transition-colors"
               title="Kembalikan fokus ke pusat Padukuhan Gading Kulon"
             >
-              <Focus className="h-3.5 w-3.5 text-slate-500" />
+              <Focus className="h-3.5 w-3.5 text-slate-900 shrink-0" />
               <span className="hidden sm:inline">Pusat Wilayah</span>
             </button>
 
             <button
               type="button"
               onClick={() => setModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-lg border-1 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 shadow-xs hover:bg-slate-100 cursor-pointer transition-colors"
               title="Buka peta ukuran penuh"
             >
-              <Maximize2 className="h-3.5 w-3.5 text-slate-500" />
+              <Maximize2 className="h-3.5 w-3.5 text-slate-900 shrink-0" />
               <span className="hidden sm:inline">Peta Penuh</span>
             </button>
           </div>
@@ -274,7 +273,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
         {/* Kontainer Peta Leaflet OpenStreetMap */}
         <div
           className={cn(
-            'relative overflow-hidden rounded-xl border border-slate-300 shadow-sm min-h-[360px] sm:min-h-[440px] bg-slate-100 z-0',
+            'relative overflow-hidden rounded-xl border-1 border-black shadow-sm min-h-[360px] sm:min-h-[440px] bg-slate-100 z-0',
             className,
           )}
         >
@@ -301,14 +300,14 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
         className="max-w-5xl"
       >
         <div className="space-y-4">
-          <div className="rounded-lg overflow-hidden border border-slate-200 h-[65vh] w-full bg-slate-100">
+          <div className="rounded-lg overflow-hidden border-1 border-black h-[65vh] w-full bg-slate-100">
             <iframe
               title="Peta OpenStreetMap Layar Penuh"
               className="h-full w-full border-0"
               src="https://www.openstreetmap.org/export/embed.html?bbox=110.354000%2C-7.662000%2C110.372000%2C-7.651000&layer=mapnik&marker=-7.656826%2C110.363111"
             />
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t border-slate-100 pt-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t-1 border-black pt-3">
             <p className="text-xs text-slate-500">
               Peta geospasial resmi berbasis OpenStreetMap kontributor terbuka.
             </p>

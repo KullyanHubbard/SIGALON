@@ -66,7 +66,7 @@ export function BeritaCard({
           {berita.judul}
         </h3>
         {pembuka && (
-          <p className="mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3 text-xs sm:text-sm text-slate-600">{pembuka}</p>
+          <p className="mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3 text-xs sm:text-sm text-slate-800">{pembuka}</p>
         )}
         <p className="mt-auto pt-2.5 sm:pt-4 text-[11px] sm:text-xs font-semibold text-slate-900">
           Oleh {berita.penulis}
@@ -89,10 +89,10 @@ export function BeritaBarisRingkas({ berita }: { berita: Berita }) {
         />
       </div>
       <div className="min-w-0">
-        <h4 className="line-clamp-2 text-sm font-semibold leading-snug text-slate-800 group-hover:text-brand-600">
+        <h4 className="line-clamp-2 text-sm font-bold leading-snug text-slate-900 group-hover:text-brand-600">
           {berita.judul}
         </h4>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs font-semibold text-slate-900">
           {formatTanggal(berita.tanggalTerbit)}
         </p>
       </div>

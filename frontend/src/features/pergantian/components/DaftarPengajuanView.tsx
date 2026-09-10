@@ -42,7 +42,7 @@ export function DaftarPengajuanView({
           empty={<EmptyState icon={FileClock} title="Belum ada pengajuan" />}
         >
           {(daftar) => (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-black">
               {daftar.map((p) => (
                 <li key={p.id} className="px-5 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">

@@ -60,7 +60,7 @@ export function StatistikNav({
             value={periode}
             onChange={(e) => onPilihPeriode(e.target.value)}
             aria-label="Periode data"
-            className="w-full cursor-pointer rounded-lg border border-slate-200 bg-surface px-3 py-2 text-base font-medium text-slate-900 outline-none transition-colors hover:border-brand-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+            className="w-full cursor-pointer rounded-lg border-1 border-black bg-surface px-3 py-2 text-base font-medium text-slate-900 outline-none transition-colors hover:border-brand-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
           >
             {daftarPeriode(data?.periodeTerawal ?? periode, periode).map(
               (p) => (
@@ -127,7 +127,7 @@ export function StatistikNav({
             ))}
           </ul>
         ) : (
-          <p className="mt-2 rounded-lg border border-dashed border-slate-200 px-3 py-3 text-xs leading-relaxed text-slate-400">
+          <p className="mt-2 rounded-lg border-1 border-dashed border-black px-3 py-3 text-xs leading-relaxed text-slate-400">
             {isError
               ? 'Rincian per RW belum bisa dimuat.'
               : 'Memuat rincian per RW…'}

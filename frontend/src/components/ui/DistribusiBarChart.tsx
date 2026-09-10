@@ -30,7 +30,7 @@ export function DistribusiBarChart({ data }: { data: Distribusi[] }) {
       {data.map((d, i) => (
         <Fragment key={d.label}>
           <dt
-            className="text-xs sm:text-sm font-semibold text-slate-600 max-w-[130px] sm:max-w-none truncate sm:whitespace-normal"
+            className="text-xs sm:text-sm font-semibold text-slate-900 max-w-[130px] sm:max-w-none truncate sm:whitespace-normal"
             title={d.label}
           >
             {d.label}
@@ -50,7 +50,7 @@ export function DistribusiBarChart({ data }: { data: Distribusi[] }) {
             />
           </dd>
           <dd
-            className="text-right text-xs sm:text-sm font-semibold tabular-nums text-slate-900 transition-opacity duration-500 ease-out motion-reduce:transition-none"
+            className="text-right text-xs sm:text-sm font-bold tabular-nums text-slate-900 transition-opacity duration-500 ease-out motion-reduce:transition-none"
             style={{
               opacity: terpasang ? 1 : 0,
               transitionDelay: `${Math.min(i * 45 + 100, 450)}ms`,

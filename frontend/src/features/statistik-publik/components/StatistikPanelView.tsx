@@ -75,7 +75,7 @@ export function StatistikPanelView({
 
             <Card className="flex flex-1 flex-col">
               <CardHeader title="Statistik Warga" />
-              <ul className="flex-1 divide-y divide-slate-100 px-5">
+              <ul className="flex-1 divide-y divide-black px-5">
                 {data.baris.map((baris, i) => (
                   <li key={baris.label}>
                     <button
@@ -100,7 +100,7 @@ export function StatistikPanelView({
                       </span>
                       <span className="flex items-center gap-1 text-slate-500">
                         {baris.jumlahTeks}
-                        <ChevronRight className="h-4 w-4 text-slate-400" />
+                        <ChevronRight className="h-4 w-4 text-slate-700" />
                       </span>
                     </button>
                   </li>

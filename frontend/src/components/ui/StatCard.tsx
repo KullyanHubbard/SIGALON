@@ -36,7 +36,7 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        'flex h-full items-center gap-3 p-3 sm:gap-4 sm:p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 motion-reduce:hover:translate-y-0',
+        'flex h-full items-center gap-3 p-3 sm:gap-4 sm:p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-black motion-reduce:hover:translate-y-0',
         className,
       )}
     >

@@ -30,7 +30,7 @@ export function DaftarJabatanView({
   onUbahLpm,
 }: DaftarJabatanViewProps) {
   return (
-    <Card className="overflow-hidden border-slate-200 shadow-sm">
+    <Card className="overflow-hidden shadow-sm">
       <CardHeader title="Daftar Akun" />
       <CardContent className="p-0">
         <QueryBoundary
@@ -50,7 +50,7 @@ export function DaftarJabatanView({
                   <Th>Aksi</Th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody>
                 {daftar.map((j) => (
                   <tr
                     key={j.kode}
@@ -112,7 +112,7 @@ export function DaftarJabatanView({
                           </Button>
                           <button
                             type="button"
-                            className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                            className="flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
                             title="Reset Password"
                             onClick={() => onResetPassword(j)}
                           >
@@ -140,7 +140,7 @@ export function DaftarJabatanView({
                   </tr>
                 ))}
                 {}
-                <tr className="border-t-2 border-slate-200 bg-slate-50/40 transition-colors hover:bg-slate-50/80">
+                <tr className="bg-slate-50/40 transition-colors hover:bg-slate-50/80">
                   <Td className="font-semibold text-slate-900">Ketua LPM</Td>
                   <Td className="font-medium text-slate-800">
                     {lpmNama ? (

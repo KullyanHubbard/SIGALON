@@ -79,7 +79,7 @@ export function EditorIsiBerita({
 
       <div
         className={cn(
-          'overflow-hidden rounded-lg border-1 border-slate-300 focus-within:border-brand-600',
+          'overflow-hidden rounded-lg border-1 border-black focus-within:border-brand-600',
           error && 'border-red-400',
         )}
       >
@@ -87,7 +87,7 @@ export function EditorIsiBerita({
           role="toolbar"
           aria-label="Format tulisan"
           aria-controls="isi-berita-editor"
-          className="flex flex-wrap items-center gap-0.5 border-b border-slate-200 bg-slate-50 px-2 py-1.5"
+          className="flex flex-wrap items-center gap-0.5 border-b-1 border-black bg-slate-50 px-2 py-1.5"
         >
           <TombolAlat
             label="Tebal"

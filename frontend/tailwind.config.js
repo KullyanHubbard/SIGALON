@@ -37,14 +37,15 @@ export default {
         },
       },
       borderColor: ({ theme }) => ({
-        DEFAULT: theme('colors.slate.200'),
+        DEFAULT: '#000000',
       }),
 
       borderWidth: {
-        DEFAULT: '4px',
-        // `border` telanjang di sini 4px (lihat DEFAULT di atas), jadi garis
-        // rambut butuh kelasnya sendiri — Tailwind tidak punya `border-1`.
+        DEFAULT: '1px',
         1: '1px',
+        2: '2px',
+        4: '4px',
+        8: '8px',
       },
       fontFamily: {
         sans: ['Open Sans', 'system-ui', 'sans-serif'],

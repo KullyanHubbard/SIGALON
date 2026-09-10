@@ -54,7 +54,7 @@ export function AksesibilitasWidget() {
       {open && (
         <div
           role="menu"
-          className="absolute bottom-11 right-0 w-52 rounded-xl border border-slate-200 bg-surface p-3 shadow-xl"
+          className="absolute bottom-11 right-0 w-52 rounded-xl border-1 border-black bg-surface p-3 shadow-xl"
         >
           <p className="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
             Ukuran Teks
@@ -70,7 +70,7 @@ export function AksesibilitasWidget() {
                   'flex-1 rounded-lg border py-2 font-bold transition-all duration-150 active:scale-95',
                   persen === s.persen
                     ? 'border-brand-600 text-brand-600 shadow-sm'
-                    : 'border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300',
+                    : 'border-1 border-black text-slate-700 hover:bg-slate-50 hover:border-black',
                 )}
                 style={{ fontSize: `${0.8 + (s.persen - 100) / 200}rem` }}
               >

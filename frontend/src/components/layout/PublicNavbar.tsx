@@ -48,7 +48,7 @@ export function PublicNavbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-surface/90 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b-1 border-black bg-surface/90 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
           <NavLink to={paths.landing} aria-label="Beranda" className="shrink-0">
             <Logo className="h-8" />
@@ -89,12 +89,12 @@ export function PublicNavbar() {
       {/* Mobile drawer dari sisi kanan */}
       <aside
         className={cn(
-          'fixed inset-y-0 right-0 z-50 flex h-full max-h-dvh w-72 sm:w-80 max-w-[85vw] flex-col border-l border-slate-200 bg-surface shadow-2xl transition-transform duration-300 ease-in-out lg:hidden',
+          'fixed inset-y-0 right-0 z-50 flex h-full max-h-dvh w-72 sm:w-80 max-w-[85vw] flex-col border-l-1 border-black bg-surface shadow-2xl transition-transform duration-300 ease-in-out lg:hidden',
           open ? 'translate-x-0' : 'translate-x-full',
         )}
         aria-label="Menu navigasi mobile"
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-100 px-5">
+        <div className="flex h-16 shrink-0 items-center justify-between border-b-1 border-black px-5">
           <Logo className="h-7" />
           <button
             type="button"
@@ -129,7 +129,7 @@ export function PublicNavbar() {
           ))}
         </nav>
 
-        <div className="border-t border-slate-100 p-4 shrink-0">
+        <div className="border-t-1 border-black p-4 shrink-0">
           <AccountButton className="w-full justify-center py-2.5" />
         </div>
       </aside>

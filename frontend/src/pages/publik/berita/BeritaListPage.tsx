@@ -74,7 +74,7 @@ export default function BeritaListPage() {
                 </div>
 
                 {totalHalaman > 1 && (
-                  <div className="flex items-center justify-center border-t border-slate-200 pt-6">
+                  <div className="flex items-center justify-center border-t-1 border-black pt-6">
                     <nav
                       aria-label="Paginasi berita"
                       className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2"
@@ -83,7 +83,7 @@ export default function BeritaListPage() {
                         type="button"
                         onClick={() => setHalaman((h) => Math.max(1, h - 1))}
                         disabled={halamanAktif === 1}
-                        className="h-9 rounded-lg border border-slate-300 px-3 sm:px-3.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
+                        className="h-9 rounded-lg border-1 border-black px-3 sm:px-3.5 text-xs sm:text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
                       >
                         Sebelumnya
                       </button>
@@ -93,7 +93,7 @@ export default function BeritaListPage() {
                           return (
                             <span
                               key={`ellipsis-${idx}`}
-                              className="px-1.5 sm:px-2 text-sm text-slate-400 select-none"
+                              className="px-1.5 sm:px-2 text-sm text-slate-700 font-bold select-none"
                             >
                               …
                             </span>
@@ -107,10 +107,10 @@ export default function BeritaListPage() {
                             type="button"
                             onClick={() => setHalaman(item)}
                             aria-current={aktif ? 'page' : undefined}
-                            className={`min-w-[36px] h-9 px-3 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+                            className={`min-w-[36px] h-9 px-3 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
                               aktif
                                 ? 'bg-brand-600 text-white font-bold shadow-sm'
-                                : 'border border-slate-300 text-slate-700 hover:bg-slate-50'
+                                : 'border-1 border-black text-slate-900 hover:bg-slate-50'
                             }`}
                           >
                             {item}
@@ -122,7 +122,7 @@ export default function BeritaListPage() {
                         type="button"
                         onClick={() => setHalaman((h) => Math.min(totalHalaman, h + 1))}
                         disabled={halamanAktif === totalHalaman}
-                        className="h-9 rounded-lg border border-slate-300 px-3 sm:px-3.5 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
+                        className="h-9 rounded-lg border-1 border-black px-3 sm:px-3.5 text-xs sm:text-sm font-semibold text-slate-900 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
                       >
                         Selanjutnya
                       </button>
