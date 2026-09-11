@@ -20,7 +20,7 @@ interface AdminDashboardViewProps {
 }
 
 export function AdminDashboardView({
-  namaPengurus,
+  namaPengurus: _namaPengurus,
   isLoading,
   isError,
   stats,
@@ -28,10 +28,7 @@ export function AdminDashboardView({
 }: AdminDashboardViewProps) {
   return (
     <div>
-      <PageHeader
-        title="Dashboard"
-        description={`Selamat datang, ${namaPengurus}. Ringkasan data padukuhan.`}
-      />
+      <PageHeader title="Dashboard" />
 
       <QueryBoundary
         isLoading={isLoading}
@@ -58,8 +55,13 @@ export function AdminDashboardView({
                   description="Jumlah penduduk per kelompok umur"
                   action={
                     <Link to={paths.admin.infografis}>
-                      <Button variant="ghost" size="sm" className="text-xs sm:text-sm px-2 sm:px-3">
-                        Lihat semua <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="px-2 text-xs sm:px-3 sm:text-sm"
+                      >
+                        Lihat semua{' '}
+                        <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       </Button>
                     </Link>
                   }

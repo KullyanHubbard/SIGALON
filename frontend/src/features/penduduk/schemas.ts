@@ -30,6 +30,7 @@ export const wargaSchema = z
       'SD',
       'SMP',
       'SMA',
+      'D2',
       'D3',
       'D4',
       'S1',

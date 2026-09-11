@@ -28,13 +28,12 @@ export function LegendaDonut({
       )}
     >
       {data.map((d, i) => {
-        const persen =
-          total === 0 ? 0 : Math.round((d.value / total) * 100);
+        const persen = total === 0 ? 0 : Math.round((d.value / total) * 100);
 
         return (
           <li
             key={d.label}
-            className="flex items-center justify-between gap-3 rounded-lg border-1 border-black bg-white px-3 py-2 sm:py-2.5 transition-all duration-300 ease-out motion-reduce:transition-none"
+            className="flex items-center justify-between gap-3 rounded-lg border-1 border-black bg-white px-3 py-2 transition-all duration-300 ease-out motion-reduce:transition-none sm:py-2.5"
             style={{
               opacity: terpasang ? 1 : 0,
               transform: terpasang ? 'translateY(0)' : 'translateY(8px)',
@@ -42,14 +41,14 @@ export function LegendaDonut({
             }}
           >
             {/* Swatch & Label */}
-            <div className="flex items-center gap-2.5 min-w-0 pr-1">
+            <div className="flex min-w-0 items-center gap-2.5 pr-1">
               <span
                 className="h-3.5 w-3.5 shrink-0 rounded-full border-1 border-black"
                 style={{ backgroundColor: warna[i % warna.length] }}
                 aria-hidden
               />
               <span
-                className="truncate text-xs sm:text-sm font-semibold text-slate-900"
+                className="truncate text-xs font-semibold text-slate-900 sm:text-sm"
                 title={d.label}
               >
                 {d.label}
@@ -57,11 +56,11 @@ export function LegendaDonut({
             </div>
 
             {/* Jumlah & Persentase */}
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="min-w-[1.75rem] text-right text-xs sm:text-sm font-bold text-slate-900 tabular-nums">
+            <div className="flex shrink-0 items-center gap-2">
+              <span className="min-w-[1.75rem] text-right text-xs font-bold tabular-nums text-slate-900 sm:text-sm">
                 {formatAngka(d.value)}
               </span>
-              <span className="inline-flex items-center justify-center min-w-[2.85rem] rounded-md border-1 border-black bg-transparent px-1.5 py-0.5 text-[11px] sm:text-xs font-extrabold text-slate-900 tabular-nums">
+              <span className="inline-flex min-w-[2.85rem] items-center justify-center rounded-md border-1 border-black bg-transparent px-1.5 py-0.5 text-[11px] font-extrabold tabular-nums text-slate-900 sm:text-xs">
                 {total === 0 ? '—' : `${persen}%`}
               </span>
             </div>
@@ -71,4 +70,3 @@ export function LegendaDonut({
     </ul>
   );
 }
-

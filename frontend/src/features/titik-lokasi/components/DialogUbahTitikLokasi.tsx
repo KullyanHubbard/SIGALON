@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Crosshair, MapPin, ExternalLink, HelpCircle, Focus } from 'lucide-react';
+import {
+  Crosshair,
+  MapPin,
+  ExternalLink,
+  HelpCircle,
+  Focus,
+} from 'lucide-react';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -10,21 +16,30 @@ import { Textarea } from '@/components/ui/Textarea';
 import { pesanError } from '@/lib/utils';
 import type { TitikLokasi, TitikLokasiBaru, TitikLokasiUbah } from '../types';
 import { dapatkanTemaTitik } from '../warna';
-import { useTambahTitikLokasi, useUbahTitikLokasi } from '../hooks/use-titik-lokasi';
+import {
+  useTambahTitikLokasi,
+  useUbahTitikLokasi,
+} from '../hooks/use-titik-lokasi';
 
 const PUSAT_PADUKUHAN: [number, number] = [-7.656826, 110.363111];
 const DEFAULT_ZOOM = 16;
 
 const PETA_BOUNDS = {
-  minLat: -7.660500,
-  maxLat: -7.653000,
-  minLon: 110.358000,
-  maxLon: 110.368500,
+  minLat: -7.6605,
+  maxLat: -7.653,
+  minLon: 110.358,
+  maxLon: 110.3685,
 };
 
 function latLonKeXY(latVal: number, lonVal: number): { x: number; y: number } {
-  const hitungX = ((lonVal - PETA_BOUNDS.minLon) / (PETA_BOUNDS.maxLon - PETA_BOUNDS.minLon)) * 100;
-  const hitungY = ((PETA_BOUNDS.maxLat - latVal) / (PETA_BOUNDS.maxLat - PETA_BOUNDS.minLat)) * 100;
+  const hitungX =
+    ((lonVal - PETA_BOUNDS.minLon) /
+      (PETA_BOUNDS.maxLon - PETA_BOUNDS.minLon)) *
+    100;
+  const hitungY =
+    ((PETA_BOUNDS.maxLat - latVal) /
+      (PETA_BOUNDS.maxLat - PETA_BOUNDS.minLat)) *
+    100;
   return {
     x: Math.round(Math.max(0, Math.min(100, hitungX)) * 10) / 10,
     y: Math.round(Math.max(0, Math.min(100, hitungY)) * 10) / 10,
@@ -32,8 +47,12 @@ function latLonKeXY(latVal: number, lonVal: number): { x: number; y: number } {
 }
 
 function xyKeLatLon(xVal: number, yVal: number): [number, number] {
-  const latVal = PETA_BOUNDS.maxLat - (yVal / 100) * (PETA_BOUNDS.maxLat - PETA_BOUNDS.minLat);
-  const lonVal = PETA_BOUNDS.minLon + (xVal / 100) * (PETA_BOUNDS.maxLon - PETA_BOUNDS.minLon);
+  const latVal =
+    PETA_BOUNDS.maxLat -
+    (yVal / 100) * (PETA_BOUNDS.maxLat - PETA_BOUNDS.minLat);
+  const lonVal =
+    PETA_BOUNDS.minLon +
+    (xVal / 100) * (PETA_BOUNDS.maxLon - PETA_BOUNDS.minLon);
   return [Number(latVal.toFixed(6)), Number(lonVal.toFixed(6))];
 }
 
@@ -59,14 +78,20 @@ interface DialogUbahTitikLokasiProps {
   titik: TitikLokasi | null; // null jika mode tambah baru
 }
 
-export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikLokasiProps) {
+export function DialogUbahTitikLokasi({
+  open,
+  onClose,
+  titik,
+}: DialogUbahTitikLokasiProps) {
   const isTambah = titik === null;
   const ubahMutasi = useUbahTitikLokasi();
   const tambahMutasi = useTambahTitikLokasi();
   const isPending = ubahMutasi.isPending || tambahMutasi.isPending;
 
   const [nama, setNama] = useState('');
-  const [kategori, setKategori] = useState<'perangkat' | 'fasilitas'>('fasilitas');
+  const [kategori, setKategori] = useState<'perangkat' | 'fasilitas'>(
+    'fasilitas',
+  );
   const [kategoriLabel, setKategoriLabel] = useState('');
   const [deskripsi, setDeskripsi] = useState('');
   const [x, setX] = useState<number>(50);
@@ -104,7 +129,8 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
       setLat(titikLat.toFixed(6));
       setLon(titikLon.toFixed(6));
       setGoogleMapsUrl(
-        titik.googleMapsUrl ?? `https://maps.google.com/?q=${titikLat.toFixed(6)},${titikLon.toFixed(6)}`,
+        titik.googleMapsUrl ??
+          `https://maps.google.com/?q=${titikLat.toFixed(6)},${titikLon.toFixed(6)}`,
       );
       setIkon(titik.ikon);
     } else {
@@ -113,12 +139,17 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
       setKategoriLabel('Fasilitas Umum');
       setDeskripsi('');
       const defaultCoord = PUSAT_PADUKUHAN;
-      const { x: defaultX, y: defaultY } = latLonKeXY(defaultCoord[0], defaultCoord[1]);
+      const { x: defaultX, y: defaultY } = latLonKeXY(
+        defaultCoord[0],
+        defaultCoord[1],
+      );
       setX(defaultX);
       setY(defaultY);
       setLat(defaultCoord[0].toFixed(6));
       setLon(defaultCoord[1].toFixed(6));
-      setGoogleMapsUrl(`https://maps.google.com/?q=${defaultCoord[0]},${defaultCoord[1]}`);
+      setGoogleMapsUrl(
+        `https://maps.google.com/?q=${defaultCoord[0]},${defaultCoord[1]}`,
+      );
       setIkon('balai');
     }
     setGalatForm(null);
@@ -175,7 +206,13 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
         '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
     }).addTo(map);
 
-    const tema = dapatkanTemaTitik({ kategori, ikon, nama, peran: null, kategoriLabel });
+    const tema = dapatkanTemaTitik({
+      kategori,
+      ikon,
+      nama,
+      peran: null,
+      kategoriLabel,
+    });
     const icon = buatMarkerIcon(tema.simbol, tema.bgIkon, tema.ringHotspot);
     const marker = L.marker(centerCoord, { icon, draggable: true }).addTo(map);
 
@@ -219,7 +256,13 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
     const marker = markerRef.current;
     if (!marker) return;
 
-    const tema = dapatkanTemaTitik({ kategori, ikon, nama, peran: null, kategoriLabel });
+    const tema = dapatkanTemaTitik({
+      kategori,
+      ikon,
+      nama,
+      peran: null,
+      kategoriLabel,
+    });
     marker.setIcon(buatMarkerIcon(tema.simbol, tema.bgIkon, tema.ringHotspot));
     marker.setTooltipContent(nama || 'Titik Terpilih');
   }, [nama, ikon, kategori, kategoriLabel]);
@@ -230,7 +273,14 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
     setLon(newLonStr);
     const numLat = parseFloat(newLatStr);
     const numLon = parseFloat(newLonStr);
-    if (!isNaN(numLat) && !isNaN(numLon) && numLat >= -90 && numLat <= 90 && numLon >= -180 && numLon <= 180) {
+    if (
+      !isNaN(numLat) &&
+      !isNaN(numLon) &&
+      numLat >= -90 &&
+      numLat <= 90 &&
+      numLon >= -180 &&
+      numLon <= 180
+    ) {
       setGoogleMapsUrl(`https://maps.google.com/?q=${numLat},${numLon}`);
       const { x: hitungX, y: hitungY } = latLonKeXY(numLat, numLon);
       setX(hitungX);
@@ -246,7 +296,9 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
   // Fokuskan peta kembali ke Pusat Wilayah (Balai Padukuhan)
   const fokusPusatWilayah = () => {
     if (mapInstanceRef.current && markerRef.current) {
-      mapInstanceRef.current.setView(PUSAT_PADUKUHAN, DEFAULT_ZOOM, { animate: true });
+      mapInstanceRef.current.setView(PUSAT_PADUKUHAN, DEFAULT_ZOOM, {
+        animate: true,
+      });
       markerRef.current.setLatLng(PUSAT_PADUKUHAN);
       perbaruiKoordinat(PUSAT_PADUKUHAN[0], PUSAT_PADUKUHAN[1]);
     }
@@ -276,7 +328,11 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
       y: Number(y) || 50,
       lat: numLat,
       lon: numLon,
-      googleMapsUrl: googleMapsUrl.trim() || (numLat && numLon ? `https://maps.google.com/?q=${numLat},${numLon}` : null),
+      googleMapsUrl:
+        googleMapsUrl.trim() ||
+        (numLat && numLon
+          ? `https://maps.google.com/?q=${numLat},${numLon}`
+          : null),
       ikon,
       urutan: titik?.urutan ?? 0,
     };
@@ -306,18 +362,18 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
         {/* Pemilih Titik Koordinat Berbasis OpenStreetMap Interaktif */}
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <label className="text-xs sm:text-sm font-semibold text-slate-800 flex items-center gap-1.5">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 sm:text-sm">
               <Crosshair className="h-4 w-4 text-brand-600" />
               Pilih Titik pada Peta OpenStreetMap (Klik Langsung atau Seret Pin)
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] sm:text-xs font-mono font-medium text-brand-700 bg-brand-50 border border-brand-200 px-2 py-0.5 rounded">
+              <span className="rounded border border-brand-200 bg-brand-50 px-2 py-0.5 font-mono text-[11px] font-medium text-brand-700 sm:text-xs">
                 Lat: {lat || '-'} | Lon: {lon || '-'}
               </span>
               <button
                 type="button"
                 onClick={fokusPusatWilayah}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 hover:text-brand-600 bg-slate-100 hover:bg-slate-200 border-1 border-black px-2 py-0.5 rounded transition-colors cursor-pointer"
+                className="inline-flex cursor-pointer items-center gap-1 rounded border-1 border-black bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-brand-600"
                 title="Pusatkan peta ke Balai Padukuhan"
               >
                 <Focus className="h-3 w-3" />
@@ -326,35 +382,38 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
             </div>
           </div>
 
-          <p className="text-xs text-slate-600 flex items-center gap-1">
-            <HelpCircle className="h-3.5 w-3.5 text-slate-700 shrink-0" />
-            Klik di mana saja pada peta jalan OpenStreetMap di bawah atau seret pin merah untuk menentukan koordinat yang akurat.
+          <p className="flex items-center gap-1 text-xs text-slate-600">
+            <HelpCircle className="h-3.5 w-3.5 shrink-0 text-slate-700" />
+            Klik di mana saja pada peta jalan OpenStreetMap di bawah atau seret
+            pin merah untuk menentukan koordinat yang akurat.
           </p>
 
-          <div className="relative overflow-hidden rounded-xl border-1 border-black shadow-inner z-0 bg-slate-100">
+          <div className="relative z-0 overflow-hidden rounded-xl border-1 border-black bg-slate-100 shadow-inner">
             <div
               ref={mapContainerRef}
-              className="h-[280px] sm:h-[360px] w-full z-0 cursor-crosshair"
+              className="z-0 h-[280px] w-full cursor-crosshair sm:h-[360px]"
             />
-            <div className="pointer-events-none absolute bottom-2 left-2 z-[400] rounded-md bg-slate-900/80 px-2.5 py-1 text-[10px] text-white backdrop-blur-xs">
-              <span>💡 Klik pada peta jalan atau seret pin untuk memindahkan titik</span>
+            <div className="backdrop-blur-xs pointer-events-none absolute bottom-2 left-2 z-[400] rounded-md bg-slate-900/80 px-2.5 py-1 text-[10px] text-white">
+              <span>
+                💡 Klik pada peta jalan atau seret pin untuk memindahkan titik
+              </span>
             </div>
           </div>
         </div>
 
         {/* 1. Koordinat GPS (Diletakkan di atas sendiri agar langsung terlihat dan mudah diatur) */}
-        <div className="rounded-xl border-1 border-black bg-slate-50/70 p-3.5 space-y-3">
+        <div className="space-y-3 rounded-xl border-1 border-black bg-slate-50/70 p-3.5">
           <div className="flex flex-wrap items-center justify-between gap-1.5">
-            <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+            <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-800">
               <MapPin className="h-4 w-4 text-brand-600" />
               Koordinat GPS (Otomatis Terisi dari Klik Peta)
             </span>
-            <span className="text-[11px] font-mono text-slate-700 bg-white px-2 py-0.5 rounded border-1 border-black font-semibold">
+            <span className="rounded border-1 border-black bg-white px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-700">
               Posisi Peta: X {x}% | Y {y}%
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <Input
               label="Latitude GPS (Otomatis dari Peta)"
               placeholder="-7.656826"
@@ -370,7 +429,7 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1">
+            <label className="mb-1 block flex items-center gap-1 text-xs font-semibold text-slate-700">
               Link Google Maps (Otomatis Dihasilkan)
               <ExternalLink className="h-3 w-3 text-slate-700" />
             </label>
@@ -379,13 +438,13 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
               placeholder="https://maps.google.com/?q=..."
               value={googleMapsUrl}
               onChange={(e) => setGoogleMapsUrl(e.target.value)}
-              className="w-full rounded-lg border-1 border-black bg-white px-3 py-2 text-xs sm:text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 font-mono"
+              className="w-full rounded-lg border-1 border-slate-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 shadow-sm hover:border-slate-400 focus:border-slate-400 focus:outline-none focus:ring-0 sm:text-sm"
             />
           </div>
         </div>
 
         {/* 2. Informasi Detail Tempat / Fasilitas */}
-        <div className="grid gap-4 sm:grid-cols-2 border-t-1 border-black pt-3">
+        <div className="grid gap-4 border-t-1 border-black pt-3 sm:grid-cols-2">
           <Input
             label="Nama Lokasi / Tempat"
             hint="Contoh: Masjid Padukuhan, Balai RW 01, Kediaman Dukuh"
@@ -395,7 +454,7 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
           />
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="mb-1.5 block text-xs font-semibold text-slate-700">
               Kategori
             </label>
             <select
@@ -411,9 +470,11 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
                   setKategoriLabel('Fasilitas Umum');
                 }
               }}
-              className="w-full rounded-lg border-1 border-black bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-lg border-1 border-black bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-black focus:outline-none focus:ring-0"
             >
-              <option value="fasilitas">Fasilitas Umum (Masjid, Balai, Pos Ronda, Posyandu)</option>
+              <option value="fasilitas">
+                Fasilitas Umum (Masjid, Balai, Pos Ronda, Posyandu)
+              </option>
               <option value="perangkat">Perangkat Desa (Dukuh, RW, RT)</option>
             </select>
           </div>
@@ -427,13 +488,13 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
           />
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+            <label className="mb-1.5 block text-xs font-semibold text-slate-700">
               Jenis Ikon
             </label>
             <select
               value={ikon}
               onChange={(e) => setIkon(e.target.value)}
-              className="w-full rounded-lg border-1 border-black bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+              className="w-full rounded-lg border-1 border-black bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-black focus:outline-none focus:ring-0"
             >
               <option value="balai">🏛️ Balai Pertemuan (Landmark)</option>
               <option value="ibadah">🕌 Tempat Ibadah / Masjid</option>
@@ -455,7 +516,12 @@ export function DialogUbahTitikLokasi({ open, onClose, titik }: DialogUbahTitikL
         </div>
 
         <div className="flex items-center justify-end gap-3 border-t-1 border-black pt-4">
-          <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isPending}
+          >
             Batal
           </Button>
           <Button type="submit" isLoading={isPending}>

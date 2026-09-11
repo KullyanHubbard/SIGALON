@@ -32,7 +32,7 @@ export function NavbarView({
   const samaPeran = nama.trim().toLowerCase() === peran.trim().toLowerCase();
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 sm:h-20 items-center justify-between border-b-1 border-black bg-surface/80 px-4 backdrop-blur lg:px-6">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b-1 border-black bg-surface/80 px-4 backdrop-blur sm:h-20 lg:px-6">
       <div className="flex items-center gap-2 lg:hidden">
         <button
           className="-ml-1 rounded-md p-2 text-slate-500 hover:bg-slate-100"

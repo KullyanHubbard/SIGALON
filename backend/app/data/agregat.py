@@ -24,6 +24,7 @@ URUTAN_PENDIDIKAN = (
     "SD",
     "SMP",
     "SMA",
+    "D2",
     "D3",
     "D4",
     "S1",

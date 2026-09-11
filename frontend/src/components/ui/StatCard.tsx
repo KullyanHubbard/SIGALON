@@ -36,7 +36,7 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        'flex h-full items-center gap-3 p-3 sm:gap-4 sm:p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md hover:border-black motion-reduce:hover:translate-y-0',
+        'flex h-full items-center gap-3 p-3 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0 sm:gap-4 sm:p-4',
         className,
       )}
     >
@@ -47,7 +47,7 @@ export function StatCard({
         height={144}
         loading="lazy"
         decoding="async"
-        className="h-9 w-9 shrink-0 sm:h-12 sm:w-12 transition-transform duration-200 group-hover:scale-105"
+        className="h-9 w-9 shrink-0 transition-transform duration-200 group-hover:scale-105 sm:h-12 sm:w-12"
       />
       <div className="min-w-0 flex-1">
         <p
@@ -56,10 +56,11 @@ export function StatCard({
         >
           {label}
         </p>
-        <p className="text-lg font-bold text-slate-900 sm:text-2xl tabular-nums tracking-tight">
+        <p className="text-lg font-bold tabular-nums tracking-tight text-slate-900 sm:text-2xl">
           {numValue !== null ? (
             <span ref={textRef}>
-              {formatAngka(numValue)}{suffix}
+              {formatAngka(numValue)}
+              {suffix}
             </span>
           ) : (
             value
@@ -69,4 +70,3 @@ export function StatCard({
     </Card>
   );
 }
-

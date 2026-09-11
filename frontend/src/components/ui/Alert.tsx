@@ -7,13 +7,11 @@ type Tone = 'info' | 'success' | 'error';
 const config: Record<Tone, { icon: typeof Info; className: string }> = {
   info: {
     icon: Info,
-    className:
-      'bg-brand-600/10 text-brand-800 border-brand-600/20',
+    className: 'bg-brand-600/10 text-brand-800 border-brand-600/20',
   },
   success: {
     icon: CheckCircle2,
-    className:
-      'bg-green-600/10 text-green-800 border-green-600/20',
+    className: 'bg-green-600/10 text-green-800 border-green-600/20',
   },
   error: {
     icon: AlertCircle,

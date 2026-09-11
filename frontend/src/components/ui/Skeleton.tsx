@@ -7,10 +7,7 @@ export function Skeleton({
 }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        'animate-pulse rounded-lg bg-slate-200/80',
-        className,
-      )}
+      className={cn('animate-pulse rounded-lg bg-slate-200/80', className)}
       {...props}
     />
   );
@@ -18,8 +15,8 @@ export function Skeleton({
 
 export function StatCardSkeleton() {
   return (
-    <div className="flex h-full items-center gap-3 p-3 sm:gap-4 sm:p-4 rounded-xl border-1 border-black bg-surface shadow-sm">
-      <Skeleton className="h-9 w-9 sm:h-12 sm:w-12 rounded-lg shrink-0" />
+    <div className="flex h-full items-center gap-3 rounded-xl border-1 border-black bg-surface p-3 shadow-sm sm:gap-4 sm:p-4">
+      <Skeleton className="h-9 w-9 shrink-0 rounded-lg sm:h-12 sm:w-12" />
       <div className="min-w-0 flex-1 space-y-2">
         <Skeleton className="h-3.5 w-24 sm:w-28" />
         <Skeleton className="h-6 w-16 sm:w-20" />
@@ -42,7 +39,7 @@ export function BeritaCardSkeleton() {
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border-1 border-black bg-surface shadow-sm">
       <Skeleton className="aspect-video w-full rounded-none" />
-      <div className="p-4 sm:p-5 space-y-3">
+      <div className="space-y-3 p-4 sm:p-5">
         <Skeleton className="h-3 w-28" />
         <Skeleton className="h-5 w-4/5" />
         <Skeleton className="h-4 w-full" />

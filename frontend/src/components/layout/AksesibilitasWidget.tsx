@@ -46,7 +46,7 @@ export function AksesibilitasWidget() {
         aria-label="Pengaturan aksesibilitas"
         aria-haspopup="menu"
         aria-expanded={open}
-        className="focus-ring flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white shadow-md transition-all duration-200 hover:scale-110 hover:shadow-lg hover:bg-brand-700 active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100"
+        className="focus-ring flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white shadow-md transition-all duration-200 hover:scale-110 hover:bg-brand-700 hover:shadow-lg active:scale-95 motion-reduce:transition-none motion-reduce:hover:scale-100"
       >
         <Accessibility className="h-5 w-5" />
       </button>
@@ -70,7 +70,7 @@ export function AksesibilitasWidget() {
                   'flex-1 rounded-lg border py-2 font-bold transition-all duration-150 active:scale-95',
                   persen === s.persen
                     ? 'border-brand-600 text-brand-600 shadow-sm'
-                    : 'border-1 border-black text-slate-700 hover:bg-slate-50 hover:border-black',
+                    : 'border-1 border-black text-slate-700 hover:border-black hover:bg-slate-50',
                 )}
                 style={{ fontSize: `${0.8 + (s.persen - 100) / 200}rem` }}
               >

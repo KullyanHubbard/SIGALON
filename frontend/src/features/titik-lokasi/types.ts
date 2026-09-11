@@ -1,6 +1,7 @@
 export type KategoriTitik = 'perangkat' | 'fasilitas';
 
-export type IkonTitik = 'balai' | 'ibadah' | 'poskamling' | 'posyandu' | 'perangkat' | string;
+export type IkonTitik =
+  'balai' | 'ibadah' | 'poskamling' | 'posyandu' | 'perangkat' | string;
 
 export interface TitikLokasi {
   id: string;

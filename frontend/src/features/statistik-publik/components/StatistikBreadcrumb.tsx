@@ -20,7 +20,7 @@ export function StatistikBreadcrumb({
         {jalur.map(({ label, tujuan }, i) => (
           <li key={label} className="flex items-center">
             {i > 0 && (
-              <span className="px-1.5 sm:px-2 text-slate-900" aria-hidden>
+              <span className="px-1.5 text-slate-900 sm:px-2" aria-hidden>
                 /
               </span>
             )}

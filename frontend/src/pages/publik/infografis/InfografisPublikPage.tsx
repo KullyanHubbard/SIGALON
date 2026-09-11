@@ -17,12 +17,12 @@ export default function InfografisPublikPage() {
 
   return (
     <div className="flex flex-col">
-      <section className="bg-brand-950 py-8 sm:py-12 lg:py-14 text-white">
+      <section className="bg-brand-950 py-8 text-white sm:py-12 lg:py-14">
         <div className={WADAH}>
-          <p className="text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-brand-300">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-300 sm:text-sm">
             Infografis
           </p>
-          <h1 className="mt-2 sm:mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold">
+          <h1 className="mt-2 text-2xl font-bold sm:mt-3 sm:text-3xl lg:text-4xl">
             Data {padukuhan.namaLengkap}
           </h1>
         </div>

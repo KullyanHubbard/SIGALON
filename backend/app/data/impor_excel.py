@@ -64,6 +64,7 @@ KOLOM: list[tuple[str, str, int]] = [
     ("kabupaten", "Kabupaten", 14),
     ("provinsi", "Provinsi", 14),
     ("kodePos", "Kode Pos", 10),
+    ("statusKependudukan", "Status Kependudukan", 18),
 ]
 
 # Kolom yang isinya terkunci ke sedikit pilihan. Dipakai pembangkit template
@@ -72,12 +73,13 @@ PILIHAN: dict[str, list[str]] = {
     "jenisKelamin": ["LAKI_LAKI", "PEREMPUAN"],
     "agama": ["ISLAM", "KRISTEN", "KATOLIK", "HINDU", "BUDDHA", "KONGHUCU", "LAINNYA"],
     "statusPerkawinan": ["BELUM_KAWIN", "KAWIN", "CERAI_HIDUP", "CERAI_MATI"],
-    "pendidikan": ["TIDAK_BELUM_SEKOLAH", "BELUM_TAMAT_SD", "SD", "SMP", "SMA", "D3", "D4", "S1", "S2", "S3"],
+    "pendidikan": ["TIDAK_BELUM_SEKOLAH", "BELUM_TAMAT_SD", "SD", "SMP", "SMA", "D2", "D3", "D4", "S1", "S2", "S3"],
     "golonganDarah": ["A", "B", "AB", "O", "TIDAK_TAHU"],
     "statusHubunganKeluarga": [
         "KEPALA_KELUARGA", "ISTRI", "ANAK", "FAMILI_LAIN", "LAINNYA",
     ],
     "jabatan": ["WARGA", "DUKUH", "RW", "RT"],
+    "statusKependudukan": ["AKTIF", "PINDAH", "MENINGGAL"],
 }
 
 _ALAMAT = {
@@ -93,10 +95,27 @@ def _samakan(teks: object) -> str:
 def petakan_kolom(baris_header: tuple) -> dict[str, int]:
     """Nama field -> indeks kolom, dicocokkan dari label di baris header."""
     ada = {_samakan(v): i for i, v in enumerate(baris_header) if v is not None}
+    alias = {
+        "status": "status kependudukan",
+        "status warga": "status kependudukan",
+        "keterangan": "status kependudukan",
+        "pindah": "status kependudukan",
+    }
+    for k, v in alias.items():
+        if k in ada and v not in ada:
+            ada[v] = ada[k]
+
     peta, hilang = {}, []
     for field, label, _ in KOLOM:
         i = ada.get(_samakan(label))
         if i is None:
+            # statusKependudukan opsional: jika header tidak ada, cari kolom ke-23 atau fallback -1 (default AKTIF)
+            if field == "statusKependudukan":
+                if len(baris_header) >= 23:
+                    peta[field] = 22
+                else:
+                    peta[field] = -1
+                continue
             hilang.append(label)
         else:
             peta[field] = i
@@ -132,7 +151,10 @@ def baca_xlsx(path: str) -> list[Penduduk]:
             continue  # dua-duanya kosong = baris belum diisi, lewati
         nilai = {}
         for field, i in peta.items():
-            val = r[i]
+            if i == -1 or i >= len(r):
+                val = None
+            else:
+                val = r[i]
             if val is None:
                 nilai[field] = ""
             elif isinstance(val, (datetime, date)):
@@ -142,13 +164,47 @@ def baca_xlsx(path: str) -> list[Penduduk]:
                 if field == "tanggalLahir" and (" " in s or "T" in s):
                     s = s.split(" ")[0].split("T")[0]
                 nilai[field] = s
-        if nilai.get("pendidikan") in ("TIDAK_SEKOLAH", "BELUM_SEKOLAH"):
+        pend = (nilai.get("pendidikan") or "").strip().upper()
+        if pend in ("TIDAK_SEKOLAH", "BELUM_SEKOLAH"):
             nilai["pendidikan"] = "TIDAK_BELUM_SEKOLAH"
+        elif pend in ("D2", "D-2", "D 2", "DII", "D-II", "D.2", "D.II"):
+            nilai["pendidikan"] = "D2"
+        elif pend in ("D3", "D-3", "D 3", "DIII", "D-III", "D.3", "D.III"):
+            nilai["pendidikan"] = "D3"
+        elif pend in ("D4", "D-4", "D 4", "DIV", "D-IV", "D.4", "D.IV"):
+            nilai["pendidikan"] = "D4"
+        elif pend in ("S1", "S-1", "S 1", "SI"):
+            nilai["pendidikan"] = "S1"
+        elif pend in ("S2", "S-2", "S 2", "SII"):
+            nilai["pendidikan"] = "S2"
+        elif pend in ("S3", "S-3", "S 3", "SIII"):
+            nilai["pendidikan"] = "S3"
+        elif pend:
+            nilai["pendidikan"] = pend
+
+        if not nilai.get("golonganDarah"):
+            nilai["golonganDarah"] = "TIDAK_TAHU"
+
+        stat = (nilai.get("statusKependudukan") or "").strip().upper()
+        if stat in ("PINDAH", "MUTASI_KELUAR", "PINDAH KELUAR"):
+            nilai["statusKependudukan"] = "PINDAH"
+        elif stat in ("MENINGGAL", "MATI"):
+            nilai["statusKependudukan"] = "MENINGGAL"
+        else:
+            nilai["statusKependudukan"] = "AKTIF"
+
         baris_ke_nomor.setdefault(nilai["id"], []).append(nomor)
         if not nilai["id"]:
             kosong.append(nomor)
             continue
-        daftar.append(baris_ke_penduduk(nilai))
+        try:
+            daftar.append(baris_ke_penduduk(nilai))
+        except Exception as e:
+            sys.exit(
+                f"Data kependudukan tidak valid di baris {nomor} "
+                f"(Kode Warga: {nilai.get('id', '-')}, Nama: {nilai.get('nama', '-')}):\n  {e}\n\n"
+                "Periksa kembali baris tersebut di Excel, betulkan nilainya, lalu jalankan ulang."
+            )
 
     if kosong:
         sys.exit(

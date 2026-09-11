@@ -38,8 +38,7 @@ export function useCountUp(
 
     // Durasi adaptif agar angka kecil tidak terasa lambat dan angka besar tetap mulus
     const adaptiveDuration =
-      duration ??
-      (targetValue < 20 ? 400 : targetValue < 200 ? 700 : 900);
+      duration ?? (targetValue < 20 ? 400 : targetValue < 200 ? 700 : 900);
 
     const startVal = currentValRef.current;
     const diff = targetValue - startVal;

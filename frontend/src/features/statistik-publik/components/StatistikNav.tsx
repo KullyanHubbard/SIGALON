@@ -60,7 +60,7 @@ export function StatistikNav({
             value={periode}
             onChange={(e) => onPilihPeriode(e.target.value)}
             aria-label="Periode data"
-            className="w-full cursor-pointer rounded-lg border-1 border-black bg-surface px-3 py-2 text-base font-medium text-slate-900 outline-none transition-colors hover:border-brand-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+            className="w-full cursor-pointer rounded-lg border-1 border-black bg-surface px-3 py-2 text-base font-medium text-slate-900 outline-none transition-colors hover:border-black focus:border-black focus:ring-0"
           >
             {daftarPeriode(data?.periodeTerawal ?? periode, periode).map(
               (p) => (

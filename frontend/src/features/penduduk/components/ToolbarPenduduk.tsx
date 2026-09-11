@@ -78,10 +78,10 @@ function PilihanRingkas({
       value={nilai ?? ''}
       onChange={(e) => onPilih(e.target.value)}
       className={cn(
-        'focus-ring h-10 w-full sm:w-auto rounded-lg border-1 bg-surface px-3 text-sm transition-colors',
+        'focus-ring h-10 w-full rounded-lg border-1 bg-surface px-3 text-sm transition-colors sm:w-auto',
         nilai
           ? 'border-brand-600 font-medium text-brand-700'
-          : 'border-1 border-black text-slate-700',
+          : 'border-1 border-slate-300 text-slate-700 hover:border-slate-400 focus:border-slate-400 focus:outline-none focus:ring-0',
       )}
     >
       <option value="">{label}: Semua</option>
@@ -157,7 +157,7 @@ export function ToolbarPenduduk({
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <div className="w-full sm:w-auto sm:min-w-[12rem] sm:flex-1 sm:max-w-xs">
+        <div className="w-full sm:w-auto sm:min-w-[12rem] sm:max-w-xs sm:flex-1">
           <Input
             icon={<Search className="h-4 w-4" />}
             placeholder="Cari nama warga…"
@@ -167,7 +167,7 @@ export function ToolbarPenduduk({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2 w-full sm:flex sm:w-auto sm:items-center">
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
           <PilihanRingkas
             label="RW"
             nilai={value.rw}
@@ -183,7 +183,7 @@ export function ToolbarPenduduk({
         </div>
 
         {}
-        <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:ml-auto justify-between sm:justify-end">
+        <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:ml-auto sm:w-auto sm:justify-end">
           {onEkspor && (
             <div className="relative" ref={eksporRef}>
               <Button
@@ -214,11 +214,13 @@ export function ToolbarPenduduk({
                       setEksporOpen(false);
                       onEkspor('xlsx');
                     }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
                   >
                     <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
                     <div>
-                      <p className="font-semibold text-slate-900">Excel (.xlsx)</p>
+                      <p className="font-semibold text-slate-900">
+                        Excel (.xlsx)
+                      </p>
                       <p className="text-xs text-slate-500">Format resmi</p>
                     </div>
                   </button>
@@ -229,7 +231,7 @@ export function ToolbarPenduduk({
                       setEksporOpen(false);
                       onEkspor('csv');
                     }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 hover:text-slate-900"
                   >
                     <FileText className="h-4 w-4 text-blue-600" />
                     <div>
@@ -242,117 +244,114 @@ export function ToolbarPenduduk({
             </div>
           )}
 
-          <div
-            className="relative flex items-center gap-2"
-            ref={panelRef}
-          >
+          <div className="relative flex items-center gap-2" ref={panelRef}>
             <Button
               variant="outline"
               onClick={() => setPanelOpen((v) => !v)}
               aria-haspopup="dialog"
               aria-expanded={panelOpen}
             >
-            <SlidersHorizontal className="h-4 w-4" />
-            Filter
-            {jumlahLanjutan > 0 && (
-              <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-semibold text-white">
-                {jumlahLanjutan}
-              </span>
-            )}
-          </Button>
+              <SlidersHorizontal className="h-4 w-4" />
+              Filter
+              {jumlahLanjutan > 0 && (
+                <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1 text-xs font-semibold text-white">
+                  {jumlahLanjutan}
+                </span>
+              )}
+            </Button>
 
-          <Button
-            onClick={() => {
-              setPanelOpen(false);
-              onTambah();
-            }}
-          >
-            <Plus className="h-4 w-4" />
-            Tambah Warga
-          </Button>
-
-          {panelOpen && (
-            <div
-              role="dialog"
-              aria-label="Filter lanjutan"
-              className="absolute right-0 top-full z-30 mt-2 w-[calc(100vw-2rem)] max-w-sm sm:max-w-md rounded-xl border-1 border-black bg-surface p-4 shadow-lg"
+            <Button
+              onClick={() => {
+                setPanelOpen(false);
+                onTambah();
+              }}
             >
-              <div className="mb-3 flex items-center justify-between gap-2">
-                <p className="text-sm font-bold text-slate-900">
-                  Filter lanjutan
-                </p>
-                {jumlahLanjutan > 0 && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
-                      const next = { ...value };
-                      for (const f of LANJUTAN) delete next[f];
-                      onChange(next);
-                    }}
-                  >
-                    Atur ulang
-                  </Button>
-                )}
-              </div>
+              <Plus className="h-4 w-4" />
+              Tambah Warga
+            </Button>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <PilihanPanel
-                  field="jenisKelamin"
-                  nilai={value.jenisKelamin}
-                  opsi={dariLabel(jenisKelaminLabel)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="kelompokUmur"
-                  nilai={value.kelompokUmur}
-                  opsi={kelompokUmurOpsi.map((u) => [u, `${u} th`] as Opsi)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="agama"
-                  nilai={value.agama}
-                  opsi={dariLabel(agamaLabel)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="pendidikan"
-                  nilai={value.pendidikan}
-                  opsi={dariLabel(pendidikanLabel)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="statusPerkawinan"
-                  nilai={value.statusPerkawinan}
-                  opsi={dariLabel(statusPerkawinanLabel)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="statusHubunganKeluarga"
-                  nilai={value.statusHubunganKeluarga}
-                  opsi={dariLabel(statusHubunganLabel)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="golonganDarah"
-                  nilai={value.golonganDarah}
-                  opsi={dariLabel(golonganDarahLabel)}
-                  onPilih={set}
-                />
-                <PilihanPanel
-                  field="pekerjaan"
-                  nilai={value.pekerjaan}
-                  opsi={dariData(opsi?.pekerjaan)}
-                  onPilih={set}
-                />
+            {panelOpen && (
+              <div
+                role="dialog"
+                aria-label="Filter lanjutan"
+                className="absolute right-0 top-full z-30 mt-2 w-[calc(100vw-2rem)] max-w-sm rounded-xl border-1 border-black bg-surface p-4 shadow-lg sm:max-w-md"
+              >
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <p className="text-sm font-bold text-slate-900">
+                    Filter lanjutan
+                  </p>
+                  {jumlahLanjutan > 0 && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const next = { ...value };
+                        for (const f of LANJUTAN) delete next[f];
+                        onChange(next);
+                      }}
+                    >
+                      Atur ulang
+                    </Button>
+                  )}
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <PilihanPanel
+                    field="jenisKelamin"
+                    nilai={value.jenisKelamin}
+                    opsi={dariLabel(jenisKelaminLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="kelompokUmur"
+                    nilai={value.kelompokUmur}
+                    opsi={kelompokUmurOpsi.map((u) => [u, `${u} th`] as Opsi)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="agama"
+                    nilai={value.agama}
+                    opsi={dariLabel(agamaLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="pendidikan"
+                    nilai={value.pendidikan}
+                    opsi={dariLabel(pendidikanLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="statusPerkawinan"
+                    nilai={value.statusPerkawinan}
+                    opsi={dariLabel(statusPerkawinanLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="statusHubunganKeluarga"
+                    nilai={value.statusHubunganKeluarga}
+                    opsi={dariLabel(statusHubunganLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="golonganDarah"
+                    nilai={value.golonganDarah}
+                    opsi={dariLabel(golonganDarahLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="pekerjaan"
+                    nilai={value.pekerjaan}
+                    opsi={dariData(opsi?.pekerjaan)}
+                    onPilih={set}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
 
-    {chips.length > 0 && (
+      {chips.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           {chips.map((chip) => (
             <span

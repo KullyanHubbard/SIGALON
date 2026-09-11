@@ -39,6 +39,7 @@ export const pendidikanLabel: Record<Pendidikan, string> = {
   SD: 'SD',
   SMP: 'SMP',
   SMA: 'SMA/SMK',
+  D2: 'Diploma (D2)',
   D3: 'Diploma (D3)',
   D4: 'Diploma (D4)',
   S1: 'Sarjana (S1)',

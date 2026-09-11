@@ -20,7 +20,11 @@ export default function HomePage() {
           <JudulBagian judul="JELAJAHI PADUKUHAN" className="uppercase" />
         </div>
         <div className="grid gap-2.5 sm:gap-6 md:grid-cols-3">
-          <div data-apple-fade data-apple-delay="1" className="h-full flex flex-col">
+          <div
+            data-apple-fade
+            data-apple-delay="1"
+            className="flex h-full flex-col"
+          >
             <KartuJelajah
               ke={paths.profil}
               judul="Profil Padukuhan"
@@ -33,12 +37,16 @@ export default function HomePage() {
                   height={144}
                   loading="lazy"
                   decoding="async"
-                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                  className="h-10 w-10 object-contain sm:h-12 sm:w-12"
                 />
               }
             />
           </div>
-          <div data-apple-fade data-apple-delay="2" className="h-full flex flex-col">
+          <div
+            data-apple-fade
+            data-apple-delay="2"
+            className="flex h-full flex-col"
+          >
             <KartuJelajah
               ke={paths.infografis}
               judul="Statistik Kependudukan"
@@ -51,12 +59,16 @@ export default function HomePage() {
                   height={144}
                   loading="lazy"
                   decoding="async"
-                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                  className="h-10 w-10 object-contain sm:h-12 sm:w-12"
                 />
               }
             />
           </div>
-          <div data-apple-fade data-apple-delay="3" className="h-full flex flex-col">
+          <div
+            data-apple-fade
+            data-apple-delay="3"
+            className="flex h-full flex-col"
+          >
             <KartuJelajah
               ke={paths.berita}
               judul="Kabar & Agenda Warga"
@@ -69,7 +81,7 @@ export default function HomePage() {
                   height={144}
                   loading="lazy"
                   decoding="async"
-                  className="h-10 w-10 sm:h-12 sm:w-12 object-contain"
+                  className="h-10 w-10 object-contain sm:h-12 sm:w-12"
                 />
               }
             />
@@ -84,7 +96,7 @@ export default function HomePage() {
           <JudulBagian judul="PETA PADUKUHAN" className="uppercase" />
         </div>
         <div data-apple-fade>
-          <PetaPadukuhan className="w-full aspect-[2432/832] sm:min-h-[14rem]" />
+          <PetaPadukuhan className="aspect-[2432/832] w-full sm:min-h-[14rem]" />
         </div>
       </section>
 

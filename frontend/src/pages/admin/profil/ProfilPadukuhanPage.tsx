@@ -57,10 +57,7 @@ export default function ProfilPadukuhanPage() {
   if (isPending || isError) {
     return (
       <div className="space-y-6">
-        <PageHeader
-          title="Profil Padukuhan"
-          description="Keterangan yang tampil di beranda, halaman profil, dan kaki setiap halaman publik."
-        />
+        <PageHeader title="Profil Padukuhan" />
         {isError ? (
           <Alert tone="error">
             Keterangan padukuhan belum bisa dimuat, jadi formulirnya ditahan:
@@ -82,7 +79,6 @@ export default function ProfilPadukuhanPage() {
     <form onSubmit={onSubmit} className="space-y-6">
       <PageHeader
         title="Profil Padukuhan"
-        description="Keterangan yang tampil di beranda, halaman profil, dan kaki setiap halaman publik."
         action={
           <Button
             type="submit"
@@ -105,11 +101,10 @@ export default function ProfilPadukuhanPage() {
         </Alert>
       )}
 
+      <input type="hidden" {...register('luasWilayah')} />
+
       <Card>
-        <CardHeader
-          title="Identitas Wilayah"
-          description="Dipakai di judul beranda, halaman profil, dan kaki halaman."
-        />
+        <CardHeader title="Identitas Wilayah" />
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nama Padukuhan"
@@ -143,21 +138,6 @@ export default function ProfilPadukuhanPage() {
             error={errors.provinsi?.message}
             {...register('provinsi')}
           />
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader
-          title="Luas & Kontak"
-          description="Nomor dan surel ini jadi tujuan tombol Hubungi Kami serta Pengaduan."
-        />
-        <CardContent className="grid gap-4 sm:grid-cols-3">
-          <Input
-            label="Luas Wilayah"
-            hint="Tulis dengan satuannya, mis. 162,4 ha"
-            error={errors.luasWilayah?.message}
-            {...register('luasWilayah')}
-          />
           <Input
             label="Telepon"
             type="tel"
@@ -174,15 +154,11 @@ export default function ProfilPadukuhanPage() {
       </Card>
 
       <Card>
-        <CardHeader
-          title="Sejarah & Gambaran Umum"
-          description="Tampil di halaman Profil."
-        />
+        <CardHeader title="Sejarah & Gambaran Umum" />
         <CardContent>
           <Textarea
-            label="Sejarah"
+            aria-label="Sejarah & Gambaran Umum"
             rows={9}
-            hint="Pisahkan paragraf dengan satu baris kosong."
             error={errors.sejarah?.message}
             {...register('sejarah')}
           />
@@ -190,10 +166,7 @@ export default function ProfilPadukuhanPage() {
       </Card>
 
       <Card>
-        <CardHeader
-          title="Batas Wilayah"
-          description="Wilayah yang berbatasan langsung, tampil di halaman Profil."
-        />
+        <CardHeader title="Batas Wilayah" />
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Sebelah Utara"

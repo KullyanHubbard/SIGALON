@@ -22,12 +22,17 @@ AKSI_WARGA = ("ubah-warga", "tambah-warga")
 # sama seperti kewenangan yang menghasilkannya.
 AKSI_AKUN = (
     "tambah-pengurus",
-    "reset-password",
+    "isi-lpm",
     "ubah-lpm",
+    "reset-password",
     "tambah-berita",
     "ubah-berita",
     "hapus-berita",
     "ubah-padukuhan",
+    "tambah-titik-lokasi",
+    "ubah-titik-lokasi",
+    "hapus-titik-lokasi",
+    "muat-bawaan-titik-lokasi",
 )
 
 # Riwayat audit lebih tua dari ini dihapus otomatis. 180 hari (≈6 bulan) cukup

@@ -22,12 +22,17 @@ export function dapatkanTemaTitik(item: {
 }): TemaTitik {
   const kategori = item.kategori ?? '';
   const ikon = item.ikon ?? '';
-  const teks = `${item.peran ?? ''} ${item.nama ?? ''} ${item.kategoriLabel ?? ''}`.toLowerCase();
+  const teks =
+    `${item.peran ?? ''} ${item.nama ?? ''} ${item.kategoriLabel ?? ''}`.toLowerCase();
 
   // 1. Kategori Perangkat Desa: selaras dengan tab filter Perangkat Desa (warna biru tegas)
   if (kategori === 'perangkat' || ikon === 'perangkat') {
     // Kepala Dukuh / Kadus -> Biru
-    if (teks.includes('dukuh') || teks.includes('kadus') || teks.includes('kepala dusun')) {
+    if (
+      teks.includes('dukuh') ||
+      teks.includes('kadus') ||
+      teks.includes('kepala dusun')
+    ) {
       return {
         bgIkon: 'bg-blue-700',
         bgBadge: 'bg-blue-700',
@@ -125,7 +130,11 @@ export function dapatkanTemaTitik(item: {
         labelSingkat: 'Pusat Pemerintahan',
       };
     default: {
-      if (teks.includes('masjid') || teks.includes('mushola') || teks.includes('ibadah')) {
+      if (
+        teks.includes('masjid') ||
+        teks.includes('mushola') ||
+        teks.includes('ibadah')
+      ) {
         return {
           bgIkon: 'bg-emerald-600',
           bgBadge: 'bg-emerald-700',
@@ -137,7 +146,12 @@ export function dapatkanTemaTitik(item: {
           labelSingkat: 'Tempat Ibadah',
         };
       }
-      if (teks.includes('ronda') || teks.includes('kamling') || teks.includes('jaga') || teks.includes('keamanan')) {
+      if (
+        teks.includes('ronda') ||
+        teks.includes('kamling') ||
+        teks.includes('jaga') ||
+        teks.includes('keamanan')
+      ) {
         return {
           bgIkon: 'bg-blue-600',
           bgBadge: 'bg-blue-700',
@@ -149,7 +163,11 @@ export function dapatkanTemaTitik(item: {
           labelSingkat: 'Keamanan',
         };
       }
-      if (teks.includes('kesehatan') || teks.includes('posyandu') || teks.includes('sosial')) {
+      if (
+        teks.includes('kesehatan') ||
+        teks.includes('posyandu') ||
+        teks.includes('sosial')
+      ) {
         return {
           bgIkon: 'bg-rose-600',
           bgBadge: 'bg-rose-700',
@@ -161,7 +179,11 @@ export function dapatkanTemaTitik(item: {
           labelSingkat: 'Kesehatan & Sosial',
         };
       }
-      if (teks.includes('lapangan') || teks.includes('taman') || teks.includes('olahraga')) {
+      if (
+        teks.includes('lapangan') ||
+        teks.includes('taman') ||
+        teks.includes('olahraga')
+      ) {
         return {
           bgIkon: 'bg-lime-700',
           bgBadge: 'bg-lime-700',

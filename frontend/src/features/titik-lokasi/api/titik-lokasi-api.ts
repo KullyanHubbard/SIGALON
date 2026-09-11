@@ -13,7 +13,9 @@ export const titikLokasiApi = {
   },
 
   async getById(id: string): Promise<TitikLokasi> {
-    const { data } = await apiClient.get<TitikLokasi>(`/titik-lokasi/${encodeURIComponent(id)}`);
+    const { data } = await apiClient.get<TitikLokasi>(
+      `/titik-lokasi/${encodeURIComponent(id)}`,
+    );
     return data;
   },
 

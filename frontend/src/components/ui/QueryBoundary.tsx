@@ -38,7 +38,6 @@ export function QueryBoundary<T>({
   if (isError || data === undefined)
     return <Alert tone="error">{errorMessage}</Alert>;
 
-
   if (data === null || isEmpty?.(data)) {
     return (
       <>

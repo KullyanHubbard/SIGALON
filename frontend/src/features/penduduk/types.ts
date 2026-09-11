@@ -7,7 +7,17 @@ export type StatusPerkawinan =
   'BELUM_KAWIN' | 'KAWIN' | 'CERAI_HIDUP' | 'CERAI_MATI';
 
 export type Pendidikan =
-  'TIDAK_BELUM_SEKOLAH' | 'BELUM_TAMAT_SD' | 'SD' | 'SMP' | 'SMA' | 'D3' | 'D4' | 'S1' | 'S2' | 'S3';
+  | 'TIDAK_BELUM_SEKOLAH'
+  | 'BELUM_TAMAT_SD'
+  | 'SD'
+  | 'SMP'
+  | 'SMA'
+  | 'D2'
+  | 'D3'
+  | 'D4'
+  | 'S1'
+  | 'S2'
+  | 'S3';
 
 export type StatusHubunganKeluarga =
   'KEPALA_KELUARGA' | 'ISTRI' | 'ANAK' | 'FAMILI_LAIN' | 'LAINNYA';

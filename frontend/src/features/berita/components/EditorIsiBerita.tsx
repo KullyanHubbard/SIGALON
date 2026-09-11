@@ -29,6 +29,7 @@ export function EditorIsiBerita({
 }: EditorIsiBeritaProps) {
   const [galatFoto, setGalatFoto] = useState<string | null>(null);
   const berkasRef = useRef<HTMLInputElement>(null);
+  const [, setTick] = useState(0);
 
   const editor = useEditor({
     extensions: [
@@ -36,6 +37,10 @@ export function EditorIsiBerita({
       Image.configure({ inline: false }),
     ],
     content: value,
+    autofocus: false,
+    onTransaction: () => {
+      setTick((t) => t + 1);
+    },
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
@@ -79,7 +84,7 @@ export function EditorIsiBerita({
 
       <div
         className={cn(
-          'overflow-hidden rounded-lg border-1 border-black focus-within:border-brand-600',
+          'overflow-hidden rounded-lg border-1 border-slate-300 focus-within:border-slate-400',
           error && 'border-red-400',
         )}
       >
@@ -87,7 +92,7 @@ export function EditorIsiBerita({
           role="toolbar"
           aria-label="Format tulisan"
           aria-controls="isi-berita-editor"
-          className="flex flex-wrap items-center gap-0.5 border-b-1 border-black bg-slate-50 px-2 py-1.5"
+          className="flex flex-wrap items-center gap-1 border-b-1 border-slate-300 bg-slate-100 px-2.5 py-1.5"
         >
           <TombolAlat
             label="Tebal"
@@ -177,13 +182,8 @@ export function EditorIsiBerita({
         <EditorContent id="isi-berita-editor" editor={editor} />
       </div>
 
-      {(error ?? galatFoto) ? (
+      {(error ?? galatFoto) && (
         <p className="mt-1 text-xs text-red-600">{error ?? galatFoto}</p>
-      ) : (
-        <p className="mt-1 text-xs text-slate-500">
-          Enter memulai paragraf baru. Foto disisipkan di posisi kursor,
-          otomatis diperkecil, dan metadata lokasinya dibuang sebelum terbit.
-        </p>
       )}
     </div>
   );
@@ -203,13 +203,15 @@ function TombolAlat({
   return (
     <button
       type="button"
+      onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
       aria-pressed={aktif}
       aria-label={label}
       title={label}
       className={cn(
-        'focus-ring rounded-md p-2 text-slate-600 transition-colors hover:bg-slate-200',
-        aktif && 'bg-brand-600/20 text-brand-700',
+        'focus-ring cursor-pointer rounded-md p-1.5 text-slate-700 transition-colors hover:bg-slate-200 hover:text-slate-900',
+        aktif &&
+          'shadow-xs bg-slate-900 text-white hover:bg-slate-800 hover:text-white',
       )}
     >
       {children}

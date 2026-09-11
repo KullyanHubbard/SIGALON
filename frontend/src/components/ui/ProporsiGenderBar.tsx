@@ -86,16 +86,16 @@ export function ProporsiGenderBar({
               alt=""
               width={28}
               height={28}
-              className="h-6 w-6 sm:h-7 sm:w-7 shrink-0 object-contain"
+              className="h-6 w-6 shrink-0 object-contain sm:h-7 sm:w-7"
             />
-            <span className="text-xs sm:text-sm font-bold text-slate-800">
+            <span className="text-xs font-bold text-slate-800 sm:text-sm">
               Laki-laki
             </span>
           </div>
 
           {/* Sisi Perempuan */}
           <div className="flex items-center justify-end gap-2 text-right">
-            <span className="text-xs sm:text-sm font-bold text-slate-800">
+            <span className="text-xs font-bold text-slate-800 sm:text-sm">
               Perempuan
             </span>
             <img
@@ -103,29 +103,29 @@ export function ProporsiGenderBar({
               alt=""
               width={28}
               height={28}
-              className="h-6 w-6 sm:h-7 sm:w-7 shrink-0 object-contain"
+              className="h-6 w-6 shrink-0 object-contain sm:h-7 sm:w-7"
             />
           </div>
         </div>
 
         {/* Stacked Horizontal Bar Tegas Kotak (Bukan Rounded Pill) */}
-        <div className="flex h-9 sm:h-10 w-full overflow-hidden border-1 border-black bg-slate-100">
+        <div className="flex h-9 w-full overflow-hidden border-1 border-black bg-slate-100 sm:h-10">
           {persenLaki > 0 && (
             <div
               style={{ width: `${persenLaki}%` }}
               className={cn(
-                'flex h-full items-center justify-between px-2.5 sm:px-3.5 bg-brand-600 text-white transition-all duration-700 ease-out min-w-0 overflow-hidden',
+                'flex h-full min-w-0 items-center justify-between overflow-hidden bg-brand-600 px-2.5 text-white transition-all duration-700 ease-out sm:px-3.5',
                 persenPerempuan > 0 && 'border-r-2 border-white',
               )}
               title={`Laki-laki: ${persenLaki}%`}
             >
-              <div className="flex items-center gap-1.5 min-w-0">
+              <div className="flex min-w-0 items-center gap-1.5">
                 <IkonMars className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline text-xs font-bold truncate">
+                <span className="hidden truncate text-xs font-bold sm:inline">
                   Laki-laki
                 </span>
               </div>
-              <span className="text-xs sm:text-sm font-extrabold tabular-nums shrink-0">
+              <span className="shrink-0 text-xs font-extrabold tabular-nums sm:text-sm">
                 {persenLaki}%
               </span>
             </div>
@@ -133,14 +133,14 @@ export function ProporsiGenderBar({
           {persenPerempuan > 0 && (
             <div
               style={{ width: `${persenPerempuan}%` }}
-              className="flex h-full items-center justify-between px-2.5 sm:px-3.5 bg-rose-600 text-white transition-all duration-700 ease-out min-w-0 overflow-hidden"
+              className="flex h-full min-w-0 items-center justify-between overflow-hidden bg-rose-600 px-2.5 text-white transition-all duration-700 ease-out sm:px-3.5"
               title={`Perempuan: ${persenPerempuan}%`}
             >
-              <span className="text-xs sm:text-sm font-extrabold tabular-nums shrink-0">
+              <span className="shrink-0 text-xs font-extrabold tabular-nums sm:text-sm">
                 {persenPerempuan}%
               </span>
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span className="hidden sm:inline text-xs font-bold truncate">
+              <div className="flex min-w-0 items-center gap-1.5">
+                <span className="hidden truncate text-xs font-bold sm:inline">
                   Perempuan
                 </span>
                 <IkonVenus className="h-4 w-4 shrink-0" />

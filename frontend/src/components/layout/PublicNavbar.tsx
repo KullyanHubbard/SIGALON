@@ -79,8 +79,10 @@ export function PublicNavbar() {
       {/* Backdrop overlay saat drawer terbuka */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/50 backdrop-blur-xs transition-opacity duration-300 lg:hidden',
-          open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
+          'backdrop-blur-xs fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 lg:hidden',
+          open
+            ? 'pointer-events-auto opacity-100'
+            : 'pointer-events-none opacity-0',
         )}
         onClick={() => setOpen(false)}
         aria-hidden="true"
@@ -89,7 +91,7 @@ export function PublicNavbar() {
       {/* Mobile drawer dari sisi kanan */}
       <aside
         className={cn(
-          'fixed inset-y-0 right-0 z-50 flex h-full max-h-dvh w-72 sm:w-80 max-w-[85vw] flex-col border-l-1 border-black bg-surface shadow-2xl transition-transform duration-300 ease-in-out lg:hidden',
+          'fixed inset-y-0 right-0 z-50 flex h-full max-h-dvh w-72 max-w-[85vw] flex-col border-l-1 border-black bg-surface shadow-2xl transition-transform duration-300 ease-in-out sm:w-80 lg:hidden',
           open ? 'translate-x-0' : 'translate-x-full',
         )}
         aria-label="Menu navigasi mobile"
@@ -99,7 +101,7 @@ export function PublicNavbar() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+            className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
             aria-label="Tutup menu"
           >
             <X className="h-5 w-5" />
@@ -119,7 +121,7 @@ export function PublicNavbar() {
                 cn(
                   'flex items-center rounded-xl px-4 py-3 text-base font-semibold transition-all duration-150',
                   isActive
-                    ? 'bg-brand-50 text-brand-700 font-bold'
+                    ? 'bg-brand-50 font-bold text-brand-700'
                     : 'text-slate-800 hover:bg-slate-100 hover:text-brand-700',
                 )
               }
@@ -129,7 +131,7 @@ export function PublicNavbar() {
           ))}
         </nav>
 
-        <div className="border-t-1 border-black p-4 shrink-0">
+        <div className="shrink-0 border-t-1 border-black p-4">
           <AccountButton className="w-full justify-center py-2.5" />
         </div>
       </aside>

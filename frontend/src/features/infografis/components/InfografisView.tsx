@@ -15,14 +15,11 @@ export function InfografisView({
   isLoading,
   isError,
   panels,
-  wilayah,
+  wilayah: _wilayah,
 }: InfografisViewProps) {
   return (
     <div>
-      <PageHeader
-        title="Infografis Kependudukan"
-        description={`Visualisasi komposisi penduduk ${wilayah}.`}
-      />
+      <PageHeader title="Infografis Kependudukan" />
 
       <QueryBoundary
         isLoading={isLoading}

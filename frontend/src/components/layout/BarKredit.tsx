@@ -17,5 +17,3 @@ export function BarKredit({ className }: { className?: string }) {
     />
   );
 }
-
-

@@ -36,7 +36,8 @@ const DAFTAR_HOTSPOT_PADUKUHAN: HotspotItem[] = [
     nama: 'Balai Padukuhan Gading Kulon',
     kategori: 'fasilitas',
     kategoriLabel: 'Pusat Pemerintahan',
-    deskripsi: 'Pusat pertemuan musyawarah warga, pendataan, dan layanan perangkat desa.',
+    deskripsi:
+      'Pusat pertemuan musyawarah warga, pendataan, dan layanan perangkat desa.',
     x: 48,
     y: 44,
     warna: 'bg-amber-500',
@@ -48,7 +49,8 @@ const DAFTAR_HOTSPOT_PADUKUHAN: HotspotItem[] = [
     nama: 'Masjid Padukuhan',
     kategori: 'fasilitas',
     kategoriLabel: 'Tempat Ibadah',
-    deskripsi: 'Pusat kegiatan keagamaan, salat berjamaah, dan pengajian warga.',
+    deskripsi:
+      'Pusat kegiatan keagamaan, salat berjamaah, dan pengajian warga.',
     x: 34,
     y: 36,
     warna: 'bg-emerald-500',
@@ -84,7 +86,8 @@ const DAFTAR_HOTSPOT_PADUKUHAN: HotspotItem[] = [
     nama: 'Pos Layanan Terpadu & Lapangan',
     kategori: 'fasilitas',
     kategoriLabel: 'Kesehatan & Sosial',
-    deskripsi: 'Pemeriksaan rutin balita/lansia serta area kegiatan olahraga luar ruang.',
+    deskripsi:
+      'Pemeriksaan rutin balita/lansia serta area kegiatan olahraga luar ruang.',
     x: 64,
     y: 30,
     warna: 'bg-rose-500',
@@ -93,7 +96,10 @@ const DAFTAR_HOTSPOT_PADUKUHAN: HotspotItem[] = [
   },
 ];
 
-function tentukanWarna(item: HotspotItem | TitikLokasi): { warna: string; warnaRing: string } {
+function tentukanWarna(item: HotspotItem | TitikLokasi): {
+  warna: string;
+  warnaRing: string;
+} {
   if ('warna' in item && item.warna && 'warnaRing' in item && item.warnaRing) {
     return { warna: item.warna, warnaRing: item.warnaRing };
   }
@@ -101,7 +107,13 @@ function tentukanWarna(item: HotspotItem | TitikLokasi): { warna: string; warnaR
   return { warna: tema.bgIkon, warnaRing: tema.ringHotspot };
 }
 
-function IkonHotspot({ jenis, className }: { jenis: string; className?: string }) {
+function IkonHotspot({
+  jenis,
+  className,
+}: {
+  jenis: string;
+  className?: string;
+}) {
   switch (jenis) {
     case 'balai':
       return <Landmark className={className} />;
@@ -144,7 +156,11 @@ function hitungPosisiPopover(x: number, y: number) {
       posisiYClass,
       posisiXClass,
     ),
-    panahClass: cn('absolute border-4 border-transparent', panahXClass, panahYClass),
+    panahClass: cn(
+      'absolute border-4 border-transparent',
+      panahXClass,
+      panahYClass,
+    ),
   };
 }
 
@@ -162,7 +178,10 @@ export function PetaHotspotOverlay({
     if (!pinnedId && !hoverId) return;
 
     const handlePointerDown = (e: MouseEvent | TouchEvent) => {
-      if (overlayRef.current && !overlayRef.current.contains(e.target as Node)) {
+      if (
+        overlayRef.current &&
+        !overlayRef.current.contains(e.target as Node)
+      ) {
         setPinnedId(null);
         setHoverId(null);
       }
@@ -184,7 +203,7 @@ export function PetaHotspotOverlay({
   }, [pinnedId, hoverId]);
 
   return (
-    <div ref={overlayRef} className="absolute inset-0 pointer-events-none">
+    <div ref={overlayRef} className="pointer-events-none absolute inset-0">
       {hotspots.map((item) => {
         // Popover aktif jika di-pin dengan klik ATAU jika sedang di-hover (bila tidak ada pin lain)
         const isPinned = pinnedId === item.id;
@@ -197,7 +216,7 @@ export function PetaHotspotOverlay({
         return (
           <div
             key={item.id}
-            className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
+            className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2"
             style={{ left: `${item.x}%`, top: `${item.y}%` }}
           >
             {/* Tombol Pin Hotspot dengan Pulse */}
@@ -215,14 +234,14 @@ export function PetaHotspotOverlay({
                 // Begitu kursor mouse meninggalkan pin, langsung hilangkan status hover
                 setHoverId(null);
               }}
-              className="group/pin relative flex items-center justify-center p-1.5 focus:outline-none cursor-pointer"
+              className="group/pin relative flex cursor-pointer items-center justify-center p-1.5 focus:outline-none"
               title={item.nama}
               aria-label={item.nama}
             >
               {/* Radar Ping Animation */}
               <span
                 className={cn(
-                  'absolute h-5 w-5 sm:h-6 sm:w-6 rounded-full opacity-75 animate-ping',
+                  'absolute h-5 w-5 animate-ping rounded-full opacity-75 sm:h-6 sm:w-6',
                   warnaRing,
                 )}
               />
@@ -230,12 +249,15 @@ export function PetaHotspotOverlay({
               {/* Pin Center */}
               <span
                 className={cn(
-                  'relative flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full text-white shadow-lg ring-2 ring-white transition-transform duration-200 group-hover/pin:scale-125',
+                  'relative flex h-4 w-4 items-center justify-center rounded-full text-white shadow-lg ring-2 ring-white transition-transform duration-200 group-hover/pin:scale-125 sm:h-5 sm:w-5',
                   warna,
-                  isAktif && 'scale-125 ring-amber-300 ring-4',
+                  isAktif && 'scale-125 ring-4 ring-amber-300',
                 )}
               >
-                <IkonHotspot jenis={item.ikon} className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                <IkonHotspot
+                  jenis={item.ikon}
+                  className="h-2.5 w-2.5 sm:h-3 sm:w-3"
+                />
               </span>
             </button>
 
@@ -263,7 +285,7 @@ export function PetaHotspotOverlay({
                       {item.kategoriLabel}
                     </span>
                     {item.peran && (
-                      <span className="rounded bg-slate-100 px-1 py-0.5 text-[9px] font-mono font-semibold text-slate-700 border-1 border-black">
+                      <span className="rounded border-1 border-black bg-slate-100 px-1 py-0.5 font-mono text-[9px] font-semibold text-slate-700">
                         {item.peran}
                       </span>
                     )}
@@ -275,19 +297,19 @@ export function PetaHotspotOverlay({
                       setPinnedId(null);
                       setHoverId(null);
                     }}
-                    className="rounded p-0.5 text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                    className="rounded p-0.5 text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                     aria-label="Tutup info"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
-                <h4 className="mt-1.5 text-xs sm:text-sm font-bold text-slate-900 leading-snug">
+                <h4 className="mt-1.5 text-xs font-bold leading-snug text-slate-900 sm:text-sm">
                   {item.nama}
                 </h4>
 
                 {item.deskripsi && (
-                  <p className="mt-1 text-[11px] text-slate-600 leading-relaxed">
+                  <p className="mt-1 text-[11px] leading-relaxed text-slate-600">
                     {item.deskripsi}
                   </p>
                 )}
@@ -298,7 +320,7 @@ export function PetaHotspotOverlay({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="mt-2 inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-brand-600 hover:text-brand-700 hover:underline"
+                    className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-brand-600 hover:text-brand-700 hover:underline sm:text-[11px]"
                   >
                     <MapPin className="h-3 w-3 shrink-0" />
                     <span>Petunjuk Arah (Maps)</span>

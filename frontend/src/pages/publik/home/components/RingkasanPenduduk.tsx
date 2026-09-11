@@ -72,7 +72,7 @@ export function RingkasanPenduduk() {
 
               <div
                 data-apple-fade
-                className="relative mt-8 overflow-hidden rounded-xl bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 sm:p-8 lg:p-10 text-white shadow-xl shadow-purple-950/20 border-1 border-black"
+                className="relative mt-8 overflow-hidden rounded-xl border-1 border-black bg-gradient-to-br from-[#2E1065] via-[#3B1280] to-[#1E0A45] p-5 text-white shadow-xl shadow-purple-950/20 sm:p-8 lg:p-10"
               >
                 {/* Latar peta satelit monokrom halus */}
                 <img
@@ -105,7 +105,7 @@ export function RingkasanPenduduk() {
 
                   <Link
                     to={paths.statistik}
-                    className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FACC15] px-6 py-3 text-center text-sm font-bold text-[#4C1D95] shadow-lg transition-all duration-200 hover:bg-yellow-400 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
+                    className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FACC15] px-6 py-3 text-center text-sm font-bold text-[#4C1D95] shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-yellow-400 hover:shadow-xl active:scale-[0.98] sm:w-auto"
                   >
                     <span>Jelajahi Statistik Warga</span>
                     <ArrowRight className="h-4 w-4" />
@@ -115,7 +115,6 @@ export function RingkasanPenduduk() {
             </>
           )}
         </QueryBoundary>
-
       </div>
     </section>
   );

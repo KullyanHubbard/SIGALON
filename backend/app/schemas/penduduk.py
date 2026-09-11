@@ -27,7 +27,7 @@ Agama = Literal[
 StatusPerkawinan = Literal["BELUM_KAWIN", "KAWIN", "CERAI_HIDUP", "CERAI_MATI"]
 
 Pendidikan = Literal[
-    "TIDAK_BELUM_SEKOLAH", "BELUM_TAMAT_SD", "SD", "SMP", "SMA", "D3", "D4", "S1", "S2", "S3"
+    "TIDAK_BELUM_SEKOLAH", "BELUM_TAMAT_SD", "SD", "SMP", "SMA", "D2", "D3", "D4", "S1", "S2", "S3"
 ]
 
 # Susunan rumah tangga. Nomor KK tidak disimpan (spec 2026-08-26), tapi peran

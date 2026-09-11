@@ -32,7 +32,7 @@ export function StatistikPanelView({
       {(data) => (
         <div className="grid items-stretch gap-6 lg:grid-cols-2">
           <div data-apple-fade>
-            <Card className="flex flex-col h-full">
+            <Card className="flex h-full flex-col">
               <CardHeader title="Sebaran Warga per RW" />
               <div className="flex-1 p-4">
                 <DistribusiPieChart
@@ -49,7 +49,7 @@ export function StatistikPanelView({
                       {/* Teks total warga di tengah donat */}
                       <CountUp
                         value={data.total}
-                        className="text-4xl sm:text-5xl lg:text-6xl font-bold tabular-nums leading-none text-slate-900"
+                        className="text-4xl font-bold tabular-nums leading-none text-slate-900 sm:text-5xl lg:text-6xl"
                       />
                       <span className="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">
                         jiwa
@@ -62,7 +62,11 @@ export function StatistikPanelView({
           </div>
 
           {/* Kolom kanan: kartu ringkas + daftar RW */}
-          <div data-apple-fade data-apple-delay="1" className="flex flex-col gap-4">
+          <div
+            data-apple-fade
+            data-apple-delay="1"
+            className="flex flex-col gap-4"
+          >
             <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
               {data.stat.map((stat) => (
                 <StatCard

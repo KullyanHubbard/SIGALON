@@ -16,7 +16,6 @@ export const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   },
 );
 
-
 export function CardHeader({
   title,
   description,
@@ -27,11 +26,15 @@ export function CardHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 sm:gap-4 border-b-1 border-black px-4 py-3.5 sm:px-6 sm:py-5">
+    <div className="flex items-center justify-between gap-3 border-b-1 border-black px-4 py-3.5 sm:gap-4 sm:px-6 sm:py-5">
       <div className="min-w-0 flex-1">
-        <h3 className="text-base sm:text-lg font-bold text-slate-900 truncate sm:whitespace-normal">{title}</h3>
+        <h3 className="truncate text-base font-bold text-slate-900 sm:whitespace-normal sm:text-lg">
+          {title}
+        </h3>
         {description && (
-          <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-slate-500">{description}</p>
+          <p className="mt-0.5 text-xs text-slate-500 sm:mt-1 sm:text-sm">
+            {description}
+          </p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}
@@ -43,5 +46,7 @@ export function CardContent({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('px-4 py-3 sm:px-5 sm:py-4', className)} {...props} />;
+  return (
+    <div className={cn('px-4 py-3 sm:px-5 sm:py-4', className)} {...props} />
+  );
 }

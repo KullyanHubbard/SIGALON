@@ -19,20 +19,23 @@ export function BarisKeterangan({
   return (
     <div
       className={cn(
-        'flex items-center justify-between gap-2.5 sm:gap-3 rounded-lg border-1 border-black bg-white px-3 py-2 sm:px-3 sm:py-2.5',
+        'flex items-center justify-between gap-2.5 rounded-lg border-1 border-black bg-white px-3 py-2 sm:gap-3 sm:px-3 sm:py-2.5',
         className,
       )}
     >
-      <dt className="flex items-center gap-2.5 min-w-0 pr-1">
+      <dt className="flex min-w-0 items-center gap-2.5 pr-1">
         {icon}
-        <span className="truncate text-xs sm:text-sm font-semibold text-slate-900" title={label}>
+        <span
+          className="truncate text-xs font-semibold text-slate-900 sm:text-sm"
+          title={label}
+        >
           {label}
         </span>
       </dt>
-      <dd className="shrink-0 max-w-[55%]">
+      <dd className="max-w-[55%] shrink-0">
         <span
           className={cn(
-            'inline-flex items-center justify-center rounded-md border-1 border-black bg-transparent px-2 sm:px-2.5 py-1 text-xs sm:text-sm font-bold text-slate-900 tabular-nums text-right max-w-full',
+            'inline-flex max-w-full items-center justify-center rounded-md border-1 border-black bg-transparent px-2 py-1 text-right text-xs font-bold tabular-nums text-slate-900 sm:px-2.5 sm:text-sm',
             badgeClass,
           )}
           title={nilai}
@@ -43,4 +46,3 @@ export function BarisKeterangan({
     </div>
   );
 }
-

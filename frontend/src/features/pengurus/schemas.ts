@@ -13,4 +13,3 @@ export type IsiJabatanFormValues = z.infer<typeof isiJabatanSchema>;
 
 export const passwordBaruSchema = z.object({ password });
 export type PasswordBaruFormValues = z.infer<typeof passwordBaruSchema>;
-

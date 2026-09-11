@@ -8,6 +8,7 @@ echo "=== Impor data Excel ke SIGALON ==="
 echo
 read -p "Path file Excel [Enter = $DEFAULT]: " FILE
 FILE="${FILE:-$DEFAULT}"
+[ ! -f "$FILE" ] && [ -f "${FILE}.xlsx" ] && FILE="${FILE}.xlsx"
 
 if [ ! -f "$FILE" ]; then
     echo

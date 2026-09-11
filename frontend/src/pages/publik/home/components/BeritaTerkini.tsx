@@ -47,7 +47,7 @@ export function BeritaTerkini() {
                   key={b.id}
                   data-apple-fade
                   data-apple-delay={idx + 1}
-                  className="h-full flex flex-col"
+                  className="flex h-full flex-col"
                 >
                   <BeritaCard berita={b} />
                 </div>

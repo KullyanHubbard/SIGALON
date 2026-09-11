@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import {
-  ExternalLink,
-  Focus,
-  Maximize2,
-  UserCheck,
-} from 'lucide-react';
+import { ExternalLink, Focus, Maximize2, UserCheck } from 'lucide-react';
 import { useTitikLokasiList } from '@/features/titik-lokasi/hooks/use-titik-lokasi';
 import type { KategoriTitik, TitikLokasi } from '@/features/titik-lokasi/types';
 import { dapatkanTemaTitik } from '@/features/titik-lokasi/warna';
@@ -17,10 +12,10 @@ const PUSAT_PADUKUHAN: [number, number] = [-7.656826, 110.363111];
 const DEFAULT_ZOOM = 16;
 
 const PETA_BOUNDS = {
-  minLat: -7.660500,
-  maxLat: -7.653000,
-  minLon: 110.358000,
-  maxLon: 110.368500,
+  minLat: -7.6605,
+  maxLat: -7.653,
+  minLon: 110.358,
+  maxLon: 110.3685,
 };
 
 function dapatkanKoordinat(item: TitikLokasi): [number, number] {
@@ -33,9 +28,11 @@ function dapatkanKoordinat(item: TitikLokasi): [number, number] {
     return [Number(item.lat), Number(item.lon)];
   }
   const hitungLat =
-    PETA_BOUNDS.maxLat - (item.y / 100) * (PETA_BOUNDS.maxLat - PETA_BOUNDS.minLat);
+    PETA_BOUNDS.maxLat -
+    (item.y / 100) * (PETA_BOUNDS.maxLat - PETA_BOUNDS.minLat);
   const hitungLon =
-    PETA_BOUNDS.minLon + (item.x / 100) * (PETA_BOUNDS.maxLon - PETA_BOUNDS.minLon);
+    PETA_BOUNDS.minLon +
+    (item.x / 100) * (PETA_BOUNDS.maxLon - PETA_BOUNDS.minLon);
   return [hitungLat, hitungLon];
 }
 
@@ -70,7 +67,8 @@ function buatDivIcon(item: TitikLokasi) {
 function buatPopupHtml(item: TitikLokasi, lat: number, lon: number) {
   const { badgeClass } = dapatkanWarnaDanIkon(item);
   const mapsUrl =
-    item.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+    item.googleMapsUrl ||
+    `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
 
   return `
     <div style="font-family: system-ui, -apple-system, sans-serif; padding: 2px; min-width: 210px;">
@@ -93,7 +91,7 @@ function buatPopupHtml(item: TitikLokasi, lat: number, lon: number) {
           : ''
       }
       <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #000000;">
-        <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #4f46e5; text-decoration: none;">
+        <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #2563eb; text-decoration: none;">
           <span>Buka di Google Maps</span> ↗
         </a>
       </div>
@@ -164,12 +162,18 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
 
   const resetPusatPeta = () => {
     if (mapInstanceRef.current) {
-      mapInstanceRef.current.setView(PUSAT_PADUKUHAN, DEFAULT_ZOOM, { animate: true });
+      mapInstanceRef.current.setView(PUSAT_PADUKUHAN, DEFAULT_ZOOM, {
+        animate: true,
+      });
     }
   };
 
-  const jumlahFasilitas = hotspots.filter((t) => t.kategori === 'fasilitas').length;
-  const jumlahPerangkat = hotspots.filter((t) => t.kategori === 'perangkat').length;
+  const jumlahFasilitas = hotspots.filter(
+    (t) => t.kategori === 'fasilitas',
+  ).length;
+  const jumlahPerangkat = hotspots.filter(
+    (t) => t.kategori === 'perangkat',
+  ).length;
 
   return (
     <>
@@ -181,16 +185,16 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               type="button"
               onClick={() => setTabAktif('semua')}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer',
+                'inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
                 tabAktif === 'semua'
-                  ? 'bg-slate-900 text-white shadow-xs'
+                  ? 'shadow-xs bg-slate-900 text-white'
                   : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
               )}
             >
               Semua Titik
               <span
                 className={cn(
-                  'ml-1 rounded-full px-1.5 py-0.2 text-[10px] font-extrabold',
+                  'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
                   tabAktif === 'semua'
                     ? 'bg-white/25 text-white'
                     : 'bg-slate-200 text-slate-900',
@@ -204,16 +208,16 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               type="button"
               onClick={() => setTabAktif('fasilitas')}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer',
+                'inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
                 tabAktif === 'fasilitas'
-                  ? 'bg-teal-700 text-white shadow-xs'
+                  ? 'shadow-xs bg-teal-700 text-white'
                   : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
               )}
             >
               Fasilitas Umum
               <span
                 className={cn(
-                  'ml-1 rounded-full px-1.5 py-0.2 text-[10px] font-extrabold',
+                  'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
                   tabAktif === 'fasilitas'
                     ? 'bg-white/25 text-white'
                     : 'bg-slate-200 text-slate-900',
@@ -227,16 +231,16 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               type="button"
               onClick={() => setTabAktif('perangkat')}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all cursor-pointer',
+                'inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition-all',
                 tabAktif === 'perangkat'
-                  ? 'bg-blue-700 text-white shadow-xs'
+                  ? 'shadow-xs bg-blue-700 text-white'
                   : 'border-1 border-black bg-white text-slate-800 hover:bg-slate-100 hover:text-slate-900',
               )}
             >
               Perangkat Desa
               <span
                 className={cn(
-                  'ml-1 rounded-full px-1.5 py-0.2 text-[10px] font-extrabold',
+                  'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
                   tabAktif === 'perangkat'
                     ? 'bg-white/25 text-white'
                     : 'bg-slate-200 text-slate-900',
@@ -251,20 +255,20 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
             <button
               type="button"
               onClick={resetPusatPeta}
-              className="inline-flex items-center gap-1.5 rounded-lg border-1 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 shadow-xs hover:bg-slate-100 cursor-pointer transition-colors"
+              className="shadow-xs inline-flex cursor-pointer items-center gap-1.5 rounded-lg border-1 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 transition-colors hover:bg-slate-100"
               title="Kembalikan fokus ke pusat Padukuhan Gading Kulon"
             >
-              <Focus className="h-3.5 w-3.5 text-slate-900 shrink-0" />
+              <Focus className="h-3.5 w-3.5 shrink-0 text-slate-900" />
               <span className="hidden sm:inline">Pusat Wilayah</span>
             </button>
 
             <button
               type="button"
               onClick={() => setModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border-1 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 shadow-xs hover:bg-slate-100 cursor-pointer transition-colors"
+              className="shadow-xs inline-flex cursor-pointer items-center gap-1.5 rounded-lg border-1 border-black bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 transition-colors hover:bg-slate-100"
               title="Buka peta ukuran penuh"
             >
-              <Maximize2 className="h-3.5 w-3.5 text-slate-900 shrink-0" />
+              <Maximize2 className="h-3.5 w-3.5 shrink-0 text-slate-900" />
               <span className="hidden sm:inline">Peta Penuh</span>
             </button>
           </div>
@@ -273,22 +277,27 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
         {/* Kontainer Peta Leaflet OpenStreetMap */}
         <div
           className={cn(
-            'relative overflow-hidden rounded-xl border-1 border-black shadow-sm min-h-[360px] sm:min-h-[440px] bg-slate-100 z-0',
+            'relative z-0 min-h-[360px] overflow-hidden rounded-xl border-1 border-black bg-slate-100 shadow-sm sm:min-h-[440px]',
             className,
           )}
         >
           {isLoading && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70 backdrop-blur-xs">
-              <span className="text-xs text-slate-500">Memuat titik peta OpenStreetMap…</span>
+            <div className="backdrop-blur-xs absolute inset-0 z-20 flex items-center justify-center bg-white/70">
+              <span className="text-xs text-slate-500">
+                Memuat titik peta OpenStreetMap…
+              </span>
             </div>
           )}
           {tabAktif === 'perangkat' && jumlahPerangkat === 0 && !isLoading && (
-            <div className="pointer-events-none absolute top-3 left-1/2 -translate-x-1/2 z-[400] rounded-full bg-slate-900/80 px-3 py-1.5 text-[11px] font-medium text-white shadow-md backdrop-blur-xs flex items-center gap-1.5">
+            <div className="backdrop-blur-xs pointer-events-none absolute left-1/2 top-3 z-[400] flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1.5 text-[11px] font-medium text-white shadow-md">
               <UserCheck className="h-3.5 w-3.5 text-purple-300" />
               <span>Belum ada data kediaman perangkat desa terdaftar</span>
             </div>
           )}
-          <div ref={mapContainerRef} className="h-full w-full min-h-[360px] sm:min-h-[440px] z-0" />
+          <div
+            ref={mapContainerRef}
+            className="z-0 h-full min-h-[360px] w-full sm:min-h-[440px]"
+          />
         </div>
       </div>
 
@@ -300,14 +309,14 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
         className="max-w-5xl"
       >
         <div className="space-y-4">
-          <div className="rounded-lg overflow-hidden border-1 border-black h-[65vh] w-full bg-slate-100">
+          <div className="h-[65vh] w-full overflow-hidden rounded-lg border-1 border-black bg-slate-100">
             <iframe
               title="Peta OpenStreetMap Layar Penuh"
               className="h-full w-full border-0"
               src="https://www.openstreetmap.org/export/embed.html?bbox=110.354000%2C-7.662000%2C110.372000%2C-7.651000&layer=mapnik&marker=-7.656826%2C110.363111"
             />
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-t-1 border-black pt-3">
+          <div className="flex flex-col justify-between gap-2.5 border-t-1 border-black pt-3 sm:flex-row sm:items-center">
             <p className="text-xs text-slate-500">
               Peta geospasial resmi berbasis OpenStreetMap kontributor terbuka.
             </p>

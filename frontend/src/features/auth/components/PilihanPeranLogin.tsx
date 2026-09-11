@@ -89,7 +89,7 @@ export function PilihanPeranLogin({ dipilih, onPilih }: Props) {
           aria-selected={dipilih === p.role}
           onClick={() => onPilih(p.role)}
           className={cn(
-            'focus-ring relative z-10 h-11 rounded-lg px-1 sm:px-2 text-xs sm:text-sm transition-colors duration-200 truncate',
+            'focus-ring relative z-10 h-11 truncate rounded-lg px-1 text-xs transition-colors duration-200 sm:px-2 sm:text-sm',
             dipilih === p.role
               ? 'font-bold text-brand-700'
               : 'font-medium text-slate-500 hover:text-slate-700',

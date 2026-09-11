@@ -28,7 +28,7 @@ const statistikDesa: NavItem = {
 };
 
 const riwayat: NavItem = {
-  label: 'Riwayat Edit',
+  label: 'Riwayat Perubahan',
   to: paths.admin.riwayat,
   icon: ikonRiwayatEdit,
   aksen: CHART_KATEGORI_COLORS[1],

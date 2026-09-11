@@ -30,7 +30,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex h-full max-h-dvh min-h-0 w-72 sm:w-80 max-w-[85vw] flex-col border-r-1 border-black bg-surface transition-transform lg:static lg:h-full lg:max-h-full lg:w-80 lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 flex h-full max-h-dvh min-h-0 w-72 max-w-[85vw] flex-col border-r-1 border-black bg-surface transition-transform sm:w-80 lg:static lg:h-full lg:max-h-full lg:w-80 lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
@@ -54,10 +54,11 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
 
         {}
+        {/* Link cepat kembali ke portal publik */}
         <Link
           to={paths.landing}
           onClick={onClose}
-          className="mx-3 mt-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:bg-slate-100 hover:translate-x-1 motion-reduce:hover:translate-x-0"
+          className="mx-3 mt-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:hover:translate-x-0"
         >
           <span
             aria-hidden
@@ -82,10 +83,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               onClick={onClose}
               className={({ isActive }) =>
                 cn(
-                  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-base transition-all duration-150 ease-out',
+                  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-base transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
                   isActive
-                    ? 'font-bold text-brand-600'
-                    : 'font-medium text-slate-900 hover:bg-slate-100 hover:translate-x-1 motion-reduce:hover:translate-x-0',
+                    ? 'bg-brand-600 font-bold text-white shadow-sm hover:bg-brand-700'
+                    : 'font-medium text-slate-900 hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white motion-reduce:hover:translate-x-0',
                 )
               }
             >
@@ -109,7 +110,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        <p className="flex h-14 min-h-14 shrink-0 items-center border-t-1 border-black px-4 text-xs sm:text-sm text-slate-400">
+        <p className="flex h-14 min-h-14 shrink-0 items-center border-t-1 border-black px-4 text-xs text-slate-400 sm:text-sm">
           {env.appName} · v0.1.0
         </p>
       </aside>

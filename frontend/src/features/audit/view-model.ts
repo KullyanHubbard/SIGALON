@@ -14,12 +14,17 @@ const AKSI_LABEL: Record<string, string> = {
   'ubah-warga': 'Mengubah data',
   'tambah-warga': 'Menambah warga',
   'tambah-pengurus': 'Membuatkan akun',
-  'reset-password': 'Mereset password',
+  'isi-lpm': 'Mengisi Ketua LPM',
   'ubah-lpm': 'Mengubah nama Ketua LPM',
+  'reset-password': 'Mereset password',
   'tambah-berita': 'Menerbitkan berita',
   'ubah-berita': 'Menyunting berita',
   'hapus-berita': 'Menghapus berita',
   'ubah-padukuhan': 'Mengubah profil padukuhan',
+  'tambah-titik-lokasi': 'Menambah titik lokasi',
+  'ubah-titik-lokasi': 'Menyunting titik lokasi',
+  'hapus-titik-lokasi': 'Menghapus titik lokasi',
+  'muat-bawaan-titik-lokasi': 'Memuat titik lokasi bawaan',
 };
 
 export interface PerubahanKolom {

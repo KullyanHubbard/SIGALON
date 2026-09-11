@@ -25,22 +25,26 @@ function Kotak({
   const gayaTingkat = {
     dukuh: {
       kartu: 'rounded-xl border-1 border-brand-900 shadow-sm',
-      header: 'bg-brand-900 text-white py-1.5 sm:py-2 px-3 text-[0.7rem] sm:text-xs tracking-wider',
+      header:
+        'bg-brand-900 text-white py-1.5 sm:py-2 px-3 text-[0.7rem] sm:text-xs tracking-wider',
       nama: 'text-xs sm:text-sm font-bold text-slate-900',
     },
     lpm: {
       kartu: 'rounded-xl border-1 border-brand-900 shadow-sm',
-      header: 'bg-brand-900 text-white py-1.5 px-3 text-[0.68rem] sm:text-xs tracking-wider',
+      header:
+        'bg-brand-900 text-white py-1.5 px-3 text-[0.68rem] sm:text-xs tracking-wider',
       nama: 'text-xs sm:text-sm font-bold text-slate-900',
     },
     rw: {
       kartu: 'rounded-xl border-1 border-brand-900 shadow-sm',
-      header: 'bg-brand-900 text-white py-1.5 px-2.5 sm:px-3 text-[0.68rem] sm:text-[0.72rem] tracking-wider',
+      header:
+        'bg-brand-900 text-white py-1.5 px-2.5 sm:px-3 text-[0.68rem] sm:text-[0.72rem] tracking-wider',
       nama: 'text-xs sm:text-sm font-bold text-slate-900',
     },
     rt: {
       kartu: 'rounded-lg border-1 border-brand-900 shadow-sm',
-      header: 'bg-brand-900 text-white py-1 px-1.5 sm:px-2 text-[0.62rem] sm:text-[0.68rem] tracking-wider',
+      header:
+        'bg-brand-900 text-white py-1 px-1.5 sm:px-2 text-[0.62rem] sm:text-[0.68rem] tracking-wider',
       nama: 'text-[0.7rem] sm:text-xs font-semibold text-slate-900',
     },
   }[tingkat];
@@ -48,19 +52,21 @@ function Kotak({
   return (
     <div
       className={cn(
-        'flex min-h-16 sm:min-h-20 w-full flex-col overflow-hidden bg-surface transition-shadow',
+        'flex min-h-16 w-full flex-col overflow-hidden bg-surface transition-shadow sm:min-h-20',
         gayaTingkat.kartu,
       )}
     >
-      <div className={cn('text-center font-bold uppercase', gayaTingkat.header)}>
+      <div
+        className={cn('text-center font-bold uppercase', gayaTingkat.header)}
+      >
         {label}
       </div>
-      <div className="flex flex-1 items-center justify-center p-2 sm:p-2.5 text-center">
+      <div className="flex flex-1 items-center justify-center p-2 text-center sm:p-2.5">
         <p
           className={cn(
-            'uppercase leading-snug break-words',
+            'break-words uppercase leading-snug',
             kosong
-              ? 'text-[0.68rem] sm:text-xs italic text-slate-400 font-normal'
+              ? 'text-[0.68rem] font-normal italic text-slate-400 sm:text-xs'
               : gayaTingkat.nama,
           )}
         >
@@ -90,7 +96,7 @@ function PalangKeAnak({ jumlah }: { jumlah: number }) {
   return (
     <div
       aria-hidden
-      className="grid w-full gap-x-2 sm:gap-x-4 [grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
+      className="grid w-full gap-x-2 [grid-template-columns:repeat(var(--n),minmax(0,1fr))] sm:gap-x-4"
       style={{ '--n': jumlah } as CSSProperties}
     >
       {Array.from({ length: jumlah }, (_, i) => (
@@ -125,11 +131,16 @@ function GrupRw({ wilayah }: { wilayah: RwPublik }) {
       <Tiang />
       <PalangKeAnak jumlah={wilayah.rt.length} />
       <div
-        className="grid w-full gap-x-2 sm:gap-x-4 [grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
+        className="grid w-full gap-x-2 [grid-template-columns:repeat(var(--n),minmax(0,1fr))] sm:gap-x-4"
         style={{ '--n': wilayah.rt.length } as CSSProperties}
       >
         {wilayah.rt.map((rt) => (
-          <Kotak key={rt.nomor} label={`RT ${rt.nomor}`} nama={rt.nama} tingkat="rt" />
+          <Kotak
+            key={rt.nomor}
+            label={`RT ${rt.nomor}`}
+            nama={rt.nama}
+            tingkat="rt"
+          />
         ))}
       </div>
     </div>
@@ -169,10 +180,10 @@ export function BaganOrganisasi() {
                 className={cn('block h-5 w-px md:hidden', GARIS)}
               />
               <div className="hidden flex-1 md:block" />
-              <div className="flex w-full items-center justify-center md:justify-start md:w-1/2">
+              <div className="flex w-full items-center justify-center md:w-1/2 md:justify-start">
                 <span
                   aria-hidden
-                  className={cn('hidden flex-1 h-px md:block', GARIS)}
+                  className={cn('hidden h-px flex-1 md:block', GARIS)}
                 />
                 <div className="w-44 sm:w-56">
                   <Kotak label="Ketua LPM" nama={struktur.lpm} tingkat="lpm" />
@@ -196,7 +207,7 @@ export function BaganOrganisasi() {
                 </div>
 
                 <div
-                  className="grid w-full grid-cols-1 gap-x-3 sm:gap-x-4 gap-y-3 md:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
+                  className="grid w-full grid-cols-1 gap-x-3 gap-y-3 sm:gap-x-4 md:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
                   style={{ '--n': struktur.rw.length } as CSSProperties}
                 >
                   {struktur.rw.map((w) => (

@@ -61,8 +61,7 @@ export function PilihWarga({
               onClick={() => onPilih(w)}
               className={cn(
                 'flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-slate-50',
-                terpilih?.id === w.id &&
-                  'font-bold text-brand-600',
+                terpilih?.id === w.id && 'font-bold text-brand-600',
               )}
             >
               <span>{w.nama}</span>

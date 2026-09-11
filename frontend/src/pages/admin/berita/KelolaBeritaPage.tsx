@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Pencil, Trash2 } from 'lucide-react';
+import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Modal } from '@/components/ui/Modal';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { Table, Td, Th } from '@/components/ui/Table';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -15,29 +16,19 @@ import {
 } from '@/features/berita/hooks/use-berita';
 import type { Berita } from '@/features/berita/types';
 import { formatTanggal } from '@/features/berita/utils';
-import { pesanError } from '@/lib/utils';
+import { cn, pesanError } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 
 export default function KelolaBeritaPage() {
   const { data, isLoading, isError } = useBeritaList();
   const hapus = useHapusBerita();
   const [target, setTarget] = useState<Berita | 'baru' | null>(null);
-
-  const onHapus = (berita: Berita) => {
-    if (
-      window.confirm(
-        `Hapus berita "${berita.judul}"? Tindakan ini tidak bisa dibatalkan.`,
-      )
-    ) {
-      hapus.mutate(berita.id);
-    }
-  };
+  const [beritaDihapus, setBeritaDihapus] = useState<Berita | null>(null);
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Kelola Berita"
-        description="Tulis dan sunting kabar kegiatan padukuhan."
         action={<Button onClick={() => setTarget('baru')}>Tulis Berita</Button>}
       />
 
@@ -47,7 +38,7 @@ export default function KelolaBeritaPage() {
         </Alert>
       )}
 
-      <Card>
+      <Card className="overflow-hidden">
         <QueryBoundary
           isLoading={isLoading}
           isError={isError}
@@ -69,56 +60,84 @@ export default function KelolaBeritaPage() {
                 </tr>
               </thead>
               <tbody>
-                {daftar.map((berita) => (
-                  <tr key={berita.id}>
-                    <Td className="whitespace-normal">
-                      <div className="flex items-center gap-3">
-                        <FotoBerita
-                          berita={berita}
-                          className="h-12 w-16 shrink-0 rounded-md"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-semibold text-slate-900">
-                            {berita.judul}
-                          </p>
-                          <Link
-                            to={paths.beritaDetail(berita.slug)}
-                            className="text-xs text-brand-700 hover:underline"
-                          >
-                            /berita/{berita.slug}
-                          </Link>
+                {daftar.map((berita, index) => {
+                  const isLast = index === daftar.length - 1;
+                  return (
+                    <tr
+                      key={berita.id}
+                      className="transition-colors hover:bg-slate-50/80"
+                    >
+                      <Td
+                        className={cn(
+                          'whitespace-normal',
+                          isLast && 'border-b-0',
+                        )}
+                      >
+                        <div className="flex items-center gap-3">
+                          <FotoBerita
+                            berita={berita}
+                            className="h-12 w-16 shrink-0 rounded-md"
+                          />
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-900">
+                              {berita.judul}
+                            </p>
+                            <Link
+                              to={paths.beritaDetail(berita.slug)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline"
+                            >
+                              <span>Lihat Berita</span>
+                              <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          </div>
                         </div>
-                      </div>
-                    </Td>
-                    <Td>{formatTanggal(berita.tanggalTerbit)}</Td>
-                    <Td>{berita.penulis}</Td>
-                    <Td className="text-right">
-                      <div className="inline-flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setTarget(berita)}
-                          className="inline-flex items-center justify-center rounded-lg border-1 border-black bg-white hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200 text-slate-700 p-1.5 transition-all shadow-2xs cursor-pointer active:scale-95"
-                          title="Sunting berita"
-                          aria-label={`Sunting ${berita.judul}`}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onHapus(berita)}
-                          disabled={
-                            hapus.isPending && hapus.variables === berita.id
-                          }
-                          className="inline-flex items-center justify-center rounded-lg border-1 border-black bg-white hover:bg-rose-50 hover:border-black hover:text-rose-600 text-rose-600 p-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50 active:scale-95"
-                          title="Hapus berita"
-                          aria-label={`Hapus ${berita.judul}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </Td>
-                  </tr>
-                ))}
+                      </Td>
+                      <Td
+                        className={cn(
+                          'font-medium text-slate-800',
+                          isLast && 'border-b-0',
+                        )}
+                      >
+                        {formatTanggal(berita.tanggalTerbit)}
+                      </Td>
+                      <Td
+                        className={cn(
+                          'font-medium text-slate-800',
+                          isLast && 'border-b-0',
+                        )}
+                      >
+                        {berita.penulis}
+                      </Td>
+                      <Td className={cn('text-right', isLast && 'border-b-0')}>
+                        <div className="inline-flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setTarget(berita)}
+                            className="shadow-2xs inline-flex cursor-pointer items-center justify-center rounded-lg border-1 border-black bg-white p-1.5 text-slate-900 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95 active:bg-slate-200"
+                            title="Sunting berita"
+                            aria-label={`Sunting ${berita.judul}`}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              hapus.reset();
+                              setBeritaDihapus(berita);
+                            }}
+                            className="shadow-2xs inline-flex cursor-pointer items-center justify-center rounded-lg border-1 border-black bg-white p-1.5 text-rose-600 transition-all hover:border-black hover:bg-rose-50 hover:text-rose-600 active:scale-95 disabled:opacity-50"
+                            title="Hapus berita"
+                            aria-label={`Hapus ${berita.judul}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </Td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </Table>
           )}
@@ -126,6 +145,58 @@ export default function KelolaBeritaPage() {
       </Card>
 
       <BeritaFormDialog target={target} onClose={() => setTarget(null)} />
+
+      <Modal
+        open={beritaDihapus !== null}
+        onClose={() => {
+          if (!hapus.isPending) setBeritaDihapus(null);
+        }}
+        title="Hapus Berita"
+        className="max-w-md"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-slate-700">
+            Apakah Anda yakin ingin menghapus berita{' '}
+            <span className="font-semibold text-slate-900">
+              “{beritaDihapus?.judul}”
+            </span>
+            ? Tindakan ini tidak dapat dibatalkan.
+          </p>
+
+          {hapus.isError && (
+            <Alert tone="error">
+              {pesanError(hapus.error, 'Gagal menghapus berita.')}
+            </Alert>
+          )}
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setBeritaDihapus(null)}
+              disabled={hapus.isPending}
+            >
+              Batal
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              isLoading={hapus.isPending}
+              onClick={async () => {
+                if (!beritaDihapus) return;
+                try {
+                  await hapus.mutateAsync(beritaDihapus.id);
+                  setBeritaDihapus(null);
+                } catch {
+                  // Pesan error ditangani oleh Alert di atas
+                }
+              }}
+            >
+              Ya, Hapus
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

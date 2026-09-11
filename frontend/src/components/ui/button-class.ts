@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 
-export type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'cta';
+export type Variant =
+  'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'cta';
 export type Size = 'sm' | 'md' | 'lg';
 
 const variantStyles: Record<Variant, string> = {
@@ -14,8 +15,7 @@ const variantStyles: Record<Variant, string> = {
     'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:scale-95',
   danger:
     'bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md hover:-translate-y-0.5 active:bg-red-800 active:shadow-sm active:translate-y-0 active:scale-[0.98]',
-  cta:
-    'bg-[#FACC15] text-[#4C1D95] font-bold shadow-sm hover:bg-yellow-400 hover:shadow-md hover:-translate-y-0.5 active:bg-yellow-500 active:shadow-sm active:translate-y-0 active:scale-[0.98]',
+  cta: 'bg-[#FACC15] text-[#4C1D95] font-bold shadow-sm hover:bg-yellow-400 hover:shadow-md hover:-translate-y-0.5 active:bg-yellow-500 active:shadow-sm active:translate-y-0 active:scale-[0.98]',
 };
 
 const sizeStyles: Record<Size, string> = {

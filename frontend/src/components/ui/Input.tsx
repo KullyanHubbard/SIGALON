@@ -38,11 +38,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              'focus-ring h-10 w-full rounded-lg border-1 border-black bg-surface px-3 text-base sm:text-sm text-slate-900 transition-all duration-150 placeholder:text-slate-400 hover:border-black focus:border-brand-600 focus-visible:ring-brand-600/20',
+              'h-10 w-full rounded-lg border-1 border-slate-300 bg-surface px-3 text-base text-slate-900 transition-all duration-150 placeholder:text-slate-400 hover:border-slate-400 focus:border-slate-400 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 sm:text-sm',
               icon && 'pl-10',
               trailing && 'pr-11',
-              error &&
-                'border-red-400 focus:border-red-500 focus-visible:ring-red-500',
+              error && 'border-red-400 focus:border-red-500',
               className,
             )}
             aria-invalid={Boolean(error)}
