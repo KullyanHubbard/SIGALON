@@ -28,7 +28,7 @@ export function AdminDashboardView({
 }: AdminDashboardViewProps) {
   return (
     <div>
-      <PageHeader title="Dashboard" />
+      <PageHeader title="Ringkasan" />
 
       <QueryBoundary
         isLoading={isLoading}

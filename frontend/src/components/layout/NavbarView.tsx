@@ -52,22 +52,26 @@ export function NavbarView({
       </div>
 
       <div className="ml-auto flex items-center gap-3">
-        <div className="hidden text-right sm:block">
-          <p className="text-sm font-medium text-slate-800">{nama}</p>
-          {!samaPeran && <p className="text-xs text-slate-500">{peran}</p>}
-        </div>
-
         <div className="relative" ref={menuRef}>
           <button
             onClick={onToggleMenu}
-            className="focus-ring flex items-center gap-2 rounded-full"
+            className="focus-ring flex items-center gap-2.5 rounded-lg border-1 border-black bg-red-500 px-3.5 py-1.5 font-medium text-black shadow-sm transition-all duration-150 ease-out hover:bg-red-600 active:scale-[0.98]"
             aria-label="Menu pengguna"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
           >
+            <div className="text-left leading-tight sm:text-right">
+              <span className="block text-sm font-bold text-black">{nama}</span>
+              {!samaPeran && (
+                <span className="block text-[11px] font-medium text-black/80">
+                  {peran}
+                </span>
+              )}
+            </div>
+
             <span
               aria-hidden
-              className="block h-9 w-9 bg-slate-400"
+              className="block h-6 w-6 shrink-0 bg-black"
               style={{
                 mask: `url("${ikonUserCircle}") center / contain no-repeat`,
                 WebkitMask: `url("${ikonUserCircle}") center / contain no-repeat`,

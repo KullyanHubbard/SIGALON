@@ -438,7 +438,7 @@ export function DialogUbahTitikLokasi({
               placeholder="https://maps.google.com/?q=..."
               value={googleMapsUrl}
               onChange={(e) => setGoogleMapsUrl(e.target.value)}
-              className="w-full rounded-lg border-1 border-slate-300 bg-white px-3 py-2 font-mono text-xs text-slate-900 shadow-sm hover:border-slate-400 focus:border-slate-400 focus:outline-none focus:ring-0 sm:text-sm"
+              className="w-full rounded-lg border-1 border-black bg-white px-3 py-2 font-mono text-xs text-slate-900 shadow-sm placeholder:text-slate-400 hover:border-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black sm:text-sm"
             />
           </div>
         </div>

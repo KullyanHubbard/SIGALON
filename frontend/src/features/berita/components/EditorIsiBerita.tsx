@@ -84,15 +84,15 @@ export function EditorIsiBerita({
 
       <div
         className={cn(
-          'overflow-hidden rounded-lg border-1 border-slate-300 focus-within:border-slate-400',
-          error && 'border-red-400',
+          'overflow-hidden rounded-lg border-1 border-black focus-within:border-black focus-within:ring-1 focus-within:ring-black',
+          error && 'border-red-500',
         )}
       >
         <div
           role="toolbar"
           aria-label="Format tulisan"
           aria-controls="isi-berita-editor"
-          className="flex flex-wrap items-center gap-1 border-b-1 border-slate-300 bg-slate-100 px-2.5 py-1.5"
+          className="flex flex-wrap items-center gap-1 border-b-1 border-black bg-slate-100 px-2.5 py-1.5"
         >
           <TombolAlat
             label="Tebal"

@@ -26,6 +26,9 @@ async def infografis(user: AuthUser = Depends(current_pengurus)) -> InfografisDa
     warga = hanya_aktif(penduduk_untuk(user))
     return InfografisData(
         totalPenduduk=len(warga),
+        totalKepalaKeluarga=sum(
+            1 for p in warga if p.statusHubunganKeluarga == "KEPALA_KELUARGA"
+        ),
         totalLakiLaki=sum(
             1 for p in warga if p.jenisKelamin == "LAKI_LAKI"
         ),

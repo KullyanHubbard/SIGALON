@@ -51,26 +51,30 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
           </div>
         </div>
 
-        {}
-        <Link
-          to={paths.landing}
-          onClick={onClose}
-          className="mx-3 mt-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:hover:translate-x-0"
-        >
-          <span
-            aria-hidden
-            className="block h-5 w-5 shrink-0 bg-current"
-            style={{
-              mask: `url("${ikonBack}") center / contain no-repeat`,
-              WebkitMask: `url("${ikonBack}") center / contain no-repeat`,
-            }}
-          />
-          Kembali ke Beranda
-        </Link>
+        {/* Link cepat kembali ke portal publik dengan garis pembatas */}
+        <div className="pt-3">
+          <Link
+            to={paths.landing}
+            onClick={onClose}
+            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:hover:translate-x-0"
+          >
+            <span
+              aria-hidden
+              className="block h-5 w-5 shrink-0 bg-current"
+              style={{
+                mask: `url("${ikonBack}") center / contain no-repeat`,
+                WebkitMask: `url("${ikonBack}") center / contain no-repeat`,
+              }}
+            />
+            Kembali ke Beranda
+          </Link>
+          {/* Garis pembatas inset (tidak menyambung sampai pojok) */}
+          <div className="mx-5 my-2.5 border-b-1 border-black" aria-hidden="true" />
+        </div>
 
         {}
         <div
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 [webkit-overflow-scrolling:touch]"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 pt-0 [webkit-overflow-scrolling:touch]"
           onClick={(e) => {
             if ((e.target as HTMLElement).closest('button, a')) {
               onClose();

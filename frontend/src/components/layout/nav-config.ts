@@ -5,6 +5,8 @@ import ikonKelolaBerita from '@/assets/icons/Sidebar-Pengurus/kelola_berita.png'
 import ikonProfilPadukuhan from '@/assets/icons/Sidebar-Pengurus/profil padukuhan.png';
 import ikonLokasi from '@/assets/icons/Sidebar-Pengurus/lokasi.png';
 import ikonRiwayatEdit from '@/assets/icons/Sidebar-Pengurus/riwayat_edit.png';
+import ikonRingkasan from '@/assets/icons/Sidebar-Pengurus/ringkasan.png';
+import ikonStatWarga from '@/assets/icons/Sidebar-Pengurus/stat warga.png';
 import type { Role } from '@/features/auth/types';
 import { CHART_KATEGORI_COLORS } from '@/lib/colors';
 import { paths } from '@/routes/paths';
@@ -23,6 +25,7 @@ export interface NavItem {
 const statistikDesa: NavItem = {
   label: 'Statistik Warga',
   to: paths.statistik,
+  icon: ikonStatWarga,
   aksen: CHART_KATEGORI_COLORS[3],
   end: true,
 };
@@ -66,8 +69,9 @@ export function navItemsForRole(role: Role | undefined): NavItem[] {
   }
   return [
     {
-      label: 'Dashboard',
+      label: 'Ringkasan',
       to: paths.admin.root,
+      icon: ikonRingkasan,
       aksen: CHART_KATEGORI_COLORS[0],
       end: true,
     },

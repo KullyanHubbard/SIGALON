@@ -28,7 +28,9 @@ export interface StatWarga {
 }
 
 export function toStatWarga(total: TotalWarga): StatWarga[] {
-  const hasil: StatWarga[] = [];
+  const hasil: StatWarga[] = [
+    { id: 'penduduk', value: formatAngka(total.totalPenduduk) },
+  ];
   if (total.totalKepalaKeluarga != null) {
     hasil.push({
       id: 'keluarga',
@@ -36,7 +38,6 @@ export function toStatWarga(total: TotalWarga): StatWarga[] {
     });
   }
   hasil.push(
-    { id: 'penduduk', value: formatAngka(total.totalPenduduk) },
     { id: 'lakiLaki', value: formatAngka(total.totalLakiLaki) },
     { id: 'perempuan', value: formatAngka(total.totalPerempuan) },
   );

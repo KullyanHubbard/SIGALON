@@ -33,7 +33,7 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
   return [
     {
       id: 'umur',
-      judul: 'Piramida Usia',
+      judul: 'Demografi Usia',
       jenis: 'bar',
       data: urutKelompokUmur(
         gabungDistribusi(data.perRw, (rw) => rw.perKelompokUmur),

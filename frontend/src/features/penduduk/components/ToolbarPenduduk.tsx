@@ -81,7 +81,7 @@ function PilihanRingkas({
         'focus-ring h-10 w-full rounded-lg border-1 bg-surface px-3 text-sm transition-colors sm:w-auto',
         nilai
           ? 'border-brand-600 font-medium text-brand-700'
-          : 'border-1 border-slate-300 text-slate-700 hover:border-slate-400 focus:border-slate-400 focus:outline-none focus:ring-0',
+          : 'border-1 border-black text-slate-900 hover:border-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black',
       )}
     >
       <option value="">{label}: Semua</option>
