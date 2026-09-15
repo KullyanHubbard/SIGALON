@@ -11,15 +11,17 @@ import {
   statusKependudukanLabel,
   statusPerkawinanLabel,
 } from '../labels';
+import type { Role } from '@/features/auth/types';
 import type { WargaFormValues } from '../schemas';
 
 interface WargaFormFieldsProps {
   register: UseFormRegister<WargaFormValues>;
   errors: FieldErrors<WargaFormValues>;
-
   menambah: boolean;
-
   bolehPindahWilayah: boolean;
+  userRole?: Role;
+  userRw?: string | null;
+  userRt?: string | null;
 }
 
 function TanggalLahir({
@@ -56,6 +58,9 @@ export function WargaFormFields({
   errors,
   menambah,
   bolehPindahWilayah,
+  userRole,
+  userRw,
+  userRt,
 }: WargaFormFieldsProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -129,18 +134,41 @@ export function WargaFormFields({
       />
       <Input
         label="RT"
-        disabled={!bolehPindahWilayah}
+        disabled={
+          menambah
+            ? userRole === 'RT'
+            : !bolehPindahWilayah
+        }
         hint={
-          bolehPindahWilayah
-            ? undefined
-            : 'Hanya Pak Dukuh yang bisa memindahkan warga.'
+          menambah
+            ? userRole === 'RT'
+              ? `Terkunci sesuai wilayah RT Anda (${userRt ?? ''})`
+              : userRole === 'RW'
+                ? 'Masukkan nomor RT warga (mis. 001)'
+                : undefined
+            : bolehPindahWilayah
+              ? undefined
+              : 'Hanya Pak Dukuh yang bisa memindahkan warga.'
         }
         error={errors.rt?.message}
         {...register('rt')}
       />
       <Input
         label="RW"
-        disabled={!bolehPindahWilayah}
+        disabled={
+          menambah
+            ? userRole === 'RW' || userRole === 'RT'
+            : !bolehPindahWilayah
+        }
+        hint={
+          menambah
+            ? userRole === 'RW' || userRole === 'RT'
+              ? `Terkunci sesuai wilayah RW Anda (${userRw ?? ''})`
+              : undefined
+            : bolehPindahWilayah
+              ? undefined
+              : 'Hanya Pak Dukuh yang bisa memindahkan warga.'
+        }
         error={errors.rw?.message}
         {...register('rw')}
       />

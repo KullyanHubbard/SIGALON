@@ -85,7 +85,10 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
       golonganDarah: v.golonganDarah,
       statusHubunganKeluarga: v.statusHubunganKeluarga,
     };
-    const alamat = { jalan: v.jalan, rt: v.rt, rw: v.rw };
+    const rtFinal = user?.role === 'RT' ? (user.rt ?? v.rt) : v.rt;
+    const rwFinal =
+      user?.role === 'RW' || user?.role === 'RT' ? (user.rw ?? v.rw) : v.rw;
+    const alamat = { jalan: v.jalan, rt: rtFinal, rw: rwFinal };
 
     if (menambah) {
       tambah.mutate(
@@ -141,6 +144,9 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
           errors={errors}
           menambah={menambah}
           bolehPindahWilayah={bolehPindahWilayah}
+          userRole={user?.role}
+          userRw={user?.rw}
+          userRt={user?.rt}
         />
 
         {galat && <Alert tone="error">{galat}</Alert>}

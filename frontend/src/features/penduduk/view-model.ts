@@ -1,4 +1,4 @@
-import { formatTanggal, hitungUmur } from '@/lib/tanggal';
+import { formatTanggal, formatUmur } from '@/lib/tanggal';
 import type { Penduduk, StatusKependudukan } from './types';
 import {
   agamaLabel,
@@ -37,7 +37,9 @@ export function toPendudukRow(p: Penduduk): PendudukRow {
     id: p.id,
     nama: p.nama,
     jenisKelamin: jenisKelaminLabel[p.jenisKelamin],
-    umur: `${hitungUmur(p.tanggalLahir)} th`,
+    umur: formatUmur(p.tanggalLahir, {
+      statusKependudukan: p.statusKependudukan,
+    }),
     agama: agamaLabel[p.agama],
     rtRw: `${p.alamat.rt}/${p.alamat.rw}`,
     keterangan: statusKependudukanLabel[p.statusKependudukan],
@@ -68,7 +70,13 @@ export function toPendudukDetail(p: Penduduk): PendudukDetailView {
         label: 'Tempat, Tgl Lahir',
         value: `${p.tempatLahir}, ${formatTanggal(p.tanggalLahir)}`,
       },
-      { label: 'Umur', value: `${hitungUmur(p.tanggalLahir)} tahun` },
+      {
+        label: 'Umur',
+        value: formatUmur(p.tanggalLahir, {
+          statusKependudukan: p.statusKependudukan,
+          lengkap: true,
+        }),
+      },
       { label: 'Agama', value: agamaLabel[p.agama] },
       {
         label: 'Status Perkawinan',

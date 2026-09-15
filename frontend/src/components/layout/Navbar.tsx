@@ -16,6 +16,7 @@ export function Navbar({ onOpenSidebar }: { onOpenSidebar: () => void }) {
     <NavbarView
       nama={user?.nama ?? ''}
       peran={user?.jabatan ?? 'Perangkat Desa'}
+      role={user?.role}
       onOpenSidebar={onOpenSidebar}
       menuOpen={menuOpen}
       onToggleMenu={() => setMenuOpen((v) => !v)}

@@ -90,6 +90,15 @@ def list_penduduk(
     kelompokUmur: str = "",
     user: AuthUser = Depends(current_pengurus),
 ) -> PaginatedPenduduk:
+    if user.role == "RT":
+        if rw and not _samakan_wilayah(rw, user.rw):
+            raise HTTPException(403, "Anda hanya berwenang mengakses data wilayah RT Anda sendiri.")
+        if rt and not _samakan_wilayah(rt, user.rt):
+            raise HTTPException(403, "Anda hanya berwenang mengakses data wilayah RT Anda sendiri.")
+    elif user.role == "RW":
+        if rw and not _samakan_wilayah(rw, user.rw):
+            raise HTTPException(403, "Anda hanya berwenang mengakses data wilayah RW Anda sendiri.")
+
     hasil = saring(
         penduduk_untuk(user),
         search=search,
@@ -130,6 +139,15 @@ def ekspor_penduduk(
     user: AuthUser = Depends(current_pengurus),
 ) -> Response:
     """Ekspor data warga ke file Excel (.xlsx) atau CSV (.csv) sesuai hak akses & filter."""
+    if user.role == "RT":
+        if rw and not _samakan_wilayah(rw, user.rw):
+            raise HTTPException(403, "Anda hanya berwenang mengekspor data wilayah RT Anda sendiri.")
+        if rt and not _samakan_wilayah(rt, user.rt):
+            raise HTTPException(403, "Anda hanya berwenang mengekspor data wilayah RT Anda sendiri.")
+    elif user.role == "RW":
+        if rw and not _samakan_wilayah(rw, user.rw):
+            raise HTTPException(403, "Anda hanya berwenang mengekspor data wilayah RW Anda sendiri.")
+
     hasil = saring(
         penduduk_untuk(user),
         search=search,

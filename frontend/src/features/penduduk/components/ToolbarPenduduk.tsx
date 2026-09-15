@@ -10,6 +10,7 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react';
+import { useAuth } from '@/features/auth/hooks/use-auth';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
@@ -85,11 +86,14 @@ function PilihanRingkas({
       )}
     >
       <option value="">{label}: Semua</option>
-      {opsi.map(([v, teks]) => (
-        <option key={v} value={v} className="bg-surface text-slate-900">
-          {teks}
-        </option>
-      ))}
+      {opsi.map(([v, teks]) => {
+        const teksTampil = teks.startsWith(label) ? teks : `${label}: ${teks}`;
+        return (
+          <option key={v} value={v} className="bg-surface text-slate-900">
+            {teksTampil}
+          </option>
+        );
+      })}
     </select>
   );
 }
@@ -132,6 +136,10 @@ export function ToolbarPenduduk({
   onEkspor,
   isExporting,
 }: ToolbarPendudukProps) {
+  const { user } = useAuth();
+  const isRT = user?.role === 'RT';
+  const isRW = user?.role === 'RW';
+
   const [panelOpen, setPanelOpen] = useState(false);
   const panelRef = useDismissOnOutside<HTMLDivElement>(panelOpen, () =>
     setPanelOpen(false),
@@ -151,7 +159,11 @@ export function ToolbarPenduduk({
     onChange(next);
   };
 
-  const chips = toFilterChips(value);
+  const chips = toFilterChips(value).filter((chip) => {
+    if (isRT && (chip.field === 'rt' || chip.field === 'rw')) return false;
+    if (isRW && chip.field === 'rw') return false;
+    return true;
+  });
   const jumlahLanjutan = LANJUTAN.filter((f) => value[f]).length;
 
   return (
@@ -168,18 +180,55 @@ export function ToolbarPenduduk({
         </div>
 
         <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
-          <PilihanRingkas
-            label="RW"
-            nilai={value.rw}
-            opsi={dariData(opsi?.rw)}
-            onPilih={(v) => set('rw', v)}
-          />
-          <PilihanRingkas
-            label="RT"
-            nilai={value.rt}
-            opsi={dariData(opsi?.rt)}
-            onPilih={(v) => set('rt', v)}
-          />
+          {isRT ? (
+            <>
+              <div
+                className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
+                title={`Wilayah Anda: RW ${user?.rw}`}
+              >
+                <span className="mr-1.5 font-normal text-slate-500">RW:</span>
+                <span>{user?.rw}</span>
+              </div>
+              <div
+                className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
+                title={`Wilayah Anda: RT ${user?.rt}`}
+              >
+                <span className="mr-1.5 font-normal text-slate-500">RT:</span>
+                <span>{user?.rt}</span>
+              </div>
+            </>
+          ) : isRW ? (
+            <>
+              <div
+                className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
+                title={`Wilayah Anda: RW ${user?.rw}`}
+              >
+                <span className="mr-1.5 font-normal text-slate-500">RW:</span>
+                <span>{user?.rw}</span>
+              </div>
+              <PilihanRingkas
+                label="RT"
+                nilai={value.rt}
+                opsi={dariData(opsi?.rt)}
+                onPilih={(v) => set('rt', v)}
+              />
+            </>
+          ) : (
+            <>
+              <PilihanRingkas
+                label="RW"
+                nilai={value.rw}
+                opsi={dariData(opsi?.rw)}
+                onPilih={(v) => set('rw', v)}
+              />
+              <PilihanRingkas
+                label="RT"
+                nilai={value.rt}
+                opsi={dariData(opsi?.rt)}
+                onPilih={(v) => set('rt', v)}
+              />
+            </>
+          )}
         </div>
 
         {}

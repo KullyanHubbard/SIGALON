@@ -1,6 +1,8 @@
 import type { RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
+import { cn } from '@/lib/utils';
+import type { Role } from '@/features/auth/types';
 import ikonMenu from '@/assets/icons/nav/menu.svg';
 import ikonUserCircle from '@/assets/icons/nav/user-circle.svg';
 import ikonKeyRound from '@/assets/icons/nav/key-round.svg';
@@ -9,8 +11,8 @@ import { paths } from '@/routes/paths';
 
 interface NavbarViewProps {
   nama: string;
-
   peran: string;
+  role?: Role;
   onOpenSidebar: () => void;
   menuOpen: boolean;
   onToggleMenu: () => void;
@@ -22,6 +24,7 @@ interface NavbarViewProps {
 export function NavbarView({
   nama,
   peran,
+  role,
   onOpenSidebar,
   menuOpen,
   onToggleMenu,
@@ -30,6 +33,7 @@ export function NavbarView({
   onLogout,
 }: NavbarViewProps) {
   const samaPeran = nama.trim().toLowerCase() === peran.trim().toLowerCase();
+  const isAdmin = role === 'ADMIN';
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b-1 border-black bg-surface/80 px-4 backdrop-blur sm:h-20 lg:px-6">
@@ -55,15 +59,20 @@ export function NavbarView({
         <div className="relative" ref={menuRef}>
           <button
             onClick={onToggleMenu}
-            className="focus-ring flex items-center gap-2.5 rounded-lg border-1 border-black bg-red-500 px-3.5 py-1.5 font-medium text-black shadow-sm transition-all duration-150 ease-out hover:bg-red-600 active:scale-[0.98]"
+            className={cn(
+              'focus-ring flex items-center gap-2.5 rounded-lg border-1 border-black px-3.5 py-1.5 font-medium text-white shadow-sm transition-all duration-150 ease-out active:scale-[0.98]',
+              isAdmin
+                ? 'bg-red-500 hover:bg-red-600'
+                : 'bg-brand-600 hover:bg-brand-700',
+            )}
             aria-label="Menu pengguna"
             aria-haspopup="menu"
             aria-expanded={menuOpen}
           >
             <div className="text-left leading-tight sm:text-right">
-              <span className="block text-sm font-bold text-black">{nama}</span>
+              <span className="block text-sm font-bold text-white">{nama}</span>
               {!samaPeran && (
-                <span className="block text-[11px] font-medium text-black/80">
+                <span className="block text-[11px] font-medium text-white/90">
                   {peran}
                 </span>
               )}
@@ -71,7 +80,7 @@ export function NavbarView({
 
             <span
               aria-hidden
-              className="block h-6 w-6 shrink-0 bg-black"
+              className="block h-6 w-6 shrink-0 bg-white"
               style={{
                 mask: `url("${ikonUserCircle}") center / contain no-repeat`,
                 WebkitMask: `url("${ikonUserCircle}") center / contain no-repeat`,

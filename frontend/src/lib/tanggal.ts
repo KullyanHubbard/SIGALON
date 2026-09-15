@@ -1,12 +1,88 @@
-import { differenceInYears, format, parseISO } from 'date-fns';
+import {
+  differenceInMonths,
+  differenceInYears,
+  format,
+  isAfter,
+  isValid,
+  parseISO,
+} from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
 
-export function hitungUmur(tanggalLahirIso: string): number {
-  return differenceInYears(new Date(), parseISO(tanggalLahirIso));
+export function hitungUmur(tanggalLahirIso?: string | null): number {
+  if (!tanggalLahirIso || !tanggalLahirIso.trim()) {
+    return 0;
+  }
+  try {
+    const tglLahir = parseISO(tanggalLahirIso);
+    if (!isValid(tglLahir)) {
+      return 0;
+    }
+    const th = differenceInYears(new Date(), tglLahir);
+    return Math.max(0, isNaN(th) ? 0 : th);
+  } catch {
+    return 0;
+  }
 }
 
-export function formatTanggal(iso: string): string {
-  return format(parseISO(iso), 'd MMMM yyyy', { locale: localeId });
+/**
+ * Format teks umur yang dinamis, akurat, dan manusiawi:
+ * - Warga meninggal: '-'
+ * - Tanggal kosong / tidak valid / masa depan: '-'
+ * - Usia >= 1 tahun: 'X th' (ringkas) atau 'X tahun' (lengkap)
+ * - Usia 1–11 bulan: 'X bln' (ringkas) atau 'X bulan' (lengkap)
+ * - Usia < 1 bulan: '< 1 bln' (ringkas) atau '< 1 bulan' (lengkap)
+ */
+export function formatUmur(
+  tanggalLahirIso?: string | null,
+  opsi?: {
+    statusKependudukan?: string;
+    lengkap?: boolean;
+  },
+): string {
+  if (opsi?.statusKependudukan?.trim().toUpperCase() === 'MENINGGAL') {
+    return '-';
+  }
+
+  if (!tanggalLahirIso || !tanggalLahirIso.trim()) {
+    return '-';
+  }
+
+  try {
+    const tglLahir = parseISO(tanggalLahirIso);
+    if (!isValid(tglLahir)) {
+      return '-';
+    }
+
+    const sekarang = new Date();
+    if (isAfter(tglLahir, sekarang)) {
+      return '-';
+    }
+
+    const th = differenceInYears(sekarang, tglLahir);
+    if (th >= 1) {
+      return opsi?.lengkap ? `${th} tahun` : `${th} th`;
+    }
+
+    const bln = differenceInMonths(sekarang, tglLahir);
+    if (bln >= 1) {
+      return opsi?.lengkap ? `${bln} bulan` : `${bln} bln`;
+    }
+
+    return opsi?.lengkap ? '< 1 bulan' : '< 1 bln';
+  } catch {
+    return '-';
+  }
+}
+
+export function formatTanggal(iso?: string | null): string {
+  if (!iso || !iso.trim()) return '-';
+  try {
+    const d = parseISO(iso);
+    if (!isValid(d)) return iso;
+    return format(d, 'd MMMM yyyy', { locale: localeId });
+  } catch {
+    return iso;
+  }
 }
 
 export function periodeBulanIni(): string {
