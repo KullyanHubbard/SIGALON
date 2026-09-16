@@ -56,7 +56,7 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
           <Link
             to={paths.landing}
             onClick={onClose}
-            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:hover:translate-x-0"
+            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:bg-slate-100 hover:text-brand-600 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:transition-none"
           >
             <span
               aria-hidden

@@ -24,7 +24,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             aria-label={terlihat ? 'Sembunyikan' : 'Tampilkan'}
             className="focus-ring cursor-pointer rounded p-1 text-slate-700 transition-all duration-150 hover:scale-110 hover:text-slate-900 active:scale-95"
           >
-            <Ikon className="h-4 w-4" />
+            <Ikon className="h-4 w-4" strokeWidth={2.5} />
           </button>
         }
         {...props}

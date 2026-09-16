@@ -13,6 +13,14 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+const tautanSidebarClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-base transition-all duration-150 ease-out active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:transition-none',
+    isActive
+      ? 'font-bold text-brand-600 hover:bg-slate-100'
+      : 'font-medium text-slate-900 hover:bg-slate-100 hover:text-brand-600',
+  );
+
 export function Sidebar({ open, onClose }: SidebarProps) {
   const { user } = useAuth();
   const items = navItemsForRole(user?.role);
@@ -58,7 +66,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <Link
             to={paths.landing}
             onClick={onClose}
-            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:hover:translate-x-0"
+            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:bg-slate-100 hover:text-brand-600 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:transition-none"
           >
             <span
               aria-hidden
@@ -84,14 +92,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               to={item.to}
               end={item.end}
               onClick={onClose}
-              className={({ isActive }) =>
-                cn(
-                  'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-base transition-all duration-150 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400',
-                  isActive
-                    ? 'bg-brand-600 font-bold text-white shadow-sm hover:bg-brand-700'
-                    : 'font-medium text-slate-900 hover:translate-x-1 hover:bg-brand-600 hover:text-white active:bg-brand-700 active:text-white motion-reduce:hover:translate-x-0',
-                )
-              }
+              className={tautanSidebarClass}
             >
               {item.icon && (
                 <span
