@@ -37,6 +37,8 @@ export interface Alamat {
   kodePos: string;
 }
 
+export type StatusDomisili = 'TETAP' | 'KONTRAK';
+
 export interface Penduduk {
   id: string;
   nama: string;
@@ -55,6 +57,11 @@ export interface Penduduk {
   jabatan: 'WARGA' | 'DUKUH' | 'RW' | 'RT';
   alamat: Alamat;
   statusKependudukan: StatusKependudukan;
+  statusDomisili?: StatusDomisili;
+  bansos?: string[];
+  alamatAsal?: string;
+  catatanPerkawinan?: string;
+  catatanKematian?: string;
 
   deletedAt: string | null;
 }
@@ -73,6 +80,8 @@ export interface FilterPenduduk {
   rt?: string;
   rw?: string;
   kelompokUmur?: KelompokUmur;
+  bansos?: string;
+  statusDomisili?: StatusDomisili;
 }
 
 export interface FilterOpsi {
@@ -99,5 +108,10 @@ export interface PendudukUbah {
   statusHubunganKeluarga?: StatusHubunganKeluarga;
   kewarganegaraan?: string;
   statusKependudukan?: StatusKependudukan;
+  statusDomisili?: StatusDomisili;
+  bansos?: string[];
+  alamatAsal?: string | null;
+  catatanPerkawinan?: string | null;
+  catatanKematian?: string | null;
   alamat?: Partial<Alamat>;
 }

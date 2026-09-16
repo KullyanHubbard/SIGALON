@@ -1,4 +1,4 @@
-import type { FieldErrors, UseFormRegister } from 'react-hook-form';
+import type { FieldErrors, UseFormRegister, UseFormWatch } from 'react-hook-form';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { NAMA_BULAN } from '@/lib/tanggal';
@@ -10,18 +10,30 @@ import {
   statusHubunganLabel,
   statusKependudukanLabel,
   statusPerkawinanLabel,
+  statusDomisiliLabel,
 } from '../labels';
 import type { Role } from '@/features/auth/types';
 import type { WargaFormValues } from '../schemas';
 
 interface WargaFormFieldsProps {
   register: UseFormRegister<WargaFormValues>;
+  watch?: UseFormWatch<WargaFormValues>;
   errors: FieldErrors<WargaFormValues>;
   menambah: boolean;
   bolehPindahWilayah: boolean;
   userRole?: Role;
   userRw?: string | null;
   userRt?: string | null;
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <div className="sm:col-span-2 border-b border-slate-200 pb-1 pt-2">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+        {title}
+      </h3>
+    </div>
+  );
 }
 
 function TanggalLahir({
@@ -55,6 +67,7 @@ function TanggalLahir({
 
 export function WargaFormFields({
   register,
+  watch,
   errors,
   menambah,
   bolehPindahWilayah,
@@ -62,19 +75,35 @@ export function WargaFormFields({
   userRw,
   userRt,
 }: WargaFormFieldsProps) {
+  const statusKependudukan = watch ? watch('statusKependudukan') : 'AKTIF';
+
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <Input
-        label="Nama Lengkap"
-        error={errors.nama?.message}
-        {...register('nama')}
-      />
+      {/* 1. IDENTITAS WARGA */}
+      <SectionHeader title="Identitas Warga" />
+
+      <div className="sm:col-span-2">
+        <Input
+          label="Nama Lengkap"
+          error={errors.nama?.message}
+          {...register('nama')}
+        />
+      </div>
+
       <Select
         label="Jenis Kelamin"
         pilihan={jenisKelaminLabel}
         error={errors.jenisKelamin?.message}
         {...register('jenisKelamin')}
       />
+
+      <Select
+        label="Gol. Darah"
+        pilihan={golonganDarahLabel}
+        error={errors.golonganDarah?.message}
+        {...register('golonganDarah')}
+      />
+
       <Input
         label="Tempat Lahir"
         error={errors.tempatLahir?.message}
@@ -89,49 +118,90 @@ export function WargaFormFields({
         error={errors.agama?.message}
         {...register('agama')}
       />
+
       <Select
-        label="Status Perkawinan"
-        pilihan={statusPerkawinanLabel}
-        error={errors.statusPerkawinan?.message}
-        {...register('statusPerkawinan')}
-      />
-      <Select
-        label="Pendidikan"
+        label="Pendidikan Terakhir"
         pilihan={pendidikanLabel}
         error={errors.pendidikan?.message}
         {...register('pendidikan')}
       />
-      <Input
-        label="Pekerjaan"
-        error={errors.pekerjaan?.message}
-        {...register('pekerjaan')}
-      />
-      <Select
-        label="Gol. Darah"
-        pilihan={golonganDarahLabel}
-        error={errors.golonganDarah?.message}
-        {...register('golonganDarah')}
-      />
+
+      <div className="sm:col-span-2">
+        <Input
+          label="Pekerjaan"
+          error={errors.pekerjaan?.message}
+          {...register('pekerjaan')}
+        />
+      </div>
+
+      {/* 2. KELUARGA & PERKAWINAN */}
+      <SectionHeader title="Keluarga & Pernikahan" />
+
       <Select
         label="Status dalam Keluarga"
         pilihan={statusHubunganLabel}
         error={errors.statusHubunganKeluarga?.message}
         {...register('statusHubunganKeluarga')}
       />
-      {}
-      {!menambah && (
-        <Select
-          label="Status Kependudukan"
-          pilihan={statusKependudukanLabel}
-          error={errors.statusKependudukan?.message}
-          {...register('statusKependudukan')}
-        />
-      )}
-      <Input
-        label="Alamat Jalan"
-        error={errors.jalan?.message}
-        {...register('jalan')}
+
+      <Select
+        label="Status Perkawinan"
+        pilihan={statusPerkawinanLabel}
+        error={errors.statusPerkawinan?.message}
+        {...register('statusPerkawinan')}
       />
+
+      <div className="sm:col-span-2">
+        <Input
+          label="Catatan Status Perkawinan (Opsional)"
+          placeholder="Misal: Cerai (Belum Update KK)"
+          hint="Diisi apabila status perkawinan belum tercatat resmi di KK atau butuh catatan khusus"
+          error={errors.catatanPerkawinan?.message}
+          {...register('catatanPerkawinan')}
+        />
+      </div>
+
+      {/* 3. STATUS KEBERADAAN / MUTASI WARGA */}
+      {!menambah && (
+        <>
+          <SectionHeader title="Status Keberadaan Warga" />
+          <div className="sm:col-span-2 rounded-lg border border-slate-200 bg-slate-50/75 p-3.5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Select
+                label="Status Warga"
+                pilihan={statusKependudukanLabel}
+                error={errors.statusKependudukan?.message}
+                {...register('statusKependudukan')}
+              />
+              {statusKependudukan === 'MENINGGAL' ? (
+                <Input
+                  label="Penyebab / Keterangan Meninggal"
+                  placeholder="Misal: Sakit, usia lanjut, kecelakaan..."
+                  hint="Meninggal karena apa atau keterangan wafat warga"
+                  error={errors.catatanKematian?.message}
+                  {...register('catatanKematian')}
+                />
+              ) : (
+                <div className="hidden sm:flex sm:items-center text-xs text-slate-500 pt-6">
+                  Ubah status ke &quot;Meninggal&quot; jika warga telah wafat untuk mencatat penyebab kematian.
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* 4. ALAMAT & DOMISILI */}
+      <SectionHeader title="Alamat & Domisili" />
+
+      <div className="sm:col-span-2">
+        <Input
+          label="Alamat Jalan"
+          error={errors.jalan?.message}
+          {...register('jalan')}
+        />
+      </div>
+
       <Input
         label="RT"
         disabled={
@@ -153,6 +223,7 @@ export function WargaFormFields({
         error={errors.rt?.message}
         {...register('rt')}
       />
+
       <Input
         label="RW"
         disabled={
@@ -172,6 +243,50 @@ export function WargaFormFields({
         error={errors.rw?.message}
         {...register('rw')}
       />
+
+      <Select
+        label="Status Domisili"
+        pilihan={statusDomisiliLabel}
+        error={errors.statusDomisili?.message}
+        {...register('statusDomisili')}
+      />
+
+      <Input
+        label="Alamat Asal (Jika Mengontrak/Pendatang)"
+        hint="Misal: Alamat KTP asal luar Gading Kulon"
+        error={errors.alamatAsal?.message}
+        {...register('alamatAsal')}
+      />
+
+      {/* 5. BANTUAN SOSIAL */}
+      <SectionHeader title="Bantuan Sosial" />
+
+      <div className="sm:col-span-2 rounded-lg border border-slate-200 bg-slate-50/75 p-3.5">
+        <label className="mb-2 block text-sm font-medium text-slate-700">
+          Program Bantuan Sosial (Bansos)
+        </label>
+        <div className="flex flex-wrap gap-6">
+          <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+            <input
+              type="checkbox"
+              className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              {...register('bansosBpnt')}
+            />
+            <span>Bantuan Pangan Non-Tunai (BPNT)</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+            <input
+              type="checkbox"
+              className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+              {...register('bansosPkh')}
+            />
+            <span>Program Keluarga Harapan (PKH)</span>
+          </label>
+        </div>
+        <p className="mt-1.5 text-xs text-slate-500">
+          Data bansos bersifat rahasia dan hanya dapat diakses oleh pengurus wilayah.
+        </p>
+      </div>
     </div>
   );
 }

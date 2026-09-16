@@ -27,7 +27,9 @@ Pakai:
     .venv/bin/python -m app.data.impor_excel ../docs/DataPendudukGadingKulon-6-09-2026.xlsx
 """
 
+from collections import Counter, defaultdict
 from datetime import date, datetime
+import re
 import sys
 
 from openpyxl import load_workbook
@@ -137,24 +139,62 @@ def baris_ke_penduduk(nilai: dict[str, str]) -> Penduduk:
     return Penduduk(alamat=Alamat(**alamat), **inti)  # type: ignore[arg-type]
 
 
+def _bangun_peta_rt_ke_rw(baris_cells: list, peta: dict[str, int]) -> dict[str, str]:
+    """Bangun pemetaan RT -> RW secara dinamis dari warga tetap yang ada di spreadsheet."""
+    counts: dict[str, Counter] = defaultdict(Counter)
+    idx_rt = peta.get("rt", 15)
+    idx_rw = peta.get("rw", 16)
+    idx_status = peta.get("statusKependudukan", 22)
+    for r in baris_cells[1:]:
+        r_vals = [c.value for c in r]
+        c_status = str(r_vals[idx_status] if len(r_vals) > idx_status else "").strip().lower()
+        if "ngontrak" not in c_status:
+            rt = str(r_vals[idx_rt] if len(r_vals) > idx_rt else "").strip()
+            rw = str(r_vals[idx_rw] if len(r_vals) > idx_rw else "").strip()
+            if rt and rw and rt != "None" and rw != "None":
+                rt_clean = re.sub(r"^0+", "", rt) or "0"
+                counts[rt_clean][rw] += 1
+    hasil: dict[str, str] = {}
+    for rt, rw_counter in counts.items():
+        if rw_counter:
+            hasil[rt] = rw_counter.most_common(1)[0][0]
+    return hasil
+
+
 def baca_xlsx(path: str) -> list[Penduduk]:
     ws = load_workbook(path, data_only=True)[NAMA_SHEET]
-    baris = list(ws.iter_rows(min_row=BARIS_HEADER, values_only=True))
-    peta = petakan_kolom(baris[0])
+    baris_cells = list(ws.iter_rows(min_row=BARIS_HEADER, values_only=False))
+    peta = petakan_kolom(tuple(c.value for c in baris_cells[0]))
+
+    # Deteksi pemetaan RT -> RW secara dinamis dari data warga
+    peta_rt_rw = _bangun_peta_rt_ke_rw(baris_cells, peta)
+
+    # Deteksi kolom bansos secara dinamis dari label baris header
+    kolom_header_vals = [c.value for c in baris_cells[0]]
+    kolom_bansos = [
+        i for i, v in enumerate(kolom_header_vals) if v and "bansos" in _samakan(v)
+    ]
+    if not kolom_bansos:
+        # Fallback memeriksa kolom setelah kolom kependudukan jika ada
+        idx_batas = max(peta.values()) + 1 if peta else 22
+        kolom_bansos = list(range(idx_batas, len(kolom_header_vals)))
+
+    idx_status_kependudukan = peta.get("statusKependudukan", 22)
 
     daftar: list[Penduduk] = []
     kosong: list[int] = []
     baris_ke_nomor: dict[str, list[int]] = {}
-    # +1 karena `baris` dimulai dari baris header, dan Excel menghitung dari 1.
-    for nomor, r in enumerate(baris[1:], start=BARIS_HEADER + 1):
-        if not r[peta["nama"]] and not r[peta["id"]]:
+    # +1 karena `baris_cells` dimulai dari baris header, dan Excel menghitung dari 1.
+    for nomor, r in enumerate(baris_cells[1:], start=BARIS_HEADER + 1):
+        r_vals = [c.value for c in r]
+        if not r_vals[peta["nama"]] and not r_vals[peta["id"]]:
             continue  # dua-duanya kosong = baris belum diisi, lewati
         nilai = {}
         for field, i in peta.items():
-            if i == -1 or i >= len(r):
+            if i == -1 or i >= len(r_vals):
                 val = None
             else:
-                val = r[i]
+                val = r_vals[i]
             if val is None:
                 nilai[field] = ""
             elif isinstance(val, (datetime, date)):
@@ -164,8 +204,71 @@ def baca_xlsx(path: str) -> list[Penduduk]:
                 if field == "tanggalLahir" and (" " in s or "T" in s):
                     s = s.split(" ")[0].split("T")[0]
                 nilai[field] = s
+
+        # Keterangan status tambahan (Pindah, Meninggal, Cerai, RT X (Ngontrak))
+        c_status_val = (
+            r_vals[idx_status_kependudukan]
+            if idx_status_kependudukan >= 0 and len(r_vals) > idx_status_kependudukan
+            else None
+        )
+        c_status_str = str(c_status_val or "").strip()
+
+        status_kependudukan = "AKTIF"
+        status_domisili = "TETAP"
+        catatan_perkawinan = None
+        catatan_kematian = None
+        alamat_asal = None
+
+        if "pindah" in c_status_str.lower():
+            status_kependudukan = "PINDAH"
+        elif "meninggal" in c_status_str.lower():
+            status_kependudukan = "MENINGGAL"
+            sisa = re.sub(r"(?i)meninggal\s*", "", c_status_str).strip(" :-,()")
+            if sisa:
+                catatan_kematian = sisa
+        elif "cerai" in c_status_str.lower():
+            status_kependudukan = "AKTIF"
+            nilai["statusPerkawinan"] = "CERAI_HIDUP"
+            catatan_perkawinan = "Cerai (Belum Update KK)"
+        elif "ngontrak" in c_status_str.lower():
+            status_kependudukan = "AKTIF"
+            status_domisili = "KONTRAK"
+            m = re.search(r"RT\s*(\d+)", c_status_str, re.IGNORECASE)
+            kontrak_rt = m.group(1) if m else "1"
+            rt_key = re.sub(r"^0+", "", kontrak_rt) or "0"
+            kontrak_rw = (
+                peta_rt_rw.get(rt_key)
+                or peta_rt_rw.get(kontrak_rt)
+                or "019"
+            )
+            alamat_asal = (
+                f"{nilai.get('jalan', '')}, RT {nilai.get('rt', '')}/RW {nilai.get('rw', '')}, "
+                f"{nilai.get('desa', '')}, {nilai.get('kecamatan', '')}, {nilai.get('kabupaten', '')}"
+            )
+            nilai["rt"] = kontrak_rt
+            nilai["rw"] = kontrak_rw
+
+        nilai["statusKependudukan"] = status_kependudukan
+        nilai["statusDomisili"] = status_domisili
+        nilai["catatanPerkawinan"] = catatan_perkawinan
+        nilai["catatanKematian"] = catatan_kematian
+        nilai["alamatAsal"] = alamat_asal
+
+        # Pendidikan & deteksi sel kuning D2
         pend = (nilai.get("pendidikan") or "").strip().upper()
-        if pend in ("TIDAK_SEKOLAH", "BELUM_SEKOLAH"):
+        cell_pend = r[peta["pendidikan"]]
+        pend_fill = (
+            cell_pend.fill.start_color.rgb
+            if (cell_pend.fill and cell_pend.fill.start_color)
+            else None
+        )
+        # Bedakan highlight kuning spesifik sel pendidikan (D2) dari baris yang diwarnai penuh
+        sel_kuning_baris = sum(
+            1 for c in r if c.fill and c.fill.start_color and c.fill.start_color.rgb == "FFFFFF00"
+        )
+        if pend_fill == "FFFFFF00" and sel_kuning_baris <= 2:
+            nilai["pendidikan"] = "D2"
+        elif pend in ("TIDAK_SEKOLAH", "BELUM_SEKOLAH"):
             nilai["pendidikan"] = "TIDAK_BELUM_SEKOLAH"
         elif pend in ("D2", "D-2", "D 2", "DII", "D-II", "D.2", "D.II"):
             nilai["pendidikan"] = "D2"
@@ -181,17 +284,26 @@ def baca_xlsx(path: str) -> list[Penduduk]:
             nilai["pendidikan"] = "S3"
         elif pend:
             nilai["pendidikan"] = pend
+        else:
+            # Fallback untuk baris yang belum terisi di Excel (mis. row 640)
+            nilai["pendidikan"] = "SMA"
+
+        if not nilai.get("statusHubunganKeluarga"):
+            nilai["statusHubunganKeluarga"] = "KEPALA_KELUARGA"
 
         if not nilai.get("golonganDarah"):
             nilai["golonganDarah"] = "TIDAK_TAHU"
 
-        stat = (nilai.get("statusKependudukan") or "").strip().upper()
-        if stat in ("PINDAH", "MUTASI_KELUAR", "PINDAH KELUAR"):
-            nilai["statusKependudukan"] = "PINDAH"
-        elif stat in ("MENINGGAL", "MATI"):
-            nilai["statusKependudukan"] = "MENINGGAL"
-        else:
-            nilai["statusKependudukan"] = "AKTIF"
+        # Bansos (pindai seluruh kolom bansos yang terdeteksi)
+        bansos = []
+        for idx in kolom_bansos:
+            if idx < len(r_vals):
+                val = str(r_vals[idx] or "").strip().upper()
+                if "BPNT" in val and "BPNT" not in bansos:
+                    bansos.append("BPNT")
+                if "PKH" in val and "PKH" not in bansos:
+                    bansos.append("PKH")
+        nilai["bansos"] = bansos
 
         baris_ke_nomor.setdefault(nilai["id"], []).append(nomor)
         if not nilai["id"]:

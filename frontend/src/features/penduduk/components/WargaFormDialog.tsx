@@ -31,6 +31,12 @@ const KOSONG: WargaFormValues = {
   golonganDarah: 'TIDAK_TAHU',
   statusHubunganKeluarga: 'ANAK',
   statusKependudukan: 'AKTIF',
+  statusDomisili: 'TETAP',
+  bansosBpnt: false,
+  bansosPkh: false,
+  alamatAsal: '',
+  catatanPerkawinan: '',
+  catatanKematian: '',
   jalan: '',
   rt: '',
   rw: '',
@@ -49,6 +55,7 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<WargaFormValues>({ resolver: zodResolver(wargaSchema) });
 
@@ -61,6 +68,12 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         tanggal,
         bulan,
         tahun,
+        statusDomisili: warga.statusDomisili ?? 'TETAP',
+        bansosBpnt: warga.bansos?.includes('BPNT') ?? false,
+        bansosPkh: warga.bansos?.includes('PKH') ?? false,
+        alamatAsal: warga.alamatAsal ?? '',
+        catatanPerkawinan: warga.catatanPerkawinan ?? '',
+        catatanKematian: warga.catatanKematian ?? '',
         jalan: warga.alamat.jalan,
         rt: warga.alamat.rt,
         rw: warga.alamat.rw,
@@ -73,6 +86,15 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
   const onSubmit = handleSubmit((v) => {
     const tanggalLahir = keTanggalLahirIso(v);
     if (!tanggalLahir) return;
+    const bansos: string[] = [];
+    if (v.bansosBpnt) bansos.push('BPNT');
+    if (v.bansosPkh) bansos.push('PKH');
+
+    const catatanKematian =
+      v.statusKependudukan === 'MENINGGAL'
+        ? (v.catatanKematian?.trim() || null)
+        : null;
+
     const inti = {
       nama: v.nama,
       jenisKelamin: v.jenisKelamin,
@@ -84,6 +106,11 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
       pekerjaan: v.pekerjaan,
       golonganDarah: v.golonganDarah,
       statusHubunganKeluarga: v.statusHubunganKeluarga,
+      statusDomisili: v.statusDomisili,
+      bansos,
+      alamatAsal: v.alamatAsal?.trim() || null,
+      catatanPerkawinan: v.catatanPerkawinan?.trim() || null,
+      catatanKematian,
     };
     const rtFinal = user?.role === 'RT' ? (user.rt ?? v.rt) : v.rt;
     const rwFinal =
@@ -94,6 +121,9 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
       tambah.mutate(
         {
           ...inti,
+          alamatAsal: v.alamatAsal?.trim() || undefined,
+          catatanPerkawinan: v.catatanPerkawinan?.trim() || undefined,
+          catatanKematian: undefined,
           kewarganegaraan: 'WNI',
           alamat: {
             ...alamat,
@@ -115,7 +145,6 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         payload: {
           ...inti,
           statusKependudukan: v.statusKependudukan,
-
           alamat: bolehPindahWilayah ? alamat : { jalan: v.jalan },
         },
       },
@@ -141,6 +170,7 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
 
         <WargaFormFields
           register={register}
+          watch={watch}
           errors={errors}
           menambah={menambah}
           bolehPindahWilayah={bolehPindahWilayah}

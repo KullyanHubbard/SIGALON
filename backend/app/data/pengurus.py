@@ -339,16 +339,6 @@ def daftar_jabatan() -> list[Jabatan]:
 
     aktif = {p.kode_jabatan: p for p in daftar() if p.aktif}
 
-    # Calon dari kolom "Jabatan" Excel, dipetakan ke kunci yang sama bentuknya.
-    # `w.jabatan` di sini kolom Excel milik warga ('WARGA'/'DUKUH'/'RW'/'RT'),
-    # BUKAN label jabatan pengurus — dua hal berbeda yang kebetulan senama.
-    calon: dict[str, Calon] = {}
-    for w in warga:
-        if w.jabatan == "WARGA" or w.statusKependudukan != "AKTIF":
-            continue
-        kunci = kode_jabatan_dari(w.jabatan, w.alamat.rw, w.alamat.rt)
-        calon.setdefault(kunci, Calon(id=w.id, nama=w.nama))
-
     hasil = []
     for role, rw, rt in rencana:
         kunci = kode_jabatan_dari(role, rw, rt)
@@ -361,7 +351,7 @@ def daftar_jabatan() -> list[Jabatan]:
                 rt=rt,
                 label=jabatan_dari(role, rw, rt),
                 pemegang=pemegang,
-                calon=None if pemegang else calon.get(kunci),
+                calon=None,
             )
         )
     return hasil

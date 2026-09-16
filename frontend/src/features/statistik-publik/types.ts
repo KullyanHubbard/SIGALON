@@ -22,6 +22,10 @@ export interface StatistikPublik {
   totalPerempuan: number;
 
   totalKepalaKeluarga: number;
+  totalPenerimaBansos?: number;
+  totalBpnt?: number;
+  totalPkh?: number;
+  perBansos?: Distribusi[];
 
   perPekerjaan: Distribusi[];
 

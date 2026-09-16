@@ -73,5 +73,15 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
       ),
       lebarPenuh: true,
     },
+    ...(data.perBansos && data.perBansos.length > 0
+      ? [
+          {
+            id: 'bansos',
+            judul: 'Distribusi Program Bantuan Sosial',
+            jenis: 'bar' as const,
+            data: data.perBansos,
+          },
+        ]
+      : []),
   ];
 }

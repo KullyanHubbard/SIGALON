@@ -39,11 +39,7 @@ export function IsiJabatanDialog({ jabatan, onClose }: IsiJabatanDialogProps) {
 
   useEffect(() => {
     if (!jabatan) return;
-    setWarga(
-      jabatan.calon
-        ? { id: jabatan.calon.id, nama: jabatan.calon.nama, rt: '', rw: '' }
-        : null,
-    );
+    setWarga(null);
     setCari('');
   }, [jabatan]);
 

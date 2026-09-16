@@ -66,7 +66,12 @@ CREATE TABLE IF NOT EXISTS penduduk (
     alamat_provinsi        TEXT NOT NULL,
     alamat_kodePos         TEXT NOT NULL,
     statusKependudukan     TEXT NOT NULL DEFAULT 'AKTIF',
-    deletedAt              TEXT
+    deletedAt              TEXT,
+    bansos                 TEXT,
+    statusDomisili         TEXT NOT NULL DEFAULT 'TETAP',
+    alamatAsal             TEXT,
+    catatanPerkawinan      TEXT,
+    catatanKematian        TEXT
 );
 
 -- Akun perangkat desa. Satu-satunya akun yang ada — warga tidak punya akun.
@@ -321,6 +326,11 @@ _TAMBALAN: list[tuple[str, str, str]] = [
     ("audit_log", "sasaran_id", "TEXT"),
     ("lpm", "warga_id", "TEXT"),
     ("penduduk", "kodeKeluarga", "TEXT"),
+    ("penduduk", "bansos", "TEXT"),
+    ("penduduk", "statusDomisili", "TEXT"),
+    ("penduduk", "alamatAsal", "TEXT"),
+    ("penduduk", "catatanPerkawinan", "TEXT"),
+    ("penduduk", "catatanKematian", "TEXT"),
 ]
 
 
@@ -388,6 +398,8 @@ def _ke_row(p: Penduduk) -> dict[str, object]:
     data = p.model_dump()
     alamat = data.pop("alamat")
     data.update({f"{_PREFIKS_ALAMAT}{k}": v for k, v in alamat.items()})
+    if isinstance(data.get("bansos"), list):
+        data["bansos"] = ",".join(data["bansos"]) if data["bansos"] else ""
     return data
 
 
@@ -399,6 +411,13 @@ def _ke_penduduk(row: sqlite3.Row) -> Penduduk:
         if k.startswith(_PREFIKS_ALAMAT)
     }
     inti = {k: v for k, v in data.items() if not k.startswith(_PREFIKS_ALAMAT)}
+    bansos_raw = inti.get("bansos")
+    if bansos_raw:
+        inti["bansos"] = [b.strip() for b in bansos_raw.split(",") if b.strip()]
+    else:
+        inti["bansos"] = []
+    if not inti.get("statusDomisili"):
+        inti["statusDomisili"] = "TETAP"
     return Penduduk(**inti, alamat=Alamat(**alamat))
 
 

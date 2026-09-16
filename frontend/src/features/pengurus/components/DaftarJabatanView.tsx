@@ -74,13 +74,6 @@ export function DaftarJabatanView({
                   <Td className="font-medium text-slate-800">
                     {j.pemegang ? (
                       j.pemegang.nama
-                    ) : j.calon ? (
-                      <span className="font-normal text-slate-500">
-                        {j.calon.nama}{' '}
-                        <span className="text-xs text-slate-400">
-                          (dari data warga)
-                        </span>
-                      </span>
                     ) : (
                       <span className="font-normal text-slate-400">—</span>
                     )}

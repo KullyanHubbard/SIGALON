@@ -10,6 +10,7 @@ from app.data.agregat import (
 from app.data.store import hanya_aktif, penduduk_untuk
 from app.schemas.auth import AuthUser
 from app.schemas.infografis import InfografisData
+from app.schemas.penduduk import Distribusi
 
 router = APIRouter(tags=["infografis"])
 
@@ -24,6 +25,14 @@ async def infografis(user: AuthUser = Depends(current_pengurus)) -> InfografisDa
     # Yang pindah & meninggal tidak ikut dihitung: ini gambaran siapa yang
     # tinggal di sini sekarang, bukan siapa yang pernah tercatat.
     warga = hanya_aktif(penduduk_untuk(user))
+    total_bpnt = sum(1 for p in warga if "BPNT" in getattr(p, "bansos", []))
+    total_pkh = sum(1 for p in warga if "PKH" in getattr(p, "bansos", []))
+    total_penerima = sum(1 for p in warga if getattr(p, "bansos", []))
+    total_ngontrak = sum(1 for p in warga if getattr(p, "statusDomisili", "TETAP") == "KONTRAK")
+    per_bansos = [
+        Distribusi(label="BPNT", value=total_bpnt),
+        Distribusi(label="PKH", value=total_pkh),
+    ]
     return InfografisData(
         totalPenduduk=len(warga),
         totalKepalaKeluarga=sum(
@@ -35,6 +44,11 @@ async def infografis(user: AuthUser = Depends(current_pengurus)) -> InfografisDa
         totalPerempuan=sum(
             1 for p in warga if p.jenisKelamin == "PEREMPUAN"
         ),
+        totalPenerimaBansos=total_penerima,
+        totalBpnt=total_bpnt,
+        totalPkh=total_pkh,
+        perBansos=per_bansos,
+        totalNgontrak=total_ngontrak,
         perAgama=distribusi_by(warga, lambda p: p.agama),
         perPendidikan=distribusi_pendidikan(warga),
         perStatusPerkawinan=distribusi_by(

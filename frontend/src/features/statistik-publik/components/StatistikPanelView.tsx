@@ -31,8 +31,8 @@ export function StatistikPanelView({
     >
       {(data) => (
         <div className="grid items-stretch gap-6 lg:grid-cols-2">
-          <div data-apple-fade>
-            <Card className="flex h-full flex-col">
+          <div data-apple-fade className="h-full">
+            <Card className="flex h-full flex-col transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0">
               <CardHeader title="Sebaran Warga per RW" />
               <div className="flex-1 p-4">
                 <DistribusiPieChart
@@ -77,7 +77,7 @@ export function StatistikPanelView({
               ))}
             </div>
 
-            <Card className="flex flex-1 flex-col">
+            <Card className="flex flex-1 flex-col transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0">
               <CardHeader title="Statistik Warga" />
               <ul className="flex-1 divide-y divide-black px-5">
                 {data.baris.map((baris, i) => (

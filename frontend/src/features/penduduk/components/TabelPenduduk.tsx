@@ -33,13 +33,61 @@ export function TabelPenduduk({ rows, onPilih, onUbah }: TabelPendudukProps) {
             <Td>{row.agama}</Td>
             <Td className="tabular-nums text-slate-600">{row.rtRw}</Td>
             <Td>
-              {row.keteranganTone ? (
-                <Badge tone={row.keteranganTone} className="rounded-md">
-                  {row.keterangan}
-                </Badge>
-              ) : (
-                row.keterangan
-              )}
+              <div className="flex flex-wrap items-center gap-1.5">
+                {row.keteranganTone ? (
+                  <Badge
+                    tone={row.keteranganTone}
+                    className="rounded-md font-medium"
+                    title={
+                      row.catatanKematian
+                        ? `${row.keterangan}: ${row.catatanKematian}`
+                        : undefined
+                    }
+                  >
+                    {row.catatanKematian
+                      ? `${row.keterangan} (${row.catatanKematian})`
+                      : row.keterangan}
+                  </Badge>
+                ) : row.catatanKematian ? (
+                  <Badge
+                    tone="slate"
+                    className="rounded-md font-medium"
+                    title={row.catatanKematian}
+                  >
+                    Meninggal ({row.catatanKematian})
+                  </Badge>
+                ) : null}
+                {row.statusDomisili === 'KONTRAK' && (
+                  <Badge tone="amber" className="rounded-md font-semibold">
+                    Ngontrak
+                  </Badge>
+                )}
+                {row.bansos?.map((b) => (
+                  <Badge
+                    key={b}
+                    tone={b === 'BPNT' ? 'green' : 'brand'}
+                    className="rounded-md font-medium"
+                  >
+                    {b}
+                  </Badge>
+                ))}
+                {row.catatanPerkawinan && (
+                  <Badge
+                    tone="red"
+                    className="rounded-md text-[11px] font-medium"
+                    title={row.catatanPerkawinan}
+                  >
+                    {row.catatanPerkawinan}
+                  </Badge>
+                )}
+                {!row.keteranganTone &&
+                  row.statusDomisili !== 'KONTRAK' &&
+                  (!row.bansos || row.bansos.length === 0) &&
+                  !row.catatanPerkawinan &&
+                  !row.catatanKematian && (
+                    <span className="text-xs text-slate-400">-</span>
+                  )}
+              </div>
             </Td>
             {}
             <Td className="text-right">

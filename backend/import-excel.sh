@@ -2,7 +2,7 @@
 set -e
 cd "$(dirname "$0")"
 
-DEFAULT="../docs/DataPendudukGadingKulon-6-09-2026.xlsx"
+DEFAULT="../docs/DataPendudukGadingKulon.xlsx"
 
 echo "=== Impor data Excel ke SIGALON ==="
 echo

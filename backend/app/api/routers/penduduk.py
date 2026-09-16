@@ -42,6 +42,8 @@ def saring(
     rt: str = "",
     rw: str = "",
     kelompokUmur: str = "",
+    bansos: str = "",
+    statusDomisili: str = "",
     **enum_filter: str,
 ) -> list[Penduduk]:
     """Semua filter digabung AND; nilai kosong tidak menyaring apa pun.
@@ -70,6 +72,18 @@ def saring(
         hasil = [
             p for p in hasil if kelompok_umur(umur(p.tanggalLahir)) == kelompokUmur
         ]
+    if bansos:
+        b_upper = bansos.strip().upper()
+        if b_upper == "BPNT":
+            hasil = [p for p in hasil if "BPNT" in getattr(p, "bansos", [])]
+        elif b_upper == "PKH":
+            hasil = [p for p in hasil if "PKH" in getattr(p, "bansos", [])]
+        elif b_upper in ("SEMUA", "YA", "TERIMA"):
+            hasil = [p for p in hasil if len(getattr(p, "bansos", [])) > 0]
+        elif b_upper in ("TIDAK", "BUKAN", "NON"):
+            hasil = [p for p in hasil if len(getattr(p, "bansos", [])) == 0]
+    if statusDomisili:
+        hasil = [p for p in hasil if getattr(p, "statusDomisili", "TETAP") == statusDomisili]
     return hasil
 
 
@@ -88,6 +102,8 @@ def list_penduduk(
     rt: str = "",
     rw: str = "",
     kelompokUmur: str = "",
+    bansos: str = "",
+    statusDomisili: str = "",
     user: AuthUser = Depends(current_pengurus),
 ) -> PaginatedPenduduk:
     if user.role == "RT":
@@ -106,6 +122,8 @@ def list_penduduk(
         rt=rt,
         rw=rw,
         kelompokUmur=kelompokUmur,
+        bansos=bansos,
+        statusDomisili=statusDomisili,
         jenisKelamin=jenisKelamin,
         agama=agama,
         golonganDarah=golonganDarah,
@@ -135,6 +153,8 @@ def ekspor_penduduk(
     rt: str = "",
     rw: str = "",
     kelompokUmur: str = "",
+    bansos: str = "",
+    statusDomisili: str = "",
     format: str = Query("xlsx", pattern="^(xlsx|csv)$"),
     user: AuthUser = Depends(current_pengurus),
 ) -> Response:
@@ -155,6 +175,8 @@ def ekspor_penduduk(
         rt=rt,
         rw=rw,
         kelompokUmur=kelompokUmur,
+        bansos=bansos,
+        statusDomisili=statusDomisili,
         jenisKelamin=jenisKelamin,
         agama=agama,
         golonganDarah=golonganDarah,

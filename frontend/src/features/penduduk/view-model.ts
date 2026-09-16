@@ -1,11 +1,12 @@
 import { formatTanggal, formatUmur } from '@/lib/tanggal';
-import type { Penduduk, StatusKependudukan } from './types';
+import type { Penduduk, StatusDomisili, StatusKependudukan } from './types';
 import {
   agamaLabel,
   golonganDarahLabel,
   statusKependudukanLabel,
   jenisKelaminLabel,
   pendidikanLabel,
+  statusDomisiliLabel,
   statusHubunganLabel,
   statusPerkawinanLabel,
 } from './labels';
@@ -30,6 +31,10 @@ export interface PendudukRow {
   keterangan: string;
 
   keteranganTone: KeteranganTone;
+  statusDomisili?: StatusDomisili;
+  bansos?: string[];
+  catatanPerkawinan?: string;
+  catatanKematian?: string;
 }
 
 export function toPendudukRow(p: Penduduk): PendudukRow {
@@ -44,6 +49,10 @@ export function toPendudukRow(p: Penduduk): PendudukRow {
     rtRw: `${p.alamat.rt}/${p.alamat.rw}`,
     keterangan: statusKependudukanLabel[p.statusKependudukan],
     keteranganTone: KETERANGAN_TONE[p.statusKependudukan],
+    statusDomisili: p.statusDomisili,
+    bansos: p.bansos,
+    catatanPerkawinan: p.catatanPerkawinan,
+    catatanKematian: p.catatanKematian,
   };
 }
 
@@ -61,32 +70,68 @@ export interface PendudukDetailView {
 
 export function toPendudukDetail(p: Penduduk): PendudukDetailView {
   const { alamat } = p;
+  const fields: DetailField[] = [
+    { label: 'Jenis Kelamin', value: jenisKelaminLabel[p.jenisKelamin] },
+    {
+      label: 'Tempat, Tgl Lahir',
+      value: `${p.tempatLahir}, ${formatTanggal(p.tanggalLahir)}`,
+    },
+    {
+      label: 'Umur',
+      value: formatUmur(p.tanggalLahir, {
+        statusKependudukan: p.statusKependudukan,
+        lengkap: true,
+      }),
+    },
+    { label: 'Agama', value: agamaLabel[p.agama] },
+    {
+      label: 'Status Perkawinan',
+      value: statusPerkawinanLabel[p.statusPerkawinan],
+    },
+  ];
+
+  if (p.catatanPerkawinan) {
+    fields.push({ label: 'Catatan Perkawinan', value: p.catatanPerkawinan });
+  }
+
+  if (p.statusKependudukan !== 'AKTIF') {
+    fields.push({
+      label: 'Status Kependudukan',
+      value: statusKependudukanLabel[p.statusKependudukan],
+    });
+  }
+
+  if (p.catatanKematian) {
+    fields.push({ label: 'Penyebab / Keterangan Meninggal', value: p.catatanKematian });
+  }
+
+  fields.push(
+    { label: 'Pendidikan', value: pendidikanLabel[p.pendidikan] },
+    { label: 'Pekerjaan', value: p.pekerjaan },
+    { label: 'Gol. Darah', value: golonganDarahLabel[p.golonganDarah] },
+    { label: 'Kewarganegaraan', value: p.kewarganegaraan },
+    {
+      label: 'Status Tempat Tinggal',
+      value: statusDomisiliLabel[p.statusDomisili ?? 'TETAP'],
+    },
+  );
+
+  if (p.statusDomisili === 'KONTRAK' && p.alamatAsal) {
+    fields.push({ label: 'Alamat Asal (KTP/KK)', value: p.alamatAsal });
+  }
+
+  fields.push({
+    label: 'Program Bansos',
+    value:
+      p.bansos && p.bansos.length > 0
+        ? p.bansos.join(', ')
+        : 'Tidak Menerima Bansos',
+  });
+
   return {
     nama: p.nama,
     hubungan: statusHubunganLabel[p.statusHubunganKeluarga],
-    fields: [
-      { label: 'Jenis Kelamin', value: jenisKelaminLabel[p.jenisKelamin] },
-      {
-        label: 'Tempat, Tgl Lahir',
-        value: `${p.tempatLahir}, ${formatTanggal(p.tanggalLahir)}`,
-      },
-      {
-        label: 'Umur',
-        value: formatUmur(p.tanggalLahir, {
-          statusKependudukan: p.statusKependudukan,
-          lengkap: true,
-        }),
-      },
-      { label: 'Agama', value: agamaLabel[p.agama] },
-      {
-        label: 'Status Perkawinan',
-        value: statusPerkawinanLabel[p.statusPerkawinan],
-      },
-      { label: 'Pendidikan', value: pendidikanLabel[p.pendidikan] },
-      { label: 'Pekerjaan', value: p.pekerjaan },
-      { label: 'Gol. Darah', value: golonganDarahLabel[p.golonganDarah] },
-      { label: 'Kewarganegaraan', value: p.kewarganegaraan },
-    ],
+    fields,
     alamat:
       `${alamat.jalan}, RT ${alamat.rt}/RW ${alamat.rw}, Desa ${alamat.desa}, ` +
       `Kec. ${alamat.kecamatan}, ${alamat.kabupaten}, ${alamat.provinsi} ${alamat.kodePos}`,

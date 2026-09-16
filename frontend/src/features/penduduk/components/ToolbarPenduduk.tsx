@@ -19,11 +19,13 @@ import { cn } from '@/lib/utils';
 import type { FilterOpsi, FilterPenduduk } from '../types';
 import {
   agamaLabel,
+  bansosLabel,
   filterLabel,
   golonganDarahLabel,
   jenisKelaminLabel,
   kelompokUmurOpsi,
   pendidikanLabel,
+  statusDomisiliLabel,
   statusHubunganLabel,
   statusPerkawinanLabel,
   toFilterChips,
@@ -40,6 +42,8 @@ const LANJUTAN = [
   'statusHubunganKeluarga',
   'golonganDarah',
   'pekerjaan',
+  'bansos',
+  'statusDomisili',
 ] as const satisfies readonly (keyof FilterPenduduk)[];
 
 interface ToolbarPendudukProps {
@@ -391,6 +395,18 @@ export function ToolbarPenduduk({
                     field="pekerjaan"
                     nilai={value.pekerjaan}
                     opsi={dariData(opsi?.pekerjaan)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="bansos"
+                    nilai={value.bansos}
+                    opsi={dariLabel(bansosLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
+                    field="statusDomisili"
+                    nilai={value.statusDomisili}
+                    opsi={dariLabel(statusDomisiliLabel)}
                     onPilih={set}
                   />
                 </div>

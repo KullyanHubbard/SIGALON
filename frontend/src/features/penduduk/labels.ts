@@ -39,9 +39,9 @@ export const pendidikanLabel: Record<Pendidikan, string> = {
   SD: 'SD',
   SMP: 'SMP',
   SMA: 'SMA/SMK',
-  D2: 'Diploma (D2)',
-  D3: 'Diploma (D3)',
-  D4: 'Diploma (D4)',
+  D2: 'Diploma II (D2)',
+  D3: 'Diploma III (D3)',
+  D4: 'Diploma IV (D4)',
   S1: 'Sarjana (S1)',
   S2: 'Magister (S2)',
   S3: 'Doktor (S3)',
@@ -64,9 +64,21 @@ export const statusHubunganLabel: Record<StatusHubunganKeluarga, string> = {
 };
 
 export const statusKependudukanLabel: Record<StatusKependudukan, string> = {
-  AKTIF: 'Menetap',
-  PINDAH: 'Pindah',
+  AKTIF: 'Hidup',
   MENINGGAL: 'Meninggal',
+  PINDAH: 'Pindah',
+};
+
+export const statusDomisiliLabel: Record<'TETAP' | 'KONTRAK', string> = {
+  TETAP: 'Warga Tetap',
+  KONTRAK: 'Warga Ngontrak',
+};
+
+export const bansosLabel: Record<string, string> = {
+  BPNT: 'BPNT',
+  PKH: 'PKH',
+  SEMUA: 'Semua Penerima Bansos',
+  TIDAK: 'Bukan Penerima Bansos',
 };
 
 export const kelompokUmurOpsi: readonly KelompokUmur[] = [
@@ -90,6 +102,8 @@ export const filterLabel: Record<keyof FilterPenduduk, string> = {
   statusHubunganKeluarga: 'Status dalam Keluarga',
   golonganDarah: 'Gol. Darah',
   pekerjaan: 'Pekerjaan',
+  bansos: 'Bantuan Sosial',
+  statusDomisili: 'Status Domisili',
 };
 
 const nilaiFilterLabel: Partial<
@@ -101,6 +115,8 @@ const nilaiFilterLabel: Partial<
   pendidikan: pendidikanLabel,
   statusPerkawinan: statusPerkawinanLabel,
   statusHubunganKeluarga: statusHubunganLabel,
+  bansos: bansosLabel,
+  statusDomisili: statusDomisiliLabel,
 };
 
 export interface FilterChip {

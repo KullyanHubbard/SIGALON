@@ -28,7 +28,7 @@ const skema = z.object({
     (v) => v.split('@').length === 2 && !v.startsWith('@') && !v.endsWith('@'),
     'Belum berbentuk alamat surel',
   ),
-  sejarah: z.string().trim().min(20, 'Sejarah minimal 20 huruf').max(8000),
+  sejarah: z.string().trim().min(20, 'Gambaran umum minimal 20 huruf').max(8000),
   batasUtara: wajib(150),
   batasTimur: wajib(150),
   batasSelatan: wajib(150),
@@ -154,10 +154,10 @@ export default function ProfilPadukuhanPage() {
       </Card>
 
       <Card>
-        <CardHeader title="Sejarah & Gambaran Umum" />
+        <CardHeader title="Gambaran Umum" />
         <CardContent>
           <Textarea
-            aria-label="Sejarah & Gambaran Umum"
+            aria-label="Gambaran Umum"
             rows={9}
             error={errors.sejarah?.message}
             {...register('sejarah')}

@@ -28,14 +28,13 @@ export const PADUKUHAN_BAWAAN: Padukuhan = {
   telepon: '+62 812-2761-391',
   email: 'gadingkulon@gmail.com',
   sejarah: [
-    'Gading Kulon adalah salah satu padukuhan di Kalurahan Donokerto, Kapanewon Turi, Sleman, Daerah Istimewa Yogyakarta.',
-    'Sejak awal berdirinya, warga Gading Kulon hidup produktif berlandaskan kebersamaan, pertanian, dan potensi lokal daerah lereng Gunung Merapi.',
-    'Hari ini Gading Kulon berkembang tanpa meninggalkan gotong royong yang jadi wataknya: kerja bakti rutin, ronda malam bergilir, dan kegiatan Karang Taruna yang menggerakkan warga muda. Portal ini dibuat agar data kependudukan padukuhan bisa dibaca dengan cepat, oleh pengurus maupun warga.',
+    'Gading Kulon merupakan salah satu padukuhan yang berada di Kalurahan Donokerto, Kapanewon Turi, Kabupaten Sleman, Daerah Istimewa Yogyakarta. Dalam penyelenggaraan kehidupan masyarakat, Padukuhan Gading Kulon terbagi menjadi 3 Rukun Warga (RW) dan 6 Rukun Tetangga (RT) yang menjadi bagian dari struktur kemasyarakatan di tingkat wilayah.',
+    'Sebagai bagian dari kawasan Kapanewon Turi, kehidupan masyarakat Gading Kulon berkembang dengan didukung oleh potensi lingkungan, kegiatan sosial, serta kebersamaan antarwarga. Interaksi masyarakat tercermin dalam berbagai kegiatan seperti kerja bakti, ronda malam, kegiatan kemasyarakatan, dan aktivitas Karang Taruna yang melibatkan warga dari berbagai kelompok usia.',
   ].join('\n\n'),
-  batasUtara: 'Padukuhan Gading Lor',
-  batasTimur: 'Padukuhan Gading Wetan',
-  batasSelatan: 'Padukuhan Ngipak',
-  batasBarat: 'Kalurahan Banyusoco',
+  batasUtara: 'Gunung Anyar',
+  batasTimur: 'Gading Wetan',
+  batasSelatan: 'Kenaruhan',
+  batasBarat: 'Dusun Tepan, Bangunkerto',
 };
 
 const PETA = {

@@ -75,7 +75,12 @@ export function ProporsiGenderBar({
   }, [totalLakiLaki, totalPerempuan]);
 
   return (
-    <Card className={cn('p-4 sm:p-5', className)}>
+    <Card
+      className={cn(
+        'p-4 sm:p-5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0',
+        className,
+      )}
+    >
       <div className="flex flex-col gap-3.5">
         {/* Baris Keterangan Atas dengan Ikon (Hanya Label) */}
         <div className="flex items-center justify-between gap-4">

@@ -18,7 +18,7 @@ from app.data.store import (
     periode_terawal,
     semua_penduduk,
 )
-from app.schemas.penduduk import Penduduk, RincianRw, StatistikPublik
+from app.schemas.penduduk import Distribusi, Penduduk, RincianRw, StatistikPublik
 from app.schemas.pengurus import (
     JabatanWilayahPublik,
     RwPublik,
@@ -75,6 +75,13 @@ def statistik_publik(
     """
     # Yang pindah & meninggal tidak ikut dihitung — lihat `store.hanya_aktif`.
     semua = hanya_aktif(penduduk_pada(periode) if periode else semua_penduduk())
+    total_bpnt = sum(1 for p in semua if "BPNT" in getattr(p, "bansos", []))
+    total_pkh = sum(1 for p in semua if "PKH" in getattr(p, "bansos", []))
+    total_penerima = sum(1 for p in semua if getattr(p, "bansos", []))
+    per_bansos = [
+        Distribusi(label="BPNT", value=total_bpnt),
+        Distribusi(label="PKH", value=total_pkh),
+    ]
     return StatistikPublik(
         periodeTerawal=periode_terawal(),
         totalPenduduk=len(semua),
@@ -87,6 +94,10 @@ def statistik_publik(
         totalKepalaKeluarga=sum(
             1 for p in semua if p.statusHubunganKeluarga == "KEPALA_KELUARGA"
         ),
+        totalPenerimaBansos=total_penerima,
+        totalBpnt=total_bpnt,
+        totalPkh=total_pkh,
+        perBansos=per_bansos,
         perPekerjaan=distribusi_by(semua, lambda p: p.pekerjaan)[:10],
         perRw=[
             _rincian(

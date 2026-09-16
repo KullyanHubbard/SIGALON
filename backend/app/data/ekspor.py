@@ -34,6 +34,11 @@ for k in KOLOM:
     KOLOM_EKSPOR.append(k)
     if k[0] == "tanggalLahir":
         KOLOM_EKSPOR.append(("umur", "Umur", 8))
+KOLOM_EKSPOR.append(("statusDomisili", "Status Domisili", 14))
+KOLOM_EKSPOR.append(("bansos", "Bansos", 14))
+KOLOM_EKSPOR.append(("catatanPerkawinan", "Catatan Perkawinan", 18))
+KOLOM_EKSPOR.append(("catatanKematian", "Keterangan Meninggal", 22))
+KOLOM_EKSPOR.append(("alamatAsal", "Alamat Asal", 24))
 
 
 def _nilai(p: Penduduk, field: str) -> object:
@@ -53,6 +58,9 @@ def _nilai(p: Penduduk, field: str) -> object:
         except (ValueError, TypeError, IndexError):
             return "-"
         return umur(tgl_iso)
+    if field == "bansos":
+        val = getattr(p, "bansos", [])
+        return ", ".join(val) if isinstance(val, list) else str(val or "")
     if field in _ALAMAT:
         return getattr(p.alamat, field, "") or ""
     val = getattr(p, field, "")

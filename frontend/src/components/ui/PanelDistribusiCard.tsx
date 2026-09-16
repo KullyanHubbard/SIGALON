@@ -14,7 +14,7 @@ export function PanelDistribusiCard({
   return (
     <Card
       className={cn(
-        'flex h-full flex-col',
+        'flex h-full flex-col transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0',
         panel.lebarPenuh && 'lg:col-span-2',
         className,
       )}

@@ -2,6 +2,7 @@ import {
   agamaLabel,
   pendidikanLabel,
   relabel,
+  statusDomisiliLabel,
   statusPerkawinanLabel,
 } from '@/features/penduduk/labels';
 import type { InfografisData } from '@/features/infografis/types';
@@ -40,5 +41,30 @@ export function toPanelInfografis(data: InfografisData): PanelDistribusi[] {
       data: data.perDusun,
       lebarPenuh: true,
     },
+    {
+      id: 'domisili',
+      judul: 'Status Domisili Warga',
+      jenis: 'pie',
+      data: [
+        {
+          label: statusDomisiliLabel.TETAP,
+          value: Math.max(0, data.totalPenduduk - (data.totalNgontrak ?? 0)),
+        },
+        {
+          label: statusDomisiliLabel.KONTRAK,
+          value: data.totalNgontrak ?? 0,
+        },
+      ],
+    },
+    ...(data.perBansos && data.perBansos.length > 0
+      ? [
+          {
+            id: 'bansos',
+            judul: 'Penerima Bantuan Sosial (Bansos)',
+            jenis: 'bar' as const,
+            data: data.perBansos,
+          },
+        ]
+      : []),
   ];
 }

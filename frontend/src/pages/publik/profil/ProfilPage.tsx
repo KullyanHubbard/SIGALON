@@ -145,7 +145,7 @@ export default function ProfilPage() {
         <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
           <div data-apple-fade className="lg:col-span-2">
             <h2 className="text-xl font-bold text-slate-900 sm:text-2xl">
-              Sejarah & Gambaran Umum
+              Gambaran Umum
             </h2>
             <div className="mt-3 space-y-3 text-sm font-medium leading-relaxed text-slate-900 sm:mt-4 sm:space-y-4 sm:text-base">
               {paragrafSejarah(padukuhan.sejarah).map((paragraf) => (

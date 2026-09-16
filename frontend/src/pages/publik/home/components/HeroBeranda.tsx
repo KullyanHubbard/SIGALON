@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { WADAH } from '@/components/layout/wadah';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { paths } from '@/routes/paths';
-import latarHero from '@/assets/hero-beranda.webp';
+import latarHero from '@/assets/hero-beranda.png';
 
 export function HeroBeranda() {
   const padukuhan = usePadukuhan();

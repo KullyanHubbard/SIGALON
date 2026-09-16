@@ -44,6 +44,8 @@ GolonganDarah = Literal["A", "B", "AB", "O", "TIDAK_TAHU"]
 # tidak pernah valid (salah input).
 StatusKependudukan = Literal["AKTIF", "PINDAH", "MENINGGAL"]
 
+StatusDomisili = Literal["TETAP", "KONTRAK"]
+
 # Jabatan warga di padukuhan, diisi pengurus di kolom "Jabatan" file Excel.
 #
 # Ini BUKAN penentu kewenangan — yang menentukan siapa boleh apa tetap akun
@@ -85,6 +87,11 @@ class Penduduk(BaseModel):
     jabatan: JabatanWarga = "WARGA"
     alamat: Alamat
     statusKependudukan: StatusKependudukan = "AKTIF"
+    statusDomisili: StatusDomisili = "TETAP"
+    bansos: list[str] = []
+    alamatAsal: Optional[str] = None
+    catatanPerkawinan: Optional[str] = None
+    catatanKematian: Optional[str] = None
     # ISO date string, atau None kalau barisnya masih berlaku. Baris ber-nilai
     # tidak pernah ikut daftar maupun statistik (disaring di `data/store.py`).
     deletedAt: Optional[str] = None
@@ -136,6 +143,11 @@ class PendudukUbah(BaseModel):
     kewarganegaraan: Optional[str] = None
     jabatan: Optional[JabatanWarga] = None
     statusKependudukan: Optional[StatusKependudukan] = None
+    statusDomisili: Optional[StatusDomisili] = None
+    bansos: Optional[list[str]] = None
+    alamatAsal: Optional[str] = None
+    catatanPerkawinan: Optional[str] = None
+    catatanKematian: Optional[str] = None
     alamat: Optional[AlamatUbah] = None
 
     @field_validator("tanggalLahir", mode="before")
@@ -161,6 +173,11 @@ class PendudukBaru(BaseModel):
     golonganDarah: GolonganDarah
     statusHubunganKeluarga: StatusHubunganKeluarga
     kewarganegaraan: str = "WNI"
+    statusDomisili: StatusDomisili = "TETAP"
+    bansos: list[str] = []
+    alamatAsal: Optional[str] = None
+    catatanPerkawinan: Optional[str] = None
+    catatanKematian: Optional[str] = None
     alamat: Alamat
 
     @field_validator("tanggalLahir", mode="before")
@@ -223,6 +240,10 @@ class StatistikPublik(BaseModel):
     # Nomor KK sendiri tidak disimpan (spec 2026-08-26), jadi ini turunan dari
     # `statusHubunganKeluarga`, bukan hitungan kartu keluarga yang sebenarnya.
     totalKepalaKeluarga: int
+    totalPenerimaBansos: int = 0
+    totalBpnt: int = 0
+    totalPkh: int = 0
+    perBansos: list[Distribusi] = []
     # Sepuluh pekerjaan terbanyak se-padukuhan. Dibatasi karena isinya teks
     # bebas: tanpa batas, satu ketikan unik per orang jadi satu baris chart.
     perPekerjaan: list[Distribusi]
