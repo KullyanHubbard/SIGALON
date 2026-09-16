@@ -1,4 +1,4 @@
-import { Eye, Pencil } from 'lucide-react';
+import { Eye, Pencil, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Table, Td, Th } from '@/components/ui/Table';
@@ -8,9 +8,10 @@ interface TabelPendudukProps {
   rows: PendudukRow[];
   onPilih: (row: PendudukRow) => void;
   onUbah: (id: string) => void;
+  onHapus: (row: PendudukRow) => void;
 }
 
-export function TabelPenduduk({ rows, onPilih, onUbah }: TabelPendudukProps) {
+export function TabelPenduduk({ rows, onPilih, onUbah, onHapus }: TabelPendudukProps) {
   return (
     <Table className="min-w-[620px]">
       <thead>
@@ -111,6 +112,16 @@ export function TabelPenduduk({ rows, onPilih, onUbah }: TabelPendudukProps) {
                   aria-label={`Ubah data ${row.nama}`}
                 >
                   <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 w-8 p-0 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                  onClick={() => onHapus(row)}
+                  title="Hapus warga (salah input)"
+                  aria-label={`Hapus warga ${row.nama}`}
+                >
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </Td>

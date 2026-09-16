@@ -19,6 +19,8 @@ export interface PendudukApi {
 
   ubah(id: string, payload: PendudukUbah): Promise<Penduduk>;
 
+  hapus(id: string): Promise<void>;
+
   ekspor(
     params: FilterPenduduk & { search?: string; format?: 'xlsx' | 'csv' },
   ): Promise<Blob>;
@@ -49,6 +51,9 @@ export const pendudukApi: PendudukApi = {
       payload,
     );
     return data;
+  },
+  async hapus(id) {
+    await apiClient.delete(`/penduduk/${id}`);
   },
   async ekspor(params) {
     const { data } = await apiClient.get<Blob>('/penduduk/ekspor', {

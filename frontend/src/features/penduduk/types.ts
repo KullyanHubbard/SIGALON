@@ -41,6 +41,7 @@ export type StatusDomisili = 'TETAP' | 'KONTRAK';
 
 export interface Penduduk {
   id: string;
+  kodeKeluarga?: string | null;
   nama: string;
   jenisKelamin: JenisKelamin;
   tempatLahir: string;
@@ -82,12 +83,14 @@ export interface FilterPenduduk {
   kelompokUmur?: KelompokUmur;
   bansos?: string;
   statusDomisili?: StatusDomisili;
+  statusKependudukan?: StatusKependudukan;
 }
 
 export interface FilterOpsi {
   rt: string[];
   rw: string[];
   pekerjaan: string[];
+  bansos?: string[];
 }
 
 export type PendudukBaru = Omit<
@@ -96,6 +99,7 @@ export type PendudukBaru = Omit<
 >;
 
 export interface PendudukUbah {
+  kodeKeluarga?: string | null;
   nama?: string;
   jenisKelamin?: JenisKelamin;
   tempatLahir?: string;

@@ -94,6 +94,7 @@ export const kelompokUmurOpsi: readonly KelompokUmur[] = [
 export const filterLabel: Record<keyof FilterPenduduk, string> = {
   rw: 'RW',
   rt: 'RT',
+  statusKependudukan: 'Status Warga',
   jenisKelamin: 'Jenis Kelamin',
   kelompokUmur: 'Kelompok Umur',
   agama: 'Agama',
@@ -109,6 +110,7 @@ export const filterLabel: Record<keyof FilterPenduduk, string> = {
 const nilaiFilterLabel: Partial<
   Record<keyof FilterPenduduk, Record<string, string>>
 > = {
+  statusKependudukan: statusKependudukanLabel,
   jenisKelamin: jenisKelaminLabel,
   agama: agamaLabel,
   golonganDarah: golonganDarahLabel,

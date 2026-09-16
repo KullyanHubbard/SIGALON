@@ -34,6 +34,7 @@ const KOSONG: WargaFormValues = {
   statusDomisili: 'TETAP',
   bansosBpnt: false,
   bansosPkh: false,
+  kodeKeluarga: '',
   alamatAsal: '',
   catatanPerkawinan: '',
   catatanKematian: '',
@@ -71,6 +72,7 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         statusDomisili: warga.statusDomisili ?? 'TETAP',
         bansosBpnt: warga.bansos?.includes('BPNT') ?? false,
         bansosPkh: warga.bansos?.includes('PKH') ?? false,
+        kodeKeluarga: warga.kodeKeluarga ?? '',
         alamatAsal: warga.alamatAsal ?? '',
         catatanPerkawinan: warga.catatanPerkawinan ?? '',
         catatanKematian: warga.catatanKematian ?? '',
@@ -144,6 +146,7 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         id: warga.id,
         payload: {
           ...inti,
+          kodeKeluarga: v.kodeKeluarga?.trim() || null,
           statusKependudukan: v.statusKependudukan,
           alamat: bolehPindahWilayah ? alamat : { jalan: v.jalan },
         },

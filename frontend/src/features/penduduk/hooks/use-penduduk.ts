@@ -57,3 +57,12 @@ export function useUbahPenduduk() {
     onSuccess: segarkan,
   });
 }
+
+export function useHapusPenduduk() {
+  const segarkan = useSegarkanPenduduk();
+  return useMutation({
+    mutationFn: (id: string) => pendudukApi.hapus(id),
+    onSuccess: segarkan,
+  });
+}
+

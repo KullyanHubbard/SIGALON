@@ -16,7 +16,7 @@ from app.data import db
 
 
 # Aksi atas data warga — dibaca pengurus, disaring per wilayah.
-AKSI_WARGA = ("ubah-warga", "tambah-warga")
+AKSI_WARGA = ("ubah-warga", "tambah-warga", "hapus-warga")
 # Aksi milik Admin — dibaca Admin. Sebagian besar soal akun; berita ikut di
 # sini karena isi portal juga kewenangannya. Dua daftar ini berpotongan kosong,
 # sama seperti kewenangan yang menghasilkannya.

@@ -161,6 +161,16 @@ export function WargaFormFields({
         />
       </div>
 
+      <div className="sm:col-span-2">
+        <Input
+          label="Kode Kelompok Keluarga (Opsional)"
+          placeholder="Misal: K0001"
+          hint="Kode keluarga untuk mengelompokkan anggota satu KK"
+          error={errors.kodeKeluarga?.message}
+          {...register('kodeKeluarga')}
+        />
+      </div>
+
       {/* 3. STATUS KEBERADAAN / MUTASI WARGA */}
       {!menambah && (
         <>

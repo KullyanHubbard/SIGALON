@@ -27,6 +27,7 @@ import {
   pendidikanLabel,
   statusDomisiliLabel,
   statusHubunganLabel,
+  statusKependudukanLabel,
   statusPerkawinanLabel,
   toFilterChips,
 } from '../labels';
@@ -34,6 +35,7 @@ import {
 type Opsi = readonly [nilai: string, teks: string];
 
 const LANJUTAN = [
+  'statusKependudukan',
   'jenisKelamin',
   'kelompokUmur',
   'agama',
@@ -350,6 +352,12 @@ export function ToolbarPenduduk({
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <PilihanPanel
+                    field="statusKependudukan"
+                    nilai={value.statusKependudukan}
+                    opsi={dariLabel(statusKependudukanLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
                     field="jenisKelamin"
                     nilai={value.jenisKelamin}
                     opsi={dariLabel(jenisKelaminLabel)}
@@ -400,7 +408,15 @@ export function ToolbarPenduduk({
                   <PilihanPanel
                     field="bansos"
                     nilai={value.bansos}
-                    opsi={dariLabel(bansosLabel)}
+                    opsi={
+                      opsi?.bansos && opsi.bansos.length > 0
+                        ? [
+                            ['SEMUA', 'Semua Penerima Bansos'],
+                            ['TIDAK', 'Bukan Penerima Bansos'],
+                            ...opsi.bansos.map((b) => [b, b] as Opsi),
+                          ]
+                        : dariLabel(bansosLabel)
+                    }
                     onPilih={set}
                   />
                   <PilihanPanel

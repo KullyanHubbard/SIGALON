@@ -32,6 +32,7 @@ interface DaftarPendudukViewProps {
   onTutupDetail: () => void;
   onTambah: () => void;
   onUbah: (id: string) => void;
+  onHapus: (row: PendudukRow) => void;
   onEkspor?: (format: 'xlsx' | 'csv') => void;
   isExporting?: boolean;
 }
@@ -53,6 +54,7 @@ export function DaftarPendudukView({
   onTutupDetail,
   onTambah,
   onUbah,
+  onHapus,
   onEkspor,
   isExporting,
 }: DaftarPendudukViewProps) {
@@ -88,7 +90,12 @@ export function DaftarPendudukView({
             }
           >
             {(daftar) => (
-              <TabelPenduduk rows={daftar} onPilih={onPilih} onUbah={onUbah} />
+              <TabelPenduduk
+                rows={daftar}
+                onPilih={onPilih}
+                onUbah={onUbah}
+                onHapus={onHapus}
+              />
             )}
           </QueryBoundary>
         </CardContent>

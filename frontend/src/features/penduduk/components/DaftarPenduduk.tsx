@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks/use-debounce';
+import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import type { FilterPenduduk } from '../types';
-import { useFilterOpsi, usePendudukList } from '../hooks/use-penduduk';
+import { useFilterOpsi, useHapusPenduduk, usePendudukList } from '../hooks/use-penduduk';
 import { pendudukApi } from '../api/penduduk-api';
 import type { Penduduk } from '../types';
-import { toPendudukDetail, toPendudukRow } from '../view-model';
+import { toPendudukDetail, toPendudukRow, type PendudukRow } from '../view-model';
 import { WargaFormDialog } from './WargaFormDialog';
 import { DaftarPendudukView, type PaginasiView } from './DaftarPendudukView';
 
@@ -16,10 +18,13 @@ export function DaftarPenduduk() {
   const [page, setPage] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [formTarget, setFormTarget] = useState<Penduduk | 'baru' | null>(null);
+  const [targetHapus, setTargetHapus] = useState<PendudukRow | null>(null);
+  const [pesanErrorHapus, setPesanErrorHapus] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   const debouncedSearch = useDebounce(search);
   const { data: filterOpsi } = useFilterOpsi();
+  const hapusMutation = useHapusPenduduk();
 
   const params = useMemo(
     () => ({ page, pageSize: PAGE_SIZE, search: debouncedSearch, ...filter }),
@@ -63,6 +68,11 @@ export function DaftarPenduduk() {
   function onUbah(id: string) {
     const warga = data?.items.find((p) => p.id === id);
     if (warga) setFormTarget(warga);
+  }
+
+  function onHapus(row: PendudukRow) {
+    setTargetHapus(row);
+    setPesanErrorHapus(null);
   }
 
   async function handleEkspor(format: 'xlsx' | 'csv') {
@@ -109,6 +119,7 @@ export function DaftarPenduduk() {
         onTutupDetail={() => setSelectedId(null)}
         onTambah={() => setFormTarget('baru')}
         onUbah={onUbah}
+        onHapus={onHapus}
         onEkspor={handleEkspor}
         isExporting={isExporting}
       />
@@ -116,6 +127,75 @@ export function DaftarPenduduk() {
         target={formTarget}
         onClose={() => setFormTarget(null)}
       />
+
+      <Modal
+        open={Boolean(targetHapus)}
+        onClose={() => {
+          if (!hapusMutation.isPending) {
+            setTargetHapus(null);
+            setPesanErrorHapus(null);
+          }
+        }}
+        title="Hapus Warga (Salah Input)"
+        className="max-w-md"
+      >
+        {targetHapus && (
+          <div className="space-y-4">
+            <div className="rounded-lg bg-amber-50 p-3.5 border border-amber-200 text-sm text-amber-900">
+              <p className="font-semibold mb-1">Khusus Data Salah Input / Fiktif</p>
+              <p className="text-xs leading-relaxed text-amber-800">
+                Fitur ini <strong>hanya untuk data yang salah dimasukkan</strong> (misal salah ketik nama atau duplikat input). Jika warga{' '}
+                <strong>pindah keluar</strong> atau <strong>meninggal dunia</strong>, jangan dihapus! Gunakan tombol{' '}
+                <strong>Ubah Data</strong> lalu ganti Status Kependudukannya agar tercatat di buku mutasi desa.
+              </p>
+            </div>
+
+            <p className="text-sm text-slate-700">
+              Apakah Anda yakin ingin menghapus data warga{' '}
+              <strong className="text-slate-900 font-semibold">{targetHapus.nama}</strong> ({targetHapus.id}) dari{' '}
+              <strong className="text-slate-900 font-semibold">{targetHapus.rtRw}</strong>?
+            </p>
+
+            {pesanErrorHapus && (
+              <div className="rounded-md bg-red-50 p-2.5 text-xs font-medium text-red-700 border border-red-200">
+                {pesanErrorHapus}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setTargetHapus(null);
+                  setPesanErrorHapus(null);
+                }}
+                disabled={hapusMutation.isPending}
+              >
+                Batal
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                isLoading={hapusMutation.isPending}
+                onClick={async () => {
+                  try {
+                    await hapusMutation.mutateAsync(targetHapus.id);
+                    setTargetHapus(null);
+                    setPesanErrorHapus(null);
+                  } catch (err: unknown) {
+                    const axiosErr = err as { response?: { data?: { detail?: string } } };
+                    const detail = axiosErr?.response?.data?.detail;
+                    setPesanErrorHapus(detail || 'Gagal menghapus data warga. Silakan coba lagi.');
+                  }
+                }}
+              >
+                Hapus Warga
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </>
   );
 }

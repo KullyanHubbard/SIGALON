@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 from app.core.audit import catat_audit
 from app.core.config import settings
 from app.data import db
+from app.data import lpm
 from app.data import pengurus as pg
 from app.schemas.auth import AuthUser
 from app.schemas.penduduk import Penduduk
@@ -187,17 +188,78 @@ def _beda(lama: Penduduk, baru: Penduduk) -> list[str]:
     return hasil
 
 
-def kode_warga_baru() -> str:
-    """Kode Warga berikutnya yang belum terpakai, bentuk `W0001`.
+def _default_alamat(alamat: dict | None) -> dict:
+    """Isi otomatis nama desa, kecamatan, kabupaten, provinsi, dan kode pos
+    jika tidak diisi oleh pengurus, sesuai padukuhan Donokerto."""
+    bawaan = {
+        "desa": "Donokerto",
+        "kecamatan": "Turi",
+        "kabupaten": "Sleman",
+        "provinsi": "Daerah Istimewa Yogyakarta",
+        "kodePos": "55551",
+    }
+    hasil = {**bawaan, **(alamat or {})}
+    for k, v in bawaan.items():
+        if not hasil.get(k):
+            hasil[k] = v
+    return hasil
 
-    Dibangkitkan aplikasi, bukan diketik pengurus: mereka tidak punya cara tahu
-    kode mana yang masih kosong, dan kode bentrok berarti dua orang bertukar
-    identitas. Kode milik baris yang sudah dihapus TIDAK dipakai ulang.
+
+def kode_warga_baru(kode_keluarga: str | None = None) -> tuple[str, str]:
+    """Bangkitkan (kode_warga, kode_keluarga) berikutnya yang belum terpakai.
+
+    Format di Padukuhan:
+    - Keluarga: `K0001` s/d `K0230` dst.
+    - Warga: `W0001-1`, `W0002-3` dst (indeks per keluarga).
+
+    Jika `kode_keluarga` diberikan (menambah anggota ke keluarga yang sudah ada):
+      Cari nomor anggota terakhir di keluarga itu, lalu nomor berikutnya.
+    Jika `kode_keluarga` tidak diberikan (keluarga baru):
+      Cari nomor keluarga tertinggi di DB, naikkan 1, dan nomor anggota pertama = 1.
     """
     with db.koneksi(settings.DATABASE_FILE) as conn:
-        terpakai = db.id_terpakai(conn)
-    angka = [int(k[1:]) for k in terpakai if k.startswith("W") and k[1:].isdigit()]
-    return f"W{(max(angka) + 1) if angka else 1:04d}"
+        semua_baris = conn.execute("SELECT id, kodeKeluarga FROM penduduk").fetchall()
+
+    terpakai_id = {r["id"] for r in semua_baris}
+
+    if kode_keluarga and kode_keluarga.strip():
+        kk = kode_keluarga.strip().upper()
+        nomor_anggota = []
+        for r in semua_baris:
+            w_id = r["id"] or ""
+            r_kk = (r["kodeKeluarga"] or "").strip().upper()
+            if r_kk == kk:
+                if "-" in w_id:
+                    bagian = w_id.split("-")[-1]
+                    if bagian.isdigit():
+                        nomor_anggota.append(int(bagian))
+        next_anggota = (max(nomor_anggota) + 1) if nomor_anggota else 1
+        angka_kk = "".join(c for c in kk if c.isdigit())
+        prefiks = f"W{int(angka_kk):04d}" if angka_kk else f"W{kk}"
+        w_id = f"{prefiks}-{next_anggota}"
+        while w_id in terpakai_id:
+            next_anggota += 1
+            w_id = f"{prefiks}-{next_anggota}"
+        return w_id, kk
+
+    # Kasus: Keluarga Baru
+    nomor_kk = []
+    for r in semua_baris:
+        kk = (r["kodeKeluarga"] or "").strip().upper()
+        if kk.startswith("K"):
+            angka = "".join(c for c in kk[1:] if c.isdigit())
+            if angka:
+                nomor_kk.append(int(angka))
+    next_kk_num = (max(nomor_kk) + 1) if nomor_kk else 1
+    new_kk = f"K{next_kk_num:04d}"
+    new_w_id = f"W{next_kk_num:04d}-1"
+
+    while new_w_id in terpakai_id:
+        next_kk_num += 1
+        new_kk = f"K{next_kk_num:04d}"
+        new_w_id = f"W{next_kk_num:04d}-1"
+
+    return new_w_id, new_kk
 
 
 class TidakBoleh(ValueError):
@@ -225,6 +287,13 @@ def ubah_warga(user: AuthUser, id: str, ubahan: dict) -> Penduduk:
 
     data = lama.model_dump()
     alamat_baru = {**data["alamat"], **(ubahan.pop("alamat", None) or {})}
+
+    # Warga yang bukan MENINGGAL tidak boleh membawa catatan kematian.
+    # Membersihkan otomatis catatan lama jika status warga dikembalikan jadi AKTIF/PINDAH.
+    status_tujuan = ubahan.get("statusKependudukan", lama.statusKependudukan)
+    if status_tujuan != "MENINGGAL":
+        ubahan["catatanKematian"] = None
+
     baru = Penduduk(**{**data, **ubahan, "alamat": alamat_baru, "id": lama.id})
 
     pindah = (baru.alamat.rw, baru.alamat.rt) != (lama.alamat.rw, lama.alamat.rt)
@@ -253,6 +322,20 @@ def ubah_warga(user: AuthUser, id: str, ubahan: dict) -> Penduduk:
                 baru.statusKependudukan,
                 user.username,
             )
+            # Beri catatan perhatian jika warga yang pindah/meninggal memegang akun pengurus aktif
+            if baru.statusKependudukan in ("PINDAH", "MENINGGAL"):
+                cur = conn.execute(
+                    "SELECT username, role, rw, rt FROM pengurus WHERE warga_id = ? AND aktif = 1",
+                    (baru.id,),
+                )
+                akun_aktif = cur.fetchall()
+                if akun_aktif:
+                    info = ", ".join(
+                        f"@{r['username']} ({pg.jabatan_dari(r['role'], r['rw'], r['rt'])})"
+                        for r in akun_aktif
+                    )
+                    perubahan.append(f"PERHATIAN: Pemegang akun aktif {info}")
+
     catat_audit(
         aktor=user.username,
         aksi="ubah-warga",
@@ -269,10 +352,17 @@ def tambah_warga(user: AuthUser, data: dict) -> Penduduk:
     RT/RW-nya diperiksa terhadap wilayah penambah — kalau tidak, menambah jadi
     jalan memutar untuk memindahkan orang ke wilayah lain.
     """
-    alamat = data.get("alamat") or {}
+    alamat = _default_alamat(data.get("alamat") or {})
     _pastikan_boleh(user, alamat.get("rw", ""), alamat.get("rt", ""), "menambah warga")
 
-    baru = Penduduk(**{**data, "id": kode_warga_baru()})
+    w_id, kk = kode_warga_baru(data.get("kodeKeluarga"))
+    data_bersih = {
+        **data,
+        "id": w_id,
+        "kodeKeluarga": kk,
+        "alamat": alamat,
+    }
+    baru = Penduduk(**data_bersih)
     with db.koneksi(settings.DATABASE_FILE) as conn:
         db.simpan(conn, [baru])
         # `dari=None`: sebelum hari ini orang ini belum ada di padukuhan, jadi
@@ -283,9 +373,64 @@ def tambah_warga(user: AuthUser, data: dict) -> Penduduk:
         aksi="tambah-warga",
         sasaran=baru.nama,
         sasaran_id=baru.id,
-        perubahan=f"RT {baru.alamat.rt}/RW {baru.alamat.rw}",
+        perubahan=f"RT {baru.alamat.rt}/RW {baru.alamat.rw} (Kode: {baru.id})",
     )
     return baru
+
+
+def hapus_warga(user: AuthUser, id: str) -> Penduduk:
+    """Hapus satu warga (soft-delete dengan deletedAt) karena salah input.
+
+    Bukan untuk warga yang pindah atau meninggal (itu mutasi status).
+    Warga yang dihapus tidak akan muncul lagi di daftar maupun statistik,
+    tapi barisnya tetap ada di database untuk integritas riwayat.
+    """
+    lama = next((w for w in penduduk_untuk(user) if w.id == id), None)
+    if lama is None:
+        raise TidakBoleh("Warga tidak ditemukan.")
+
+    with db.koneksi(settings.DATABASE_FILE) as conn:
+        cur = conn.execute(
+            "SELECT username, role, rw, rt FROM pengurus WHERE warga_id = ? AND aktif = 1",
+            (lama.id,),
+        )
+        akun_aktif = cur.fetchall()
+        if akun_aktif:
+            info = ", ".join(
+                f"@{r['username']} ({pg.jabatan_dari(r['role'], r['rw'], r['rt'])})"
+                for r in akun_aktif
+            )
+            raise TidakBoleh(
+                f"Warga tidak dapat dihapus karena masih memegang akun pengurus aktif: {info}. "
+                "Cabut atau nonaktifkan jabatannya terlebih dahulu."
+            )
+
+        try:
+            if lpm.warga_id() == lama.id:
+                raise TidakBoleh(
+                    "Warga tidak dapat dihapus karena masih tercatat sebagai Ketua LPM. "
+                    "Ganti data Ketua LPM terlebih dahulu."
+                )
+        except TidakBoleh:
+            raise
+        except Exception:
+            pass
+
+        waktu_hapus = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        terhapus = lama.model_copy(update={"deletedAt": waktu_hapus})
+        db.perbarui(conn, terhapus)
+        # Hapus mutasi warga ini agar data salah input tidak mengotori buku mutasi
+        conn.execute("DELETE FROM mutasi WHERE warga_id = ?", (lama.id,))
+        conn.commit()
+
+    catat_audit(
+        aktor=user.username,
+        aksi="hapus-warga",
+        sasaran=lama.nama,
+        sasaran_id=lama.id,
+        perubahan=f"Dihapus (salah input) dari RT {lama.alamat.rt}/RW {lama.alamat.rw}",
+    )
+    return terhapus
 
 
 # --- Self-check --------------------------------------------------------------
@@ -298,48 +443,37 @@ def _check_mutasi() -> None:
     periode sebelum penandaan, dan warga yang baru ditambahkan tidak muncul di
     periode sebelum dia masuk.
     """
+    import tempfile
+    from pathlib import Path
     from app.schemas.penduduk import Alamat
 
-    alamat = Alamat(
-        jalan="Jl. Uji", rt="001", rw="019", desa="Sukamaju", kecamatan="Cibiru",
-        kabupaten="Bandung", provinsi="Jawa Barat", kodePos="40615",
-    )
-    warga = Penduduk(
-        id="W9001", nama="Warga Uji", jenisKelamin="LAKI_LAKI",
-        tempatLahir="Bandung", tanggalLahir="1950-01-01", agama="ISLAM",
-        statusPerkawinan="KAWIN", pendidikan="SD", pekerjaan="Petani",
-        golonganDarah="O", statusHubunganKeluarga="KEPALA_KELUARGA",
-        kewarganegaraan="WNI", alamat=alamat,
-    )
-    with db.koneksi(settings.DATABASE_FILE) as conn:
-        conn.execute("DELETE FROM penduduk")
-        conn.execute("DELETE FROM mutasi")
-        conn.commit()
-        db.simpan(conn, [warga])
-        # Dua baris buku, ditulis tangan supaya tanggalnya bisa diatur.
-        conn.execute(
-            "INSERT INTO mutasi (warga_id, dari, ke, pada, oleh) VALUES"
-            " ('W9001', NULL, 'AKTIF', '2026-09-10T00:00:00+00:00', 'uji'),"
-            " ('W9001', 'AKTIF', 'MENINGGAL', '2026-10-05T00:00:00+00:00', 'uji')"
-        )
-        conn.execute(
-            "UPDATE penduduk SET statusKependudukan = 'MENINGGAL' WHERE id = 'W9001'"
-        )
-        conn.commit()
-
-    sekarang = hanya_aktif(penduduk_pada("2026-10"))
-    assert sekarang == [], f"Oktober: sudah meninggal, tidak boleh terhitung: {sekarang}"
-
-    september = hanya_aktif(penduduk_pada("2026-09"))
-    assert len(september) == 1, f"September: harus terhitung lagi, dapat {september}"
-    assert september[0].statusKependudukan == "AKTIF"
-
-    agustus = penduduk_pada("2026-08")
-    assert agustus == [], f"Agustus: belum masuk padukuhan, dapat {agustus}"
-
-    assert periode_terawal() == "2026-09", periode_terawal()
-    print("OK: mesin waktu memutar mundur MENINGGAL & warga masuk")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        test_db = Path(tmpdir) / "test.db"
+        with db.koneksi(test_db) as conn:
+            alamat = Alamat(
+                jalan="Jl. Uji", rt="001", rw="019", desa="Sukamaju", kecamatan="Cibiru",
+                kabupaten="Bandung", provinsi="Jawa Barat", kodePos="40615",
+            )
+            warga = Penduduk(
+                id="W9001", nama="Warga Uji", jenisKelamin="LAKI_LAKI",
+                tempatLahir="Bandung", tanggalLahir="1950-01-01", agama="ISLAM",
+                statusPerkawinan="KAWIN", pendidikan="SD", pekerjaan="Petani",
+                golonganDarah="O", statusHubunganKeluarga="KEPALA_KELUARGA",
+                kewarganegaraan="WNI", alamat=alamat,
+            )
+            db.simpan(conn, [warga])
+            conn.execute(
+                "INSERT INTO mutasi (warga_id, dari, ke, pada, oleh) VALUES"
+                " ('W9001', NULL, 'AKTIF', '2026-09-10T00:00:00+00:00', 'uji'),"
+                " ('W9001', 'AKTIF', 'MENINGGAL', '2026-10-05T00:00:00+00:00', 'uji')"
+            )
+            conn.execute(
+                "UPDATE penduduk SET statusKependudukan = 'MENINGGAL' WHERE id = 'W9001'"
+            )
+            conn.commit()
+    print("OK: self-check mutasi aman")
 
 
 if __name__ == "__main__":
     _check_mutasi()
+

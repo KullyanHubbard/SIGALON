@@ -50,6 +50,7 @@ export const wargaSchema = z
     statusDomisili: z.enum(['TETAP', 'KONTRAK']).default('TETAP'),
     bansosBpnt: z.boolean().default(false),
     bansosPkh: z.boolean().default(false),
+    kodeKeluarga: z.string().optional(),
     alamatAsal: z.string().optional(),
     catatanPerkawinan: z.string().optional(),
     catatanKematian: z.string().optional(),

@@ -31,6 +31,8 @@ _FILTER_LANGSUNG = (
     "pendidikan",
     "statusPerkawinan",
     "statusHubunganKeluarga",
+    "statusKependudukan",
+    "statusDomisili",
 )
 
 
@@ -43,12 +45,11 @@ def saring(
     rw: str = "",
     kelompokUmur: str = "",
     bansos: str = "",
-    statusDomisili: str = "",
     **enum_filter: str,
 ) -> list[Penduduk]:
     """Semua filter digabung AND; nilai kosong tidak menyaring apa pun.
 
-    `search` cuma mencocokkan nama — NIK & Nomor KK tidak disimpan lagi.
+    `search` mencocokkan nama dan Kode Warga (`id`).
 
     ponytail: disaring di memori atas cache `store.py`, bukan lewat SQL — data
     satu padukuhan muat di RAM dan sudah dimuat saat start. Pindah ke WHERE
@@ -57,13 +58,14 @@ def saring(
     q = search.strip().lower()
     hasil = daftar
     if q:
-        hasil = [p for p in hasil if q in p.nama.lower()]
+        hasil = [p for p in hasil if q in p.nama.lower() or q in p.id.lower()]
     for field in _FILTER_LANGSUNG:
         nilai = enum_filter.get(field, "")
         if nilai:
-            hasil = [p for p in hasil if getattr(p, field) == nilai]
+            hasil = [p for p in hasil if getattr(p, field, None) == nilai]
     if pekerjaan:
-        hasil = [p for p in hasil if p.pekerjaan == pekerjaan]
+        p_clean = pekerjaan.strip().lower()
+        hasil = [p for p in hasil if p.pekerjaan and p.pekerjaan.strip().lower() == p_clean]
     if rt:
         hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rt, rt)]
     if rw:
@@ -74,16 +76,17 @@ def saring(
         ]
     if bansos:
         b_upper = bansos.strip().upper()
-        if b_upper == "BPNT":
-            hasil = [p for p in hasil if "BPNT" in getattr(p, "bansos", [])]
-        elif b_upper == "PKH":
-            hasil = [p for p in hasil if "PKH" in getattr(p, "bansos", [])]
-        elif b_upper in ("SEMUA", "YA", "TERIMA"):
+        if b_upper in ("SEMUA", "YA", "TERIMA"):
             hasil = [p for p in hasil if len(getattr(p, "bansos", [])) > 0]
         elif b_upper in ("TIDAK", "BUKAN", "NON"):
             hasil = [p for p in hasil if len(getattr(p, "bansos", [])) == 0]
-    if statusDomisili:
-        hasil = [p for p in hasil if getattr(p, "statusDomisili", "TETAP") == statusDomisili]
+        else:
+            # Dinamis: mencocokkan tag bansos apa pun tanpa dibatasi hardcoded BPNT/PKH
+            hasil = [
+                p
+                for p in hasil
+                if any(b_upper == str(b).strip().upper() for b in getattr(p, "bansos", []))
+            ]
     return hasil
 
 
@@ -98,12 +101,15 @@ def list_penduduk(
     pendidikan: str = "",
     statusPerkawinan: str = "",
     statusHubunganKeluarga: str = "",
+    statusKependudukan: str = "",
     pekerjaan: str = "",
     rt: str = "",
     rw: str = "",
     kelompokUmur: str = "",
     bansos: str = "",
     statusDomisili: str = "",
+    sortBy: str = "",
+    sortOrder: str = "asc",
     user: AuthUser = Depends(current_pengurus),
 ) -> PaginatedPenduduk:
     if user.role == "RT":
@@ -124,6 +130,7 @@ def list_penduduk(
         kelompokUmur=kelompokUmur,
         bansos=bansos,
         statusDomisili=statusDomisili,
+        statusKependudukan=statusKependudukan,
         jenisKelamin=jenisKelamin,
         agama=agama,
         golonganDarah=golonganDarah,
@@ -131,6 +138,32 @@ def list_penduduk(
         statusPerkawinan=statusPerkawinan,
         statusHubunganKeluarga=statusHubunganKeluarga,
     )
+
+    if sortBy:
+        reverse = sortOrder.lower() == "desc"
+        if sortBy == "nama":
+            hasil = sorted(hasil, key=lambda p: p.nama.lower(), reverse=reverse)
+        elif sortBy in ("umur", "tanggalLahir"):
+            hasil = sorted(
+                hasil,
+                key=lambda p: p.tanggalLahir or "",
+                reverse=(not reverse if sortBy == "umur" else reverse),
+            )
+        elif sortBy == "rt":
+            hasil = sorted(
+                hasil,
+                key=lambda p: int(p.alamat.rt) if p.alamat.rt.isdigit() else 0,
+                reverse=reverse,
+            )
+        elif sortBy == "rw":
+            hasil = sorted(
+                hasil,
+                key=lambda p: int(p.alamat.rw) if p.alamat.rw.isdigit() else 0,
+                reverse=reverse,
+            )
+        elif sortBy == "id":
+            hasil = sorted(hasil, key=lambda p: p.id, reverse=reverse)
+
     start = (page - 1) * pageSize
     return PaginatedPenduduk(
         items=hasil[start : start + pageSize],
@@ -149,6 +182,7 @@ def ekspor_penduduk(
     pendidikan: str = "",
     statusPerkawinan: str = "",
     statusHubunganKeluarga: str = "",
+    statusKependudukan: str = "",
     pekerjaan: str = "",
     rt: str = "",
     rw: str = "",
@@ -177,6 +211,7 @@ def ekspor_penduduk(
         kelompokUmur=kelompokUmur,
         bansos=bansos,
         statusDomisili=statusDomisili,
+        statusKependudukan=statusKependudukan,
         jenisKelamin=jenisKelamin,
         agama=agama,
         golonganDarah=golonganDarah,
@@ -222,10 +257,22 @@ def filter_opsi(user: AuthUser = Depends(current_pengurus)) -> FilterOpsi:
     tidak bisa dijadikan enum tertutup dari awal.
     """
     milik_saya = penduduk_untuk(user)
+
+    def _urut_wilayah(kode: str) -> tuple[int, int | str]:
+        angka = "".join(c for c in kode if c.isdigit())
+        return (0, int(angka)) if angka else (1, kode)
+
+    semua_bansos: set[str] = set()
+    for p in milik_saya:
+        for b in getattr(p, "bansos", []):
+            if b and str(b).strip():
+                semua_bansos.add(str(b).strip())
+
     return FilterOpsi(
-        rt=sorted({p.alamat.rt for p in milik_saya}),
-        rw=sorted({p.alamat.rw for p in milik_saya}),
+        rt=sorted({p.alamat.rt for p in milik_saya if p.alamat.rt}, key=_urut_wilayah),
+        rw=sorted({p.alamat.rw for p in milik_saya if p.alamat.rw}, key=_urut_wilayah),
         pekerjaan=sorted({p.pekerjaan for p in milik_saya if p.pekerjaan}),
+        bansos=sorted(semua_bansos),
     )
 
 
@@ -271,3 +318,20 @@ def ubah_penduduk(
         # 404 kalau memang tidak terlihat olehnya; 403 kalau terlihat tapi
         # tindakannya yang dilarang.
         raise HTTPException(404 if "tidak ditemukan" in str(e) else 403, str(e))
+
+
+@router.delete("/penduduk/{id}", status_code=204)
+def hapus_penduduk(
+    id: str, user: AuthUser = Depends(current_pengurus)
+) -> None:
+    """Hapus data warga karena salah input (soft-delete).
+
+    Warga yang dihapus disembunyikan permanen dari daftar dan statistik,
+    tetapi barisnya tetap ada di database dengan deletedAt untuk riwayat audit.
+    Warga yang pindah atau meninggal jangan dihapus, melainkan gunakan PATCH /penduduk/{id}.
+    """
+    try:
+        store.hapus_warga(user, id)
+    except store.TidakBoleh as e:
+        raise HTTPException(404 if "tidak ditemukan" in str(e) else 403, str(e))
+

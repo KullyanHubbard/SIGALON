@@ -130,6 +130,7 @@ class PendudukUbah(BaseModel):
     """Field yang tidak dikirim tidak diubah. `id` tidak pernah bisa diganti —
     itu Kode Warga, satu-satunya kunci yang bertahan melewati impor."""
 
+    kodeKeluarga: Optional[str] = None
     nama: Optional[str] = None
     jenisKelamin: Optional[JenisKelamin] = None
     tempatLahir: Optional[str] = None
@@ -162,6 +163,7 @@ class PendudukBaru(BaseModel):
     """Warga baru. `id` (Kode Warga) TIDAK ada di sini — dibangkitkan aplikasi,
     karena pengurus tidak punya cara tahu kode mana yang belum terpakai."""
 
+    kodeKeluarga: Optional[str] = None
     nama: str
     jenisKelamin: JenisKelamin
     tempatLahir: str
@@ -189,11 +191,13 @@ class PendudukBaru(BaseModel):
 class FilterOpsi(BaseModel):
     """Pilihan filter yang BUKAN enum — nilainya cuma bisa diketahui dari isi
     data. Enum (agama, pendidikan, ...) sudah ada di frontend `labels.ts`, jadi
-    tidak dikirim lewat jaringan."""
+    tidak dikirim lewat jaringan.
+    """
 
     rt: list[str]
     rw: list[str]
     pekerjaan: list[str]
+    bansos: list[str] = []
 
 
 class Distribusi(BaseModel):
