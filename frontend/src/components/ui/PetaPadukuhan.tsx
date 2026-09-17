@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ExternalLink, MapPin, Maximize2 } from 'lucide-react';
-import mapImage from '@/assets/Maps-frontend.png';
+import mapImage from '@/assets/Maps-frontend.webp';
 import { Modal } from '@/components/ui/Modal';
 import { usePadukuhan } from '@/hooks/use-padukuhan';
 import { GOOGLE_MAPS_URL } from '@/lib/padukuhan';
