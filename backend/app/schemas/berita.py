@@ -1,16 +1,10 @@
 """Berita padukuhan — cerminan `frontend/src/features/berita/types.ts`.
 
-Batasannya sengaja sama persis dengan skema Zod di
-`frontend/src/features/berita/schemas.ts`: form yang lolos di layar tidak boleh
-ditolak server, dan pemanggil yang melewati form tetap harus kena batas yang
-sama.
+Batasannya sama persis dengan skema Zod di frontend.
 
-`isi` berupa HTML sejak editornya jadi WYSIWYG (3 September 2026), dan HTML dari
-klien tidak boleh dipercaya: nilainya dipasang ke `dangerouslySetInnerHTML` di
-halaman publik, jadi satu `<script>` yang lolos berjalan di peramban setiap
-pengunjung. Karena itu **penyaringan terjadi di sini, satu kali, saat menulis** —
-bukan saat menampilkan. Yang tersimpan di DB sudah bersih, jadi tidak ada jalur
-baca yang bisa lupa menyaring.
+HTML dari klien tidak dipercaya: `isi` dipasang ke
+`dangerouslySetInnerHTML` di halaman publik, jadi penyaringan terjadi
+di sini SEKALI, saat menulis — bukan saat menampilkan.
 """
 
 import nh3
@@ -26,14 +20,10 @@ MAKS_FOTO = 900_000
 #: editor, jadi ini kira-kira ruang untuk lima gambar plus teksnya.
 MAKS_ISI = 4_000_000
 
-#: Tag yang boleh terbit. Persis yang bisa dihasilkan editornya, tidak lebih:
-#: apa pun di luar daftar ini tidak punya cara masuk dari layar, jadi
-#: kemunculannya berarti seseorang memanggil API langsung.
+#: Tag yang boleh terbit. Persis yang bisa dihasilkan editornya, tidak lebih.
 #:
-#: `<a>` sengaja TIDAK ada, dan editornya juga tidak punya tombol tautan:
-#: mengizinkannya berarti mengizinkan skema URL yang lebih longgar, sementara
-#: `data:` harus tetap terbuka untuk gambar yang disisipkan. Berita padukuhan
-#: belum butuh tautan; kalau nanti butuh, batasi skemanya per atribut.
+#: `<a>` sengaja TIDAK ada: mengizinkannya berarti melonggarkan skema URL,
+#: sementara `data:` harus tetap terbuka untuk gambar sisipan.
 TAG_DIIZINKAN = {
     "p", "br", "strong", "em", "u", "s", "code", "pre",
     "h2", "h3", "ul", "ol", "li", "blockquote", "hr", "img",
@@ -43,12 +33,7 @@ ATRIBUT_DIIZINKAN = {"img": {"src", "alt"}}
 
 
 def bersihkan_html(mentah: str) -> str:
-    """Buang apa pun di luar daftar putih di atas.
-
-    `nh3` (pengikat Rust untuk ammonia), bukan penyaring buatan sendiri:
-    menulis parser HTML yang tahan segala bentuk penyelundupan adalah pekerjaan
-    yang salah untuk dikerjakan sendiri, dan yang gagalnya diam-diam.
-    """
+    """Buang apa pun di luar daftar putih di atas."""
     return nh3.clean(
         mentah,
         tags=TAG_DIIZINKAN,
@@ -60,9 +45,7 @@ def bersihkan_html(mentah: str) -> str:
 
 
 def _teks_saja(html: str) -> str:
-    """Isi artikel tanpa satu pun tag — dipakai mengukur panjang tulisannya.
-    Tanpa ini `<p><img …></p>` berisi ribuan karakter base64 lolos batas
-    minimum sementara tulisannya nol kata."""
+    """Isi artikel tanpa satu pun tag — dipakai mengukur panjang tulisannya."""
     return nh3.clean(html, tags=set(), attributes={}).strip()
 
 
@@ -96,9 +79,7 @@ class BeritaBaru(BaseModel):
     @field_validator("foto")
     @classmethod
     def _harus_gambar(cls, v: str) -> str:
-        """Nilai ini dipasang apa adanya ke `<img src>` di halaman publik.
-        Tanpa penjagaan ini, `data:text/html,…` yang dikirim langsung ke API
-        ikut tersimpan dan terbit."""
+        """Nilai ini dipasang apa adanya ke `<img src>` di halaman publik."""
         if v and not (v.startswith("data:image/") or v.startswith("/uploads/")):
             raise ValueError("Foto harus berupa data URL gambar atau path /uploads/")
         return v
@@ -113,9 +94,7 @@ class Berita(BeritaBaru):
 
 
 def demo() -> None:
-    """Self-check penyaring HTML. Jalankan:
-    .venv/bin/python -m app.schemas.berita
-    """
+    """Self-check penyaring HTML. Jalankan: .venv/bin/python -m app.schemas.berita"""
     # Yang jelas berbahaya hilang, tulisan di sekitarnya tetap utuh.
     assert bersihkan_html("<p>Halo</p><script>alert(1)</script>") == "<p>Halo</p>"
     assert "onerror" not in bersihkan_html('<img src="data:image/png;base64,AA" onerror="alert(1)">')

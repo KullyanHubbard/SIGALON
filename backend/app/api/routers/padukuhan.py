@@ -1,9 +1,4 @@
-"""Keterangan tetap padukuhan: dibaca siapa saja, diubah ADMIN.
-
-Pola pathnya sama dengan berita — `/publik/…` terbuka, `/padukuhan` tertutup.
-Isinya memang untuk dibaca umum: nama wilayah, luas, kontak balai padukuhan,
-sejarah, batas wilayah. Tidak ada data orang di sini.
-"""
+"""Keterangan tetap padukuhan: dibaca siapa saja, diubah ADMIN."""
 
 from fastapi import APIRouter, Depends
 
@@ -18,9 +13,7 @@ router = APIRouter(tags=["padukuhan"])
 
 @router.get("/publik/padukuhan", response_model=Padukuhan | None)
 def keterangan_padukuhan() -> Padukuhan | None:
-    """`null` berarti Admin belum pernah menyimpannya, dan frontend memakai
-    nilai bawaannya sendiri. Bukan 404: tidak adanya baris itu keadaan normal
-    pemasangan baru, bukan kesalahan pemanggil."""
+    """`null` berarti Admin belum pernah menyimpannya, dan frontend memakai nilai bawaannya sendiri."""
     return data.ambil()
 
 

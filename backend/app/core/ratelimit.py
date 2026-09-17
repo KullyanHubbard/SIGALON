@@ -1,20 +1,10 @@
 """Batas percobaan login: 5 gagal per username dalam 15 menit.
 
-**Per username saja, bukan per IP.** Batas per-IP sempat ada lalu dicabut: di
-padukuhan seluruh pengurus kemungkinan besar memakai satu jaringan yang sama —
-balai desa, atau satu tethering — sehingga menghitung per IP berarti beberapa
-orang yang masing-masing salah ketik sekali bisa mengunci seluruh ruangan, dan
-tidak ada seorang pun yang bisa membukanya.
+Per username saja, BUKAN per IP — satu jaringan balai desa dipakai
+banyak pengurus, jadi per-IP bisa mengunci seluruh ruangan.
 
-Yang ditahan batas ini: orang menebak-nebak password satu akun tertentu.
-Yang TIDAK ditahan: penebakan yang berpindah-pindah username dari satu tempat.
-Itu diterima sadar — jumlah akunnya sedikit dan usernamenya tidak diumumkan.
-
-ponytail: hitungannya di memori proses, hilang tiap restart, dan tidak dibagi
-antar-proses. Serangan tebak-password berlangsung dalam hitungan menit
-sedangkan restart jarang, jadi ini memadai. Pindahkan ke tabel begitu backend
-jalan lebih dari satu proses — kalau tidak, batasnya terkalikan sebanyak
-jumlah proses.
+ponytail: hitungan di memori proses, hilang tiap restart. Pindahkan ke
+tabel kalau backend jalan lebih dari satu proses.
 """
 
 import time

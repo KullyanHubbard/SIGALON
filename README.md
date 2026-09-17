@@ -55,8 +55,8 @@ Terdapat 4 peran pengurus dengan batas kewenangan yang tegas:
 ```
 NIA-WEB/
 ├── CLAUDE.md               # Panduan utama konvensi kode & arsitektur
-├── start-all.sh            # Skrip otomatis jalankan backend + frontend + ngrok (Linux/macOS)
-├── start-all.bat           # Skrip otomatis jalankan backend + frontend + ngrok (Windows)
+├── start-all.sh            # Skrip otomatis jalankan backend + frontend (Linux/macOS)
+├── start-all.bat           # Skrip otomatis jalankan backend + frontend (Windows)
 ├── docs/                   # Dokumen prosedur & file template Excel
 ├── frontend/               # Aplikasi React + TypeScript + Vite
 │   ├── src/
@@ -79,7 +79,6 @@ NIA-WEB/
 ### Prasyarat System
 * **Node.js** v18+ & **npm**
 * **Python** 3.10+
-* *(Opsional)* **ngrok** jika ingin melakukan tunneling HTTP saat pengujian lokal.
 
 ---
 

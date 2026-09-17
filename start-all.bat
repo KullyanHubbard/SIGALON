@@ -11,7 +11,6 @@ echo.
 REM 1. Bersihkan proses lama jika port 8000 atau 5173 masih terpakai
 taskkill /F /FI "WINDOWTITLE eq SIGALON Backend*" /T >nul 2>&1
 taskkill /F /FI "WINDOWTITLE eq SIGALON Frontend*" /T >nul 2>&1
-taskkill /F /IM ngrok.exe >nul 2>&1
 powershell -NoProfile -Command "Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { ($_.Name -eq 'python.exe' -or $_.Name -eq 'node.exe') -and $_.CommandLine -like '*SIGALON*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }" >nul 2>&1
 powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 8000,5173 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }" >nul 2>&1
 
@@ -74,43 +73,12 @@ set /a TRIES+=1
 if !TRIES! geq 15 (
     echo [PERINGATAN] Backend belum merespons setelah 15 detik.
     echo Silakan periksa jendela "SIGALON Backend" untuk melihat pesan error.
-    goto CHECK_NGROK
+    goto RUN_LOCAL
 )
 goto WAIT_BACKEND
 
 :BACKEND_READY
 echo [OK] Backend aktif di http://localhost:8000
-
-:CHECK_NGROK
-REM Beri jeda 2 detik agar Vite siap menerima koneksi
-ping 127.0.0.1 -n 3 >nul
-
-REM Cari ngrok di PATH atau lokasi cadangan
-set "NGROK_CMD=ngrok"
-where ngrok >nul 2>&1
-if not errorlevel 1 goto RUN_NGROK
-
-if exist "D:\Backup\CDP-Proyek\ngrok.exe" (
-    set "NGROK_CMD=D:\Backup\CDP-Proyek\ngrok.exe"
-    goto RUN_NGROK
-)
-
-if exist "%LOCALAPPDATA%\Microsoft\WindowsApps\ngrok.exe" (
-    set "NGROK_CMD=%LOCALAPPDATA%\Microsoft\WindowsApps\ngrok.exe"
-    goto RUN_NGROK
-)
-
-goto RUN_LOCAL
-
-:RUN_NGROK
-echo.
-echo ============================================================
-echo   Menghubungkan ke ngrok tunnel port 5173...
-echo   Tekan Ctrl+C untuk keluar dan mematikan semua server.
-echo ============================================================
-echo.
-%NGROK_CMD% http 5173
-goto SHUTDOWN
 
 :RUN_LOCAL
 echo.
@@ -121,7 +89,6 @@ echo   Frontend : http://localhost:5173
 echo   Backend  : http://localhost:8000
 echo   API Docs : http://localhost:8000/docs
 echo ============================================================
-echo   ngrok tidak ditemukan. Berjalan dalam mode lokal.
 echo.
 echo Membuka browser: http://localhost:5173
 start http://localhost:5173
@@ -135,7 +102,6 @@ echo.
 echo Menghentikan semua server SIGALON...
 taskkill /F /FI "WINDOWTITLE eq SIGALON Backend*" /T >nul 2>&1
 taskkill /F /FI "WINDOWTITLE eq SIGALON Frontend*" /T >nul 2>&1
-taskkill /F /IM ngrok.exe >nul 2>&1
 powershell -NoProfile -Command "Get-CimInstance Win32_Process -ErrorAction SilentlyContinue | Where-Object { ($_.Name -eq 'python.exe' -or $_.Name -eq 'node.exe') -and $_.CommandLine -like '*SIGALON*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }" >nul 2>&1
 powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 8000,5173 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }" >nul 2>&1
 echo [OK] Semua server telah dimatikan dengan bersih.

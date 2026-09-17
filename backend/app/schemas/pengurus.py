@@ -8,12 +8,7 @@ from app.schemas.auth import AuthUser, Role
 
 
 class PengurusOut(AuthUser):
-    """Akun pengurus untuk halaman kelola akun: `AuthUser` + status aktif.
-
-    `aktif` sengaja tidak ikut `AuthUser` biasa — di dalam sesi nilainya selalu
-    True (yang nonaktif tidak bisa masuk), jadi mengirimkannya di sana cuma
-    menyiratkan pilihan yang tidak ada.
-    """
+    """Akun pengurus untuk halaman kelola akun: `AuthUser` + status aktif."""
 
     aktif: bool
 
@@ -26,11 +21,7 @@ class CalonOut(BaseModel):
 
 
 class JabatanOut(BaseModel):
-    """Satu jabatan di padukuhan, terisi maupun kosong.
-
-    Daftarnya diturunkan dari alamat warga, bukan disimpan — lihat
-    `app/data/pengurus.py:daftar_jabatan`.
-    """
+    """Satu jabatan di padukuhan, terisi maupun kosong."""
 
     #: Kunci, mis. `RT:019/001` — lihat `pengurus.kode_jabatan_dari()`.
     kode: str
@@ -72,12 +63,7 @@ class WargaPilihan(BaseModel):
 
 
 class PengurusBaru(BaseModel):
-    """Mengisi satu jabatan kosong. `role`/`rw`/`rt` menunjuk jabatan mana.
-
-    Orangnya ditunjuk lewat `wargaId`, bukan nama yang diketik: nama dari
-    klien tidak bisa diperiksa, sedangkan Kode Warga bisa dicocokkan ke data
-    penduduk — termasuk wilayahnya.
-    """
+    """Mengisi satu jabatan kosong. `role`/`rw`/`rt` menunjuk jabatan mana."""
 
     username: str = Field(min_length=3, max_length=32)
     password: str = Field(min_length=8)
@@ -103,9 +89,7 @@ class PasswordBaru(BaseModel):
 
 
 class JabatanWilayahPublik(BaseModel):
-    """Satu RT (atau induk RW) di bagan publik: nomor wilayah + nama
-    pemegangnya. `nama` kosong berarti jabatan itu belum ada akunnya —
-    frontend menandainya "Belum diisi", bukan menyembunyikannya."""
+    """Satu RT (atau induk RW) di bagan publik: nomor wilayah + nama pemegangnya."""
 
     nomor: str
     nama: Optional[str] = None
@@ -116,14 +100,7 @@ class RwPublik(JabatanWilayahPublik):
 
 
 class StrukturOrganisasiPublik(BaseModel):
-    """Bagan pengurus untuk halaman profil publik.
-
-    TANPA username, id, atau status akun — beda dari `JabatanOut` yang
-    dipakai Admin. `dukuh`/`rw` diturunkan dari `pengurus.daftar_jabatan()`,
-    sumber yang sama dipakai halaman kelola akun. `lpm` datang dari tabel
-    terpisah (`app/data/lpm.py`): Ketua LPM bukan salah satu dari empat peran
-    akun (ADMIN/DUKUH/RW/RT), jadi tidak punya baris di tabel `pengurus`.
-    """
+    """Bagan pengurus untuk halaman profil publik."""
 
     dukuh: Optional[str] = None
     rw: list[RwPublik] = []

@@ -53,13 +53,7 @@ async def http_exception_handler(request, exc: HTTPException) -> JSONResponse:
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc: RequestValidationError) -> JSONResponse:
-    """Payload yang tidak lolos skema juga dijawab `{"message": ...}`.
-
-    Tanpa ini FastAPI menjawab `{"detail": [...]}`, yang tidak dibaca
-    interceptor axios — yang sampai ke layar cuma "Request failed with status
-    code 422", kalimat yang tidak menolong siapa pun. Yang dikirim galat
-    PERTAMA saja: form menampilkannya di satu baris Alert, bukan daftar.
-    """
+    """Payload yang tidak lolos skema juga dijawab `{"message": ...}`."""
     galat = exc.errors()[0]
     # `loc` berbentuk ("body", "judul"); yang berguna bagi pembaca kolomnya.
     kolom = ".".join(str(bagian) for bagian in galat["loc"][1:])
@@ -89,11 +83,7 @@ def health() -> dict[str, str]:
 
 @app.on_event("startup")
 def _startup() -> None:
-    """Bootstrap akun ADMIN pertama, lalu ringkasan keadaan data.
-
-    Tidak ada kredensial yang dicetak: begitu tabelnya berisi data pendataan
-    sungguhan, log server jadi tempat bocornya.
-    """
+    """Bootstrap akun ADMIN pertama, lalu ringkasan keadaan data."""
     bootstrap()
     migrasi_foto_ke_disk()
     seed_titik_lokasi()

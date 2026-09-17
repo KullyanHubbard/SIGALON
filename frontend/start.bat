@@ -8,7 +8,7 @@ if not exist .env (
     >> .env echo # Daftar lengkap beserta penjelasannya ada di frontend/README.md.
     >> .env echo.
     >> .env echo # Base URL API backend. /api = lewat proxy dev server (vite.config.ts) ke
-    >> .env echo # localhost:8000, jadi satu origin — cukup satu tunnel ngrok, tanpa CORS.
+    >> .env echo # localhost:8000, jadi satu origin, tanpa CORS.
     >> .env echo # Isi URL penuh (mis. http://localhost:8000) hanya kalau memang mau langsung.
     >> .env echo VITE_API_BASE_URL=/api
     >> .env echo.

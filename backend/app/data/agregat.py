@@ -1,9 +1,4 @@
-"""Helper cacah yang dipakai lebih dari satu router statistik.
-
-Sebelumnya `infografis.py` dan `publik.py` masing-masing menulis ulang
-`_format_rw`, `_umur`, dan pengelompokan umurnya sendiri. Satu tempat saja:
-kalau batas kelompok umur berubah, dua halaman ikut berubah bersamaan.
-"""
+"""Helper cacah yang dipakai lebih dari satu router statistik."""
 
 from collections import Counter
 from dataclasses import dataclass
@@ -38,12 +33,7 @@ URUTAN_PENDIDIKAN = (
 
 
 def _dua_digit(kode: str) -> str:
-    """`'019'` -> `'19'`, `'001'` -> `'01'`.
-
-    Nol di depan adalah format penyimpanan yang mengikuti kartu keluarga (tiga
-    digit); yang dibaca orang dua digit. Nomor tiga digit sungguhan (`'100'`)
-    tidak dipotong, dan kode nol semua tidak jadi string kosong.
-    """
+    """`'019'` -> `'19'`, `'001'` -> `'01'`."""
     return (kode.lstrip("0") or "0").rjust(2, "0")
 
 
@@ -122,11 +112,7 @@ class CacahDasar:
 
 
 def cacah_dasar(orang: Iterable[Penduduk]) -> CacahDasar:
-    """Total jiwa, laki-laki, perempuan, dan kepala keluarga dalam satu lintasan.
-
-    `KEPALA_KELUARGA` diturunkan dari `statusHubunganKeluarga` — nomor KK sendiri
-    tidak didata (lihat CLAUDE.md §1).
-    """
+    """Total jiwa, laki-laki, perempuan, dan kepala keluarga dalam satu lintasan."""
     warga = list(orang)
     return CacahDasar(
         total=len(warga),
@@ -149,19 +135,7 @@ class RingkasanBansos:
 
 
 def ringkasan_bansos(orang: Iterable[Penduduk]) -> RingkasanBansos:
-    """Cacah penerima BPNT/PKH beserta rinciannya untuk grafik.
-
-    Ditulis di sini, bukan di tiap router: sebelumnya blok yang sama persis
-    berdiri di `infografis.py` dan dua tempat di `publik.py`. Menambah jenis
-    bantuan baru berarti menyuntingnya di tiga tempat, dan yang terlewat tidak
-    memunculkan galat apa pun — angkanya cuma diam-diam berbeda antar halaman.
-
-    `perBansos` sengaja memakai kategori yang SALING LEPAS (BPNT saja, PKH saja,
-    keduanya) supaya jumlah ketiganya sama dengan `totalPenerima` — grafiknya
-    tidak menghitung orang yang sama dua kali. `totalBpnt`/`totalPkh` justru
-    bertumpang tindih, karena itu yang ditanya kalau soalnya "berapa penerima
-    BPNT" tanpa peduli dia juga menerima PKH.
-    """
+    """Cacah penerima BPNT/PKH beserta rinciannya untuk grafik."""
     warga = list(orang)
     punya = [(p, set(getattr(p, "bansos", []) or ())) for p in warga]
     bpnt_saja = sum(1 for _, b in punya if "BPNT" in b and "PKH" not in b)

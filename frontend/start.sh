@@ -10,7 +10,7 @@ if [ ! -f .env ]; then
 # Daftar lengkap beserta penjelasannya ada di frontend/README.md.
 
 # Base URL API backend. `/api` = lewat proxy dev server (vite.config.ts) ke
-# localhost:8000, jadi satu origin — cukup satu tunnel ngrok, tanpa CORS.
+# localhost:8000, jadi satu origin, tanpa CORS.
 # Isi URL penuh (mis. http://localhost:8000) hanya kalau memang mau langsung.
 VITE_API_BASE_URL=/api
 

@@ -1,14 +1,9 @@
-"""Nama Ketua LPM untuk bagan struktur organisasi publik — satu baris tunggal.
+"""Nama Ketua LPM untuk bagan organisasi publik — satu baris tunggal.
 
-Bukan bagian dari `pengurus`: LPM tidak punya login, tidak punya akun di tabel
-`pengurus`. Tapi pergantiannya tetap membutuhkan persetujuan Dukuh lewat sistem
-pergantian yang sama (`app/data/pergantian.py`).
+LPM tidak punya akun di tabel `pengurus`, tapi pergantiannya tetap lewat
+persetujuan Dukuh. Kosong: Admin isi langsung. Terisi: harus diajukan.
 
-Kalau LPM masih kosong, Admin mengisi langsung (tanpa persetujuan). Kalau sudah
-terisi, Admin mengajukan pergantian yang harus disetujui Dukuh.
-
-`warga_id` menghubungkan LPM ke data warga: nama ikut dari data penduduk
-(bukan diketik), dan satu orang satu jabatan bisa diperiksa.
+`warga_id` menghubungkan ke data warga supaya nama tidak diketik manual.
 """
 
 from app.core.config import settings

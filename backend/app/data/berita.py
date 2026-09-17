@@ -1,18 +1,8 @@
 """Berita padukuhan: tulis, sunting, hapus. Tabel `berita` di SQLite.
 
-Sebelum ini berita tinggal di `localStorage` peramban yang menulisnya, jadi
-tulisan Dukuh tidak pernah sampai ke satu pun pengunjung. Yang dipindahkan cuma
-penyimpanannya; bentuk datanya tetap sama seperti yang sudah dibaca frontend.
-
-**Foto disimpan utuh sebagai data URL di kolomnya**, bukan sebagai berkas di
-disk. Harganya jelas dan dipilih sadar: hapus berita = hapus satu baris, tanpa
-berkas yatim yang tertinggal; backup tetap menyalin satu file `.db`; dan tidak
-ada direktori unggahan yang harus dijaga izinnya.
-
-ponytail: ceilingnya `daftar()` — ia mengirim seluruh foto sekaligus, jadi tiap
-muat `/berita` membawa ±800 KB per berita berfoto. Puluhan berita masih wajar
-untuk satu padukuhan; begitu lewat dari itu, simpan berkasnya di disk lalu
-sajikan lewat StaticFiles dan sisakan path-nya saja di kolom ini.
+Foto ditulis sebagai berkas di `data/uploads/berita/`, kolom `foto`
+menyimpan path-nya. `migrasi_foto_ke_disk()` mengangkat baris lama
+yang masih berisi data URL.
 """
 
 import base64
@@ -30,11 +20,7 @@ _KOLOM = "id, slug, judul, foto, tanggalTerbit, penulis, isi"
 
 
 def _simpan_foto_disk(foto_input: str) -> str:
-    """Mengubah data URL base64 menjadi berkas `.webp` terkompresi di disk server.
-
-    Mengembalikan path URL relatif `/uploads/berita/<filename>.webp` yang disajikan
-    oleh StaticFiles. Jika input sudah berupa URL atau kosong, dikembalikan apa adanya.
-    """
+    """Mengubah data URL base64 menjadi berkas `.webp` terkompresi di disk server."""
     if not foto_input or not foto_input.startswith("data:image/"):
         return foto_input
 
@@ -80,10 +66,7 @@ def _hapus_foto_disk(foto_url: str) -> None:
 
 
 def migrasi_foto_ke_disk() -> None:
-    """Migrasi foto base64 yang sudah ada di DB menjadi file .webp di disk.
-
-    Di-run saat startup agar file .db yang membengkak langsung mengecil.
-    """
+    """Migrasi foto base64 yang sudah ada di DB menjadi file .webp di disk."""
     with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         rows = conn.execute("SELECT id, foto FROM berita WHERE foto LIKE 'data:image/%'").fetchall()
         for r in rows:
@@ -94,22 +77,12 @@ def migrasi_foto_ke_disk() -> None:
 
 
 def ke_slug(judul: str) -> str:
-    """Judul -> potongan URL. Huruf kecil, hanya a-z/0-9, sisanya jadi tanda
-    hubung. Tanpa normalisasi diakritik: judul berita padukuhan berbahasa
-    Indonesia, yang tidak punya huruf beraksen."""
+    """Judul -> potongan URL."""
     return re.sub(r"^-+|-+$", "", re.sub(r"[^a-z0-9]+", "-", judul.lower()))
 
 
 def _slug_unik(conn: sqlite3.Connection, judul: str, kecuali_id: str | None) -> str:
-    """Slug yang belum dipakai berita lain. Bentrok diberi akhiran angka, bukan
-    ditolak: dua kegiatan tahunan bernama sama itu wajar ("Kerja Bakti
-    Bulanan"), dan menolaknya memaksa penulis mengarang judul yang tidak dia
-    inginkan.
-
-    `id IS NOT ?` menangani dua hal sekaligus: saat menyunting, berita itu
-    sendiri tidak dianggap bentrok dengan dirinya; saat menulis baru
-    (`kecuali_id` None) tidak ada baris yang dikecualikan.
-    """
+    """Slug yang belum dipakai berita lain."""
     dasar = ke_slug(judul) or "berita"
     terpakai = {
         r["slug"]
@@ -124,8 +97,7 @@ def _slug_unik(conn: sqlite3.Connection, judul: str, kecuali_id: str | None) -> 
 
 
 def daftar() -> list[Berita]:
-    """Semua berita, terbaru menurut tanggal kejadian/berita (tanggalTerbit DESC).
-    Tanggal sama diurutkan menurut `rowid DESC` (yang ditulis belakangan lebih dulu)."""
+    """Semua berita, terbaru menurut tanggal kejadian/berita (tanggalTerbit DESC)."""
     with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         rows = conn.execute(
             f"SELECT {_KOLOM} FROM berita ORDER BY tanggalTerbit DESC, rowid DESC"
@@ -166,11 +138,7 @@ def tambah(baru: BeritaBaru) -> Berita:
 
 
 def ubah(id: str, isi: BeritaBaru) -> Berita | None:
-    """Ganti seluruh isi satu berita. `None` kalau id-nya tidak ada.
-
-    Slug ikut berubah saat judul disunting: tautan lama jadi mati, dan itu
-    dipilih sadar daripada URL yang bertentangan dengan judul di layar.
-    """
+    """Ganti seluruh isi satu berita. `None` kalau id-nya tidak ada."""
     lama = by_id(id)
     if lama is None:
         return None
@@ -194,8 +162,7 @@ def ubah(id: str, isi: BeritaBaru) -> Berita | None:
 
 
 def hapus(id: str) -> bool:
-    """True kalau ada yang terhapus. False = id tidak dikenal, dan pemanggilnya
-    yang memutuskan itu 404 atau bukan."""
+    """True kalau ada yang terhapus."""
     lama = by_id(id)
     if lama and lama.foto:
         _hapus_foto_disk(lama.foto)

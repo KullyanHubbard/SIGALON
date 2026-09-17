@@ -1,9 +1,4 @@
-"""Pembangun berkas ekspor data penduduk (.xlsx dan .csv).
-
-Bentuk kolom dan tampilannya disamakan dengan format data penduduk padukuhan
-supaya hasil unduhan pengurus bisa langsung dibaca rapi di Excel atau diimpor
-kembali ke sistem jika dibutuhkan.
-"""
+"""Pembangun berkas ekspor data penduduk (.xlsx dan .csv)."""
 
 import csv
 from datetime import date
@@ -41,7 +36,7 @@ KOLOM_EKSPOR.append(("catatanKematian", "Keterangan Meninggal", 22))
 KOLOM_EKSPOR.append(("alamatAsal", "Alamat Asal", 24))
 
 
-def _nilai(p: Penduduk, field: str) -> object:
+def _nilai(p: Penduduk, field: str) -> str | int:
     """Ekstrak nilai dari objek Penduduk berdasarkan nama field."""
     if field == "umur":
         status = str(getattr(p, "statusKependudukan", "") or "").strip().upper()
@@ -70,7 +65,7 @@ def _nilai(p: Penduduk, field: str) -> object:
 def bikin_excel(daftar: list[Penduduk], judul: str = "DATA PENDUDUK") -> bytes:
     """Buat file Excel (.xlsx) berisi data penduduk dengan styling dokumen resmi."""
     wb = Workbook()
-    ws = wb.active
+    ws = wb.active or wb.create_sheet()
     ws.title = NAMA_SHEET
 
     tipis = Side(style="thin", color="B7B7B7")

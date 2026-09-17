@@ -40,21 +40,14 @@ def ke_auth_user(p: data_pengurus.Pengurus) -> AuthUser:
 def token_sesi(
     creds: HTTPAuthorizationCredentials | None = Depends(_bearer),
 ) -> str:
-    """Token mentah dari header. Dipakai endpoint yang perlu mencabut sesinya
-    sendiri (keluar, ganti password)."""
+    """Token mentah dari header."""
     if creds is None:
         raise HTTPException(401, "Sesi tidak ditemukan. Silakan masuk.")
     return creds.credentials
 
 
 async def current_user(token: str = Depends(token_sesi)) -> AuthUser:
-    """Semua pengurus yang sudah masuk.
-
-    Sesi dicari di tabel `sesi`, lalu akunnya dibaca ulang dari DB. Dua-duanya
-    tiap request, dan itu yang membuat pencabutan berlaku seketika: sesi yang
-    dihapus langsung tidak dikenali, dan akun yang dinonaktifkan langsung
-    tertolak — tidak ada tanda tangan yang tetap sah sampai umurnya habis.
-    """
+    """Semua pengurus yang sudah masuk."""
     pengurus_id = data_sesi.pemilik(token)
     if pengurus_id is None:
         raise HTTPException(401, "Sesi tidak valid atau sudah kedaluwarsa.")
@@ -84,8 +77,7 @@ async def current_admin(user: AuthUser = Depends(current_user)) -> AuthUser:
 
 
 async def current_pengurus(user: AuthUser = Depends(current_user)) -> AuthUser:
-    """Baca data warga. Arah kebalikan `current_admin`: ADMIN ditolak — dia
-    mengelola akun, bukan membaca isi data penduduk & infografis."""
+    """Baca data warga."""
     tolak_kalau_belum_ganti(user)
     if user.role not in ROLE_PENGURUS:
         raise HTTPException(403, "Admin tidak memiliki akses data warga.")
@@ -170,6 +162,5 @@ async def ganti_password_sendiri(
 
 @router.post("/logout", status_code=204)
 async def logout(token: str = Depends(token_sesi)) -> None:
-    """Cabut sesi ini. Sejak sesi tersimpan di server, ini benar-benar mencabut
-    — bukan sekadar melupakan token di browser seperti dulu."""
+    """Cabut sesi ini."""
     data_sesi.akhiri(token)

@@ -1,14 +1,4 @@
-"""Konfigurasi terpusat — satu-satunya tempat nilai yang bisa berbeda antar
-environment (dev/staging/prod) boleh ditulis.
-
-Dibaca dari `backend/.env` bila ada; lihat `backend/README.md` untuk daftar
-lengkapnya. Setiap field punya default yang aman untuk dev, jadi repo tetap
-jalan tanpa `.env` sama sekali.
-
-Nama field sengaja `UPPER_SNAKE_CASE` biar 1:1 dengan nama env var — tidak ada
-aturan pemetaan yang perlu diingat. Ekspornya satu: `settings`. Jangan bikin
-getter tersebar.
-"""
+"""Konfigurasi terpusat: satu-satunya tempat nilai per-environment ditulis."""
 
 from pathlib import Path
 
@@ -40,15 +30,8 @@ class Settings(BaseSettings):
     PORTAL_DATABASE_PATH: str = "./data/portal.db"
 
     # --- Turso (SQLite yang sama, tapi tinggal di cloud) --------------------
-    # Kosong = seluruhnya tetap di file lokal, dan itu yang dipakai saat
-    # ngoding. Diisi hanya pada instalasi yang sudah dipindahkan; cara
-    # mendapatkannya ada di `backend/README.md`.
-    #
-    # Dua database dipisah persis seperti dua filenya, dan pemisahan itu bukan
-    # kerapian belaka: `portal` isinya memang untuk dibaca publik, `sigalon`
-    # isinya data kependudukan. Satu token bocor tidak boleh otomatis membuka
-    # dua-duanya.
-    #
+    # Kosong = tetap file lokal; cara mengisinya ada di `backend/README.md`.
+    # Dua database dipisah supaya satu token bocor tidak membuka dua-duanya.
     # Token = setara password. Tempatnya `backend/.env`, yang sudah di-gitignore.
     TURSO_DATABASE_URL: str = ""
     TURSO_AUTH_TOKEN: str = ""

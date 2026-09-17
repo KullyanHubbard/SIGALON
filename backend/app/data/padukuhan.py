@@ -1,11 +1,4 @@
-"""Keterangan tetap padukuhan: satu baris tunggal di tabel `padukuhan`.
-
-Barisnya BOLEH tidak ada. Selama Admin belum pernah menyimpannya, `ambil()`
-mengembalikan `None` dan frontend memakai nilai bawaannya sendiri
-(`lib/padukuhan.ts`). Itu disengaja: kalau server ikut menyimpan nilai awal,
-ada dua daftar nilai bawaan di dua bahasa yang bisa berbeda diam-diam, dan
-tidak ada yang tahu mana yang menang.
-"""
+"""Keterangan tetap padukuhan: satu baris tunggal di tabel `padukuhan`."""
 
 from app.core.config import settings
 from app.data import db
@@ -25,8 +18,7 @@ def ambil() -> Padukuhan | None:
 
 
 def ubah(baru: Padukuhan) -> Padukuhan:
-    """Simpan seluruh keterangan sekaligus — formnya memang mengirim semuanya,
-    jadi tidak ada perpaduan sebagian yang bisa menyisakan kolom setengah lama."""
+    """Simpan seluruh keterangan sekaligus, bukan per kolom."""
     kolom = [k.strip() for k in _KOLOM.split(",")]
     with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
         conn.execute(

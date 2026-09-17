@@ -1,7 +1,7 @@
 @echo off
 cd /d "%~dp0"
 
-set "DEFAULT=..\docs\DataPendudukGadingKulon-6-09-2026.xlsx"
+set "DEFAULT=..\docs\DataPendudukGadingKulon.xlsx"
 
 echo === Impor data Excel ke SIGALON ===
 echo.

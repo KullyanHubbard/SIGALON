@@ -1,8 +1,4 @@
-"""Hash password.
-
-Token sesi TIDAK di sini — sejak sesi tersimpan di server, token cuma nomor
-acak tanpa arti dan tidak ada yang ditandatangani. Lihat `app/data/sesi.py`.
-"""
+"""Hash password."""
 
 import bcrypt
 

@@ -1,22 +1,4 @@
-"""Sesi login yang tersimpan di server.
-
-Menggantikan JWT. Bedanya satu dan itu yang penting: token di sini cuma nomor
-acak tanpa arti, dan yang menentukan sah atau tidak adalah **adanya baris di
-tabel** — bukan tanda tangan yang tetap berlaku sampai umurnya habis.
-
-Akibatnya:
-
-- **"Keluar" benar-benar mencabut.** Dulu logout cuma melupakan token di
-  browser; kalau tokennya sempat tersalin, ia masih berlaku sampai TTL habis.
-- **Mengganti password memutus sesi lain.** Orang yang curiga passwordnya
-  bocor punya cara menutup pintu, bukan cuma mengganti kuncinya.
-- **Tidak ada rahasia yang bisa salah dipasang.** `JWT_SECRET` bawaan dulu
-  membuat siapa pun bisa memalsukan token; sekarang tidak ada yang bisa
-  dipalsukan karena tidak ada yang ditandatangani.
-
-Harganya: satu query per request. Sudah dibayar sejak Tahap 3a — `current_user`
-memang query DB tiap request untuk memeriksa status `aktif`.
-"""
+"""Sesi login yang tersimpan di server."""
 
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -33,11 +15,7 @@ def _sekarang() -> datetime:
 
 
 def buat(pengurus_id: str) -> str:
-    """Mulai sesi baru, kembalikan tokennya.
-
-    Sekalian membuang sesi yang sudah kedaluwarsa — tidak ada penjadwal di
-    aplikasi ini, jadi pembersihannya menumpang pekerjaan yang memang terjadi.
-    """
+    """Mulai sesi baru, kembalikan tokennya."""
     token = secrets.token_urlsafe(_PANJANG_TOKEN)
     sekarang = _sekarang()
     kedaluwarsa = sekarang + timedelta(hours=settings.SESI_TTL_JAM)

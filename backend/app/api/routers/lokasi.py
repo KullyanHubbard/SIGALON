@@ -1,8 +1,4 @@
-"""Titik lokasi fasilitas dan perangkat desa: dibaca siapa saja, dikelola ADMIN.
-
-- `/publik/titik-lokasi` — tanpa auth. Menampilkan seluruh titik lokasi untuk peta interaktif.
-- `/titik-lokasi*` — menambah, menyunting koordinat & keterangan, menghapus. ADMIN saja.
-"""
+"""Titik lokasi fasilitas dan perangkat desa: dibaca siapa saja, dikelola ADMIN."""
 
 from fastapi import APIRouter, Depends, HTTPException
 

@@ -1,10 +1,9 @@
 """Pergantian pemegang jabatan pengurus: pengajuan + persetujuan.
 
-Admin mengajukan, perangkat desa yang memutuskan. Modul ini memegang seluruh
-aturan siapa boleh menyetujui apa — router cuma memanggil.
+Admin mengajukan, perangkat desa yang memutuskan. Seluruh aturan siapa
+boleh menyetujui apa ada di sini — router cuma memanggil.
 
-Riwayatnya tidak pernah dihapus: inilah catatan permanen perpindahan jabatan.
-Lihat `docs/superpowers/specs/2026-08-26-tahap-2-pengajuan-persetujuan-design.md`.
+Riwayatnya tidak pernah dihapus.
 """
 
 import uuid
@@ -77,13 +76,10 @@ def _sekarang() -> str:
 def penyetuju_untuk(role: str, rw: str | None, rt: str | None) -> list[pg.Pengurus]:
     """Siapa yang harus menyetujui pergantian sebuah jabatan.
 
-    Dihitung ulang tiap kali dipanggil, bukan dibekukan saat pengajuan dibuat:
-    jabatan yang berganti di tengah jalan akan meninggalkan daftar penyetuju
-    yang menunjuk orang yang sudah tidak menjabat.
+    Dihitung ulang tiap dipanggil, bukan dibekukan saat pengajuan dibuat.
 
-    **Jabatan kosong dilewati**, bukan dihitung sebagai suara yang belum masuk —
-    tanpa itu satu jabatan kosong mengunci pergantian secara permanen (spec
-    Tahap 2, "Kursi kosong dilewati" — spec-nya memakai istilah lama).
+    Jabatan kosong DILEWATI, bukan dihitung sebagai suara yang belum masuk —
+    tanpa itu satu jabatan kosong mengunci pergantian secara permanen.
     """
     aktif = [p for p in pg.daftar() if p.aktif]
     dukuh = [p for p in aktif if p.role == pg.ROLE_DUKUH]
@@ -145,13 +141,7 @@ def _ambil(conn, id: str) -> Pengajuan | None:
 
 
 def _pangkas_riwayat_selesai(conn) -> None:
-    """Otomatis memangkas riwayat pergantian yang sudah selesai.
-
-    Menyimpan maksimal `MAKS_RIWAYAT_SELESAI` (4) riwayat pergantian selesai
-    terbaru. Pengajuan selesai (DISETUJUI, DITOLAK, GUGUR) yang melebihi
-    batas dihapus dari DB beserta suaranya agar tidak menumpuk.
-    Pengajuan yang masih berjalan (MENUNGGU) selalu dipertahankan.
-    """
+    """Otomatis memangkas riwayat pergantian yang sudah selesai."""
     rows = conn.execute(
         "SELECT id FROM pengajuan WHERE status != ? ORDER BY diajukan_pada DESC, id DESC",
         (STATUS_MENUNGGU,),
@@ -196,12 +186,10 @@ def _kandidat_masih_sah(kandidat_id: str) -> bool:
 def _kandidat_sudah_menjabat(kandidat_id: str) -> pg.Pengurus | None:
     """Apakah warga ini sudah memegang jabatan aktif?
 
-    Mengembalikan `Pengurus`-nya kalau ya, `None` kalau belum. Dipakai dua
-    kali: saat pengajuan dibuat (menolak langsung) dan saat akan diterapkan
-    (menggugurkan kalau keadaannya berubah di antara dua momen itu).
+    Dipakai dua kali: saat pengajuan dibuat, dan saat akan diterapkan
+    (menggugurkan kalau keadaannya berubah di antaranya).
 
-    Juga memeriksa tabel LPM: satu orang tidak boleh merangkap LPM dan
-    jabatan pengurus lainnya.
+    Tabel LPM ikut diperiksa: satu orang tidak boleh merangkap.
     """
     if not kandidat_id:
         return None
@@ -274,11 +262,7 @@ def _evaluasi(conn, p: Pengajuan) -> Pengajuan:
 
 
 def _terapkan(conn, p: Pengajuan) -> None:
-    """Pindahkan atau kosongkan jabatan.
-
-    Untuk jabatan berakun (Dukuh/RW/RT): pemegang lama dinonaktifkan.
-    Untuk LPM: langsung ubah tabel `lpm`. Jika kandidat kosong, dikosongkan.
-    """
+    """Pindahkan atau kosongkan jabatan."""
     nama_lama: str | None = None
 
     if p.jabatan_kode == "LPM":
@@ -304,8 +288,7 @@ def _terapkan(conn, p: Pengajuan) -> None:
 
 
 def ajukan(*, jabatan_kode: str, kandidat_id: str, oleh: str) -> Pengajuan:
-    """Usulkan pergantian atau pengosongan pemegang sebuah jabatan. Raise `TidakBoleh` kalau
-    melanggar salah satu aturan di spec Tahap 2."""
+    """Usulkan pergantian atau pengosongan pemegang sebuah jabatan."""
     from app.data.store import semua_penduduk
 
     # --- Resolve target jabatan ---
@@ -450,11 +433,7 @@ def daftar(*, hanya_berjalan: bool = False) -> list[Pengajuan]:
 
 
 def menunggu_jawaban(pengurus_id: str) -> list[Pengajuan]:
-    """Pengajuan yang menunggu jawaban orang ini, dan hanya itu.
-
-    Penyetuju tidak pernah melihat pengajuan yang bukan urusannya — bukan
-    disembunyikan di layar, memang tidak ikut dikembalikan.
-    """
+    """Pengajuan yang menunggu jawaban orang ini, dan hanya itu."""
     orang = pg.cari_by_id(pengurus_id)
     if orang is None or not orang.aktif:
         return []
@@ -468,8 +447,7 @@ def menunggu_jawaban(pengurus_id: str) -> list[Pengajuan]:
 
 
 def jawab(*, pengajuan_id: str, pengurus_id: str, setuju: bool) -> Pengajuan:
-    """Satu suara. Raise `TidakBoleh` kalau bukan penyetujunya, pengajuannya
-    sudah selesai, atau orang ini sudah pernah menjawab."""
+    """Satu suara."""
     with _db() as conn:
         p = _ambil(conn, pengajuan_id)
         if p is None:

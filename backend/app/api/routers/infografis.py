@@ -18,11 +18,7 @@ router = APIRouter(tags=["infografis"])
 
 @router.get("/infografis", response_model=InfografisData)
 async def infografis(user: AuthUser = Depends(current_pengurus)) -> InfografisData:
-    """Agregat wilayah pemanggilnya, bukan seluruh padukuhan.
-
-    Grafik Ketua RT 004 jadi tentang RT 004 saja — termasuk `perDusun`, yang
-    karena itu cuma berisi satu batang. Wajar, bukan cacat.
-    """
+    """Agregat wilayah pemanggilnya, bukan seluruh padukuhan."""
     warga = hanya_aktif(penduduk_untuk(user))
     cacah = cacah_dasar(warga)
     bansos = ringkasan_bansos(warga)

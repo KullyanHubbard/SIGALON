@@ -1,10 +1,9 @@
 """Akun perangkat desa (Dukuh/RW/RT) — satu-satunya akun yang ada.
 
-Dibaca lewat koneksi sekali pakai per operasi, BUKAN lewat cache `store.py`:
-tabelnya ditulis saat runtime (ADMIN menambah & menonaktifkan akun), jadi
-cache impor-sekali akan basi.
+Koneksi sekali pakai per operasi, BUKAN cache `store.py`: tabelnya
+ditulis saat runtime, jadi cache impor-sekali akan basi.
 
-Password selalu di-hash bcrypt, tidak pernah disimpan polos.
+Password selalu di-hash bcrypt, tidak pernah polos.
 """
 
 import uuid
@@ -46,8 +45,7 @@ class Pengurus:
 
     @property
     def kode_jabatan(self) -> str:
-        """Kunci jabatan yang dipegang, dipakai menjodohkan akun dengan daftar
-        jabatan yang diturunkan dari data penduduk."""
+        """Kunci jabatan yang dipegang, untuk menjodohkan akun dengan daftar jabatan."""
         return kode_jabatan_dari(self.role, self.rw, self.rt)
 
 
@@ -59,11 +57,7 @@ def normalisasi_wilayah(w: str | None) -> str | None:
 
 
 def jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
-    """Label jabatan diturunkan, tidak disimpan — kalau ikut disimpan, ia bisa
-    berbeda dari wilayahnya diam-diam saat salah satunya diedit.
-
-    Yang menentukan adalah `role`; `rw`/`rt` cuma mengisi nomornya.
-    """
+    """Label jabatan diturunkan dari role+RW+RT, tidak disimpan."""
     rw = normalisasi_wilayah(rw)
     rt = normalisasi_wilayah(rt)
     if role == ROLE_ADMIN:
@@ -80,16 +74,7 @@ def jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
 
 
 def kode_jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
-    """Kunci satu jabatan, mis. `DUKUH`, `RW:019`, `RT:019/001`.
-
-    Bukan label yang dibaca orang — itu `jabatan_dari()`. Kunci ini yang
-    menjodohkan akun dengan daftar jabatan, dan yang disimpan di kolom
-    `pengajuan.jabatan_kode`.
-
-    RT memakai RW-nya sekaligus karena nomor RT hanya unik di dalam RW-nya —
-    "RT 001" tanpa RW bisa menunjuk dua jabatan berbeda begitu padukuhan punya
-    dua RW yang sama-sama bernomor RT 001.
-    """
+    """Kunci satu jabatan, mis. `DUKUH`, `RW:019`, `RT:019/001`."""
     rw_bersih = normalisasi_wilayah(rw) or ""
     rt_bersih = normalisasi_wilayah(rt) or ""
     if role == ROLE_RW:
@@ -114,10 +99,9 @@ def cocok_wilayah(
 ) -> bool:
     """Apakah seorang warga boleh memegang jabatan ini.
 
-    Ketua RT harus warga RT itu, Ketua RW harus warga RW itu, dan Dukuh boleh
-    dari mana pun di padukuhan. Ditulis di sini, bukan di router: dipakai dua
-    jalur — mengisi jabatan kosong dan mengajukan pergantian — dan aturannya
-    tidak boleh berbeda di antara keduanya.
+    Ketua RT dari RT itu, Ketua RW dari RW itu, Dukuh dari mana pun.
+    Di sini, bukan di router: dipakai dua jalur dan aturannya tidak boleh
+    berbeda di antara keduanya.
     """
     if role == ROLE_RT:
         return _samakan_wilayah(warga_rw, rw) and _samakan_wilayah(warga_rt, rt)
@@ -146,8 +130,7 @@ def _dari_row(row) -> Pengurus:
 
 
 def cari_by_username(username: str) -> tuple[Pengurus, bytes] | None:
-    """Pengurus + hash password-nya. Hash sengaja dikembalikan terpisah, bukan
-    jadi field `Pengurus` — supaya tidak ikut terbawa ke response API."""
+    """Pengurus + hash password-nya."""
     with _db() as conn:
         row = conn.execute(
             "SELECT * FROM pengurus WHERE username = ?", (username,)
@@ -283,10 +266,9 @@ def ubah(
 def ganti_password(id: str, password: str, *, oleh_admin: bool) -> bool:
     """Ganti password satu akun.
 
-    `oleh_admin=True` (reset) menyalakan kembali `harus_ganti_password`:
-    password yang sempat diketahui Admin tidak boleh berlaku untuk membaca
-    apa pun. `oleh_admin=False` (pemiliknya sendiri) memadamkannya, dan itu
-    terjadi dalam operasi yang sama supaya tidak ada celah di antaranya.
+    `oleh_admin=True` (reset) menyalakan kembali `harus_ganti_password`;
+    `False` (pemiliknya sendiri) memadamkannya, dalam operasi yang sama
+    supaya tidak ada celah di antaranya.
     """
     with _db() as conn:
         with conn:
@@ -325,17 +307,7 @@ class Jabatan:
 
 
 def daftar_jabatan() -> list[Jabatan]:
-    """Seluruh jabatan pengurus, diturunkan dari alamat warga di data penduduk.
-
-    Tidak ada tabel atau berkas konfigurasi berisi daftar RW/RT: pasangan yang
-    benar-benar ada di padukuhan sudah tercatat di kolom alamat tiap warga.
-    Menyimpannya di tempat kedua berarti dua sumber kebenaran yang bisa berbeda
-    diam-diam ketika padukuhan memekarkan sebuah RT.
-
-    Konsekuensinya diterima sadar: jabatan baru baru muncul setelah ada warga
-    ber-RT itu di data — dan itu urutan yang benar, RT tanpa warga tidak perlu
-    akun.
-    """
+    """Seluruh jabatan pengurus, diturunkan dari alamat warga di data penduduk."""
     from app.data.store import semua_penduduk
 
     warga = semua_penduduk()
@@ -369,12 +341,7 @@ def daftar_jabatan() -> list[Jabatan]:
 
 
 def bootstrap() -> None:
-    """Buat akun ADMIN pertama kalau tabel masih kosong.
-
-    Menolak jalan (bukan memakai default) ketika tabel kosong tapi env belum
-    diisi: default berarti ada instalasi yang berjalan dengan password yang
-    tertulis di kode publik.
-    """
+    """Buat akun ADMIN pertama kalau tabel masih kosong."""
     with _db() as conn:
         ada = conn.execute("SELECT 1 FROM pengurus LIMIT 1").fetchone()
     if ada:

@@ -1,18 +1,7 @@
-"""Sumber data penduduk yang dibaca router — satu-satunya tempat data warga
-masuk ke proses, jadi router tidak perlu tahu datanya lahir dari mana.
+"""Sumber data penduduk yang dibaca router. DB kosong tetap kosong.
 
-Datanya tinggal di SQLite (`settings.DATABASE_PATH`). **Tidak ada seeding
-otomatis**: DB kosong tetap kosong, dan itu disengaja.
-
-Dulu seluruh tabel dibaca ke memori sekali saat modul diimpor. Itu dicabut di
-Tahap 3a: begitu ada endpoint tulis, cache seperti itu basi tanpa ada yang
-menyadarinya. Konstantanya dihapus, bukan disimpan sebagai alias — apa pun yang
-masih menunjuk ke sana harus gagal terang-terangan.
-
-ponytail: tiap panggilan membuka koneksi dan membaca seluruh tabel (~385 baris
-pada satu padukuhan), lalu menyaring di Python. Sederhana, dan menghapus
-seluruh urusan "kapan cache harus disegarkan". Pindahkan penyaringannya ke
-`WHERE` di SQL kalau datanya nanti puluhan ribu baris.
+ponytail: menyaring di Python, pindahkan ke `WHERE` SQL kalau datanya
+sudah puluhan ribu baris.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -28,51 +17,18 @@ from app.schemas.penduduk import Penduduk
 
 
 def semua_penduduk() -> list[Penduduk]:
-    """Seluruh warga padukuhan, tanpa batas wilayah.
-
-    Baris ber-`deletedAt` = salah input, datanya memang tidak pernah valid,
-    jadi tidak pernah ikut daftar maupun statistik. Disaring di sini, satu
-    tempat, supaya tiap router tidak perlu mengingatnya. Tetap tersimpan di DB —
-    yang menyaring adalah pembacaan, bukan penyimpanan.
-
-    `statusKependudukan` PINDAH/MENINGGAL **ikut dikembalikan** di sini: mereka
-    masih harus tampil di daftar penduduk, kalau tidak pengurus tidak punya cara
-    membatalkan penandaan yang keliru. Yang mengeluarkannya dari HITUNGAN adalah
-    `hanya_aktif`, dipanggil di jalur statistik.
-    """
+    """Seluruh warga, tanpa batas wilayah. Baris ber-`deletedAt` disaring di sini."""
     with db.koneksi(settings.DATABASE_FILE) as conn:
         return [p for p in db.muat(conn) if p.deletedAt is None]
 
 
 def hanya_aktif(daftar: list[Penduduk]) -> list[Penduduk]:
-    """Buang warga yang sudah pindah atau meninggal.
-
-    Dipakai **hanya di jalur statistik** — total penduduk, demografi,
-    infografis, statistik publik. Angka "jumlah penduduk" harus berarti orang
-    yang benar-benar tinggal di sini sekarang; kalau yang pindah dan meninggal
-    ikut dihitung, angkanya makin jauh dari kenyataan tiap tahun tanpa ada yang
-    menyadarinya.
-
-    Daftar penduduk sengaja TIDAK memakai ini: warga bertanda PINDAH/MENINGGAL
-    tetap harus terlihat dan bisa diubah, kalau tidak penandaan yang keliru
-    tidak bisa dibatalkan.
-    """
+    """Buang warga yang pindah/meninggal. Hanya dipakai di jalur statistik."""
     return [w for w in daftar if w.statusKependudukan == "AKTIF"]
 
 
 def penduduk_untuk(user: AuthUser) -> list[Penduduk]:
-    """Warga yang boleh dilihat pengurus ini.
-
-    Dukuh seluruh padukuhan, Ketua RW se-RW-nya, Ketua RT se-RT-nya. Aturannya
-    dipinjam dari `pengurus.cocok_wilayah` — predikat yang sama yang menentukan
-    siapa boleh memegang sebuah jabatan, karena memang pertanyaannya sama:
-    wilayah mana yang jadi tanggung jawab orang ini.
-
-    Dipanggil SETIAP endpoint baca. Router tidak pernah menyaring sendiri —
-    kalau tidak, satu endpoint yang lupa jadi lubang yang tidak kelihatan.
-
-    ADMIN tidak pernah sampai ke sini: `current_pengurus` menolaknya lebih dulu.
-    """
+    """Warga yang boleh dilihat pengurus ini."""
     return [
         w
         for w in semua_penduduk()
@@ -95,11 +51,7 @@ WIB = timezone(timedelta(hours=7))
 
 
 def _batas_periode(periode: str) -> str:
-    """Awal bulan BERIKUTNYA dalam ISO — pemisah "sudah" dan "belum terjadi".
-
-    Mutasi tepat pada batas ini sudah di luar periode: ia terjadi di bulan
-    sesudahnya, jadi harus ikut dibatalkan.
-    """
+    """Awal bulan BERIKUTNYA dalam ISO: pemisah sudah dan belum terjadi."""
     tahun, bulan = (int(x) for x in periode.split("-"))
     tahun_berikut, bulan_berikut = (tahun + 1, 1) if bulan == 12 else (tahun, bulan + 1)
     # Dikembalikan sebagai UTC: `db.mutasi_sejak` membandingkannya sebagai TEKS,
@@ -117,14 +69,7 @@ def periode_sekarang() -> str:
 
 
 def periode_terawal() -> str:
-    """Bulan paling lampau yang masih bisa dihitung.
-
-    Konservatif dengan sengaja: selama buku mutasi kosong, jawabannya bulan
-    berjalan. Bulan antara "fitur dipasang" dan "mutasi pertama" sebenarnya
-    masih bisa dihitung, tapi tidak ada yang mencatat kapan fitur dipasang —
-    dan menawarkan bulan yang tidak bisa dipertanggungjawabkan lebih buruk
-    daripada menawarkan lebih sedikit.
-    """
+    """Bulan paling lampau yang masih bisa dihitung."""
     with db.koneksi(settings.DATABASE_FILE) as conn:
         pada = db.mutasi_terawal(conn)
     if pada is None:
@@ -133,15 +78,7 @@ def periode_terawal() -> str:
 
 
 def penduduk_pada(periode: str) -> list[Penduduk]:
-    """Warga sebagaimana keadaannya di akhir bulan `periode` (`YYYY-MM`).
-
-    Ambil keadaan sekarang, lalu batalkan tiap mutasi yang terjadi SESUDAH
-    periode itu, dari yang paling akhir. Warga yang baru masuk sesudahnya
-    (`dari IS NULL`) dikeluarkan — waktu itu dia memang belum ada.
-
-    Periode berjalan pun lewat jalur yang sama: tidak ada mutasi sesudahnya,
-    jadi hasilnya persis `semua_penduduk()`.
-    """
+    """Warga sebagaimana keadaannya di akhir bulan `periode` (`YYYY-MM`)."""
     batas = _batas_periode(periode)
     warga = {w.id: w for w in semua_penduduk()}
     with db.koneksi(settings.DATABASE_FILE) as conn:
@@ -166,12 +103,7 @@ def penduduk_pada(periode: str) -> list[Penduduk]:
 
 
 def _boleh_pindah_wilayah(user: AuthUser) -> bool:
-    """Hanya Dukuh yang boleh mengubah RT/RW seorang warga.
-
-    Kalau Ketua RT boleh, ia bisa memindahkan orang keluar dari wilayahnya
-    sendiri — dan begitu tersimpan, ia tidak bisa lagi menyentuh orang itu untuk
-    membatalkannya. Kesalahan yang tidak bisa diperbaiki oleh yang melakukannya.
-    """
+    """Hanya Dukuh yang boleh mengubah RT/RW seorang warga."""
     return user.role == pg.ROLE_DUKUH
 
 
@@ -190,8 +122,7 @@ def _beda(lama: Penduduk, baru: Penduduk) -> list[str]:
 
 
 def _default_alamat(alamat: dict | None) -> dict:
-    """Isi otomatis nama desa, kecamatan, kabupaten, provinsi, dan kode pos
-    jika tidak diisi oleh pengurus, sesuai padukuhan Donokerto."""
+    """Isi otomatis desa/kecamatan/kabupaten/provinsi/kode pos kalau kosong."""
     bawaan = {
         "desa": "Donokerto",
         "kecamatan": "Turi",
@@ -207,17 +138,7 @@ def _default_alamat(alamat: dict | None) -> dict:
 
 
 def kode_warga_baru(kode_keluarga: str | None = None) -> tuple[str, str]:
-    """Bangkitkan (kode_warga, kode_keluarga) berikutnya yang belum terpakai.
-
-    Format di Padukuhan:
-    - Keluarga: `K0001` s/d `K0230` dst.
-    - Warga: `W0001-1`, `W0002-3` dst (indeks per keluarga).
-
-    Jika `kode_keluarga` diberikan (menambah anggota ke keluarga yang sudah ada):
-      Cari nomor anggota terakhir di keluarga itu, lalu nomor berikutnya.
-    Jika `kode_keluarga` tidak diberikan (keluarga baru):
-      Cari nomor keluarga tertinggi di DB, naikkan 1, dan nomor anggota pertama = 1.
-    """
+    """Bangkitkan (kode_warga, kode_keluarga) berikutnya yang belum terpakai."""
     with db.koneksi(settings.DATABASE_FILE) as conn:
         semua_baris = conn.execute("SELECT id, kodeKeluarga FROM penduduk").fetchall()
 
@@ -275,11 +196,7 @@ def _pastikan_boleh(user: AuthUser, rw: str, rt: str, aksi: str) -> None:
 
 
 def ubah_warga(user: AuthUser, id: str, ubahan: dict) -> Penduduk:
-    """Simpan perubahan satu warga. Raise `TidakBoleh` kalau melanggar izin.
-
-    `ubahan` berisi field `Penduduk` yang mau diganti; `alamat` boleh sebagian.
-    Field yang tidak dikirim tidak disentuh.
-    """
+    """Simpan perubahan satu warga. Raise `TidakBoleh` kalau melanggar izin."""
     lama = next((w for w in penduduk_untuk(user) if w.id == id), None)
     if lama is None:
         # Sama seperti GET: warga di luar wilayah dijawab "tidak ada", bukan
@@ -357,8 +274,8 @@ def ubah_warga(user: AuthUser, id: str, ubahan: dict) -> Penduduk:
 def tambah_warga(user: AuthUser, data: dict) -> Penduduk:
     """Tambah warga baru di wilayah pengurus ini.
 
-    RT/RW-nya diperiksa terhadap wilayah penambah — kalau tidak, menambah jadi
-    jalan memutar untuk memindahkan orang ke wilayah lain.
+    RT/RW diperiksa terhadap wilayah penambah — kalau tidak, menambah jadi
+    jalan memutar untuk memindahkan orang.
     """
     alamat = _default_alamat(data.get("alamat") or {})
     _pastikan_boleh(user, alamat.get("rw", ""), alamat.get("rt", ""), "menambah warga")
@@ -387,12 +304,7 @@ def tambah_warga(user: AuthUser, data: dict) -> Penduduk:
 
 
 def hapus_warga(user: AuthUser, id: str) -> Penduduk:
-    """Hapus satu warga (soft-delete dengan deletedAt) karena salah input.
-
-    Bukan untuk warga yang pindah atau meninggal (itu mutasi status).
-    Warga yang dihapus tidak akan muncul lagi di daftar maupun statistik,
-    tapi barisnya tetap ada di database untuk integritas riwayat.
-    """
+    """Soft-delete satu warga (`deletedAt`) karena salah input."""
     lama = next((w for w in penduduk_untuk(user) if w.id == id), None)
     if lama is None:
         raise TidakBoleh("Warga tidak ditemukan.")

@@ -1,18 +1,4 @@
-"""Pergantian jabatan: Admin mengajukan, perangkat desa yang memutuskan.
-
-Pembagiannya tegas dan itu inti seluruh mekanisme ini:
-
-- `POST /pergantian` dan `GET /pergantian` — **ADMIN saja**. Ia mengajukan dan
-  melihat, tidak pernah menyetujui. Pencarian warga untuk memilih kandidat ada
-  di `GET /pengurus/warga` — dipakai juga saat mengisi jabatan kosong, jadi
-  tempatnya bukan di sini.
-- `GET /pergantian/menunggu` dan `POST /pergantian/{id}/jawab` — **pengurus
-  saja**. Admin ditolak `current_pengurus`, jadi tidak ada jalan memutar lewat
-  panggilan langsung.
-
-Seluruh aturannya ada di `app/data/pergantian.py`; di sini cuma penerjemahan
-ke HTTP.
-"""
+"""Pergantian jabatan: Admin mengajukan, perangkat desa yang memutuskan."""
 
 from fastapi import APIRouter, Depends, HTTPException
 

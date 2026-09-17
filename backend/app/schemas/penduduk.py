@@ -76,8 +76,7 @@ class Alamat(BaseModel):
 
 
 class Penduduk(BaseModel):
-    """Satu warga. `id` UUID dibangkitkan saat impor — NIK & Nomor KK tidak
-    disimpan sama sekali, jadi tidak ada kunci turunan data."""
+    """Satu warga."""
 
     id: str
     kodeKeluarga: Optional[str] = None
@@ -118,11 +117,7 @@ class PaginatedPenduduk(BaseModel):
 
 
 class AlamatUbah(BaseModel):
-    """Bagian alamat yang mau diganti. Yang tidak dikirim tidak disentuh.
-
-    `rt`/`rw` hanya boleh diisi Dukuh — ditegakkan `app/data/store.py`, bukan di
-    sini, supaya aturannya satu tempat dengan yang menegakkan batas wilayah.
-    """
+    """Bagian alamat yang mau diganti. Yang tidak dikirim tidak disentuh."""
 
     jalan: Optional[str] = None
     rt: Optional[str] = None
@@ -135,8 +130,7 @@ class AlamatUbah(BaseModel):
 
 
 class PendudukUbah(BaseModel):
-    """Field yang tidak dikirim tidak diubah. `id` tidak pernah bisa diganti —
-    itu Kode Warga, satu-satunya kunci yang bertahan melewati impor."""
+    """Field yang tidak dikirim tidak diubah."""
 
     kodeKeluarga: Optional[str] = None
     nama: Optional[str] = None
@@ -168,8 +162,7 @@ class PendudukUbah(BaseModel):
 
 
 class PendudukBaru(BaseModel):
-    """Warga baru. `id` (Kode Warga) TIDAK ada di sini — dibangkitkan aplikasi,
-    karena pengurus tidak punya cara tahu kode mana yang belum terpakai."""
+    """Warga baru."""
 
     kodeKeluarga: Optional[str] = None
     nama: str
@@ -197,10 +190,7 @@ class PendudukBaru(BaseModel):
 
 
 class FilterOpsi(BaseModel):
-    """Pilihan filter yang BUKAN enum — nilainya cuma bisa diketahui dari isi
-    data. Enum (agama, pendidikan, ...) sudah ada di frontend `labels.ts`, jadi
-    tidak dikirim lewat jaringan.
-    """
+    """Pilihan filter yang BUKAN enum — nilainya cuma bisa diketahui dari isi data."""
 
     rt: list[str]
     rw: list[str]
@@ -214,16 +204,7 @@ class Distribusi(BaseModel):
 
 
 class RincianRw(BaseModel):
-    """Agregat satu wilayah (RW, atau satu RT di dalamnya) untuk halaman depan.
-
-    Cacah saja, tanpa nama/alamat — sama seperti induknya, isi model ini
-    terbuka untuk siapa pun. Label pada tiap `Distribusi` masih enum mentah
-    (`'ISLAM'`); penerjemahannya milik frontend (`features/penduduk/labels.ts`).
-
-    Modelnya rekursif supaya rincian RT persis sebentuk dengan rincian RW —
-    satu model, satu tampilan di frontend. Kedalamannya cuma dua: entri di
-    dalam `perRt` selalu ber-`perRt` kosong.
-    """
+    """Agregat satu wilayah (RW, atau satu RT di dalamnya) untuk halaman depan."""
 
     label: str
     totalPenduduk: int

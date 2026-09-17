@@ -102,9 +102,8 @@ def demo() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         settings.PORTAL_DATABASE_PATH = str(Path(tmp) / "portal_uji.db")
         try:
-            # Awalnya harus murni kosong (0 titik)
             assert len(semua()) == 0, "DB baru harus mulai dengan 0 titik"
-            
+
             # Uji tambah titik manual oleh admin
             baru = tambah(TitikLokasiBaru(
                 nama="Gardu Ronda RT 01",
@@ -121,12 +120,10 @@ def demo() -> None:
             assert ambil(baru.id) is not None
             assert len(semua()) == 1
 
-            # Uji ubah
             ubah(baru.id, TitikLokasiUbah(x=20.0, y=65.0))
             terubah = ambil(baru.id)
             assert terubah is not None and terubah.x == 20.0 and terubah.y == 65.0
 
-            # Uji hapus
             assert hapus(baru.id) is True
             assert ambil(baru.id) is None
             assert len(semua()) == 0, "Setelah dihapus harus kembali 0 titik dan tidak ada yang bangkit otomatis"

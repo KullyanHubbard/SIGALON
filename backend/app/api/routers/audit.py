@@ -1,17 +1,4 @@
-"""Riwayat perubahan: siapa mengubah apa, kapan, dari apa jadi apa.
-
-Yang dilihat mengikuti kewenangan, dan tumpangnya SATU ARAH saja:
-
-- **PENGURUS** melihat riwayat data warga di wilayahnya, **ditambah seluruh
-  aksi Admin** (buat akun, reset password, berita, profil padukuhan). Aman:
-  aksi Admin tidak memuat data warga, dan pengurus memang sudah boleh membaca
-  data warga wilayahnya. Yang didapat pengawasan atas Admin.
-- **ADMIN** melihat aksi Admin saja, dan **tidak pernah** riwayat data warga.
-  Arah ini tertutup rapat dan bukan karena kelalaian: baris warga membawa nama
-  orang beserta perubahannya (`Jamilah Kurniawan · AKTIF -> MENINGGAL`), jadi
-  membukanya membatalkan "Admin nol akses data warga" lewat pintu belakang —
-  ia tidak bisa membuka daftar penduduk, tapi bisa membaca siapa meninggal.
-"""
+"""Riwayat perubahan: siapa mengubah apa, kapan, dari apa jadi apa."""
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -41,13 +28,9 @@ def _keluaran(r: dict) -> CatatanAudit:
 def riwayat(user: AuthUser = Depends(current_user)) -> list[CatatanAudit]:
     """Riwayat yang boleh dibaca orang ini.
 
-    Sengaja memakai `current_user`, bukan `current_pengurus` atau
-    `current_admin`: dua peran memakai endpoint yang sama tapi mendapat isi
-    yang berbeda, dan pembagiannya ditentukan di sini.
-
-    Karena itu pemeriksaan "password awal belum diganti" harus dipanggil manual:
-    ia menumpang pada dua dependency yang justru TIDAK dipakai di sini, dan
-    riwayat warga membawa nama orang beserta perubahannya.
+    Memakai `current_user`, bukan `current_pengurus`/`current_admin`: dua
+    peran memakai endpoint yang sama dengan isi berbeda. Karena itu
+    pemeriksaan password-awal harus dipanggil manual di sini.
     """
     tolak_kalau_belum_ganti(user)
 

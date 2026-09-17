@@ -71,11 +71,7 @@ def statistik_publik(
         description="Bulan statistik, format YYYY-MM. Kosongkan untuk data saat ini.",
     ),
 ) -> StatistikPublik:
-    """Statistik agregat warga yang aktif pada akhir bulan yang diminta.
-
-    Format query parameter `YYYY-MM` divalidasi dengan regex — parameter
-    yang salah ketik lebih baik tahu daripada dikasih angka bulan lain.
-    """
+    """Statistik agregat warga yang aktif pada akhir bulan yang diminta."""
     # Yang pindah & meninggal tidak ikut dihitung — lihat `store.hanya_aktif`.
     semua = hanya_aktif(penduduk_pada(periode) if periode else semua_penduduk())
     cacah = cacah_dasar(semua)
@@ -107,16 +103,7 @@ def statistik_publik(
 
 @router.get("/publik/struktur-organisasi", response_model=StrukturOrganisasiPublik)
 def struktur_organisasi_publik() -> StrukturOrganisasiPublik:
-    """Bagan pengurus untuk halaman profil — Dukuh & Ketua RW/RT beserta nama
-    pemegangnya kalau ada. Dibangun dari `pengurus.daftar_jabatan()`, sumber
-    yang sama dipakai halaman Admin, jadi pergantian jabatan yang disetujui
-    otomatis terlihat di sini tanpa deploy ulang.
-
-    RW/RT hanya muncul kalau ada warga AKTIF ber-alamat di situ —
-    `daftar_jabatan()` menurunkan wilayahnya dari data warga, bukan daftar
-    tetap. Jabatan tanpa akun aktif tampil dengan `nama=None`; frontend yang
-    menandainya "Belum diisi".
-    """
+    """Bagan pengurus untuk halaman profil — Dukuh & Ketua RW/RT beserta nama pemegangnya kalau ada."""
     jabatan = data_pengurus.daftar_jabatan()
 
     dukuh = next(

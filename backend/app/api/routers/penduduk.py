@@ -39,15 +39,7 @@ _FILTER_LANGSUNG = (
 
 @dataclass
 class FilterPenduduk:
-    """Seluruh filter `GET /penduduk`, ditulis SEKALI dan dipakai bersama oleh
-    daftar dan ekspor lewat `Depends()`.
-
-    Dulu keempat belas parameter ini diketik ulang di kedua endpoint. Bahayanya
-    bukan panjangnya, tapi diamnya: satu filter baru yang lupa ditambahkan di
-    sisi ekspor membuat pengurus menyaring di layar, mengunduh, lalu mendapat
-    seluruh warga di dalam filenya — tanpa satu pun pesan salah. Sebagai satu
-    dataclass, menambah filter = menambah satu field, dan dua-duanya ikut.
-    """
+    """Seluruh filter `GET /penduduk`, dipakai bersama oleh daftar dan ekspor."""
 
     search: str = ""
     jenisKelamin: str = ""
@@ -67,13 +59,10 @@ class FilterPenduduk:
 
 def saring(daftar: list[Penduduk], f: FilterPenduduk) -> list[Penduduk]:
     """Semua filter digabung AND; nilai kosong tidak menyaring apa pun.
-
     `search` mencocokkan nama dan Kode Warga (`id`).
 
-    ponytail: disaring di memori atas daftar yang dikembalikan `store.py`,
-    bukan lewat SQL — `store.penduduk_untuk()` query database tiap dipanggil
-    (tidak ada cache sejak Tahap 3a), dan data satu padukuhan muat di RAM.
-    Pindah ke WHERE clause kalau datanya nanti puluhan ribu baris.
+    ponytail: disaring di memori, bukan lewat SQL. Pindah ke WHERE kalau
+    datanya nanti puluhan ribu baris.
     """
     q = f.search.strip().lower()
     hasil = daftar
@@ -113,14 +102,7 @@ def saring(daftar: list[Penduduk], f: FilterPenduduk) -> list[Penduduk]:
 def warga_tersaring(
     user: AuthUser, f: FilterPenduduk, kegiatan: str
 ) -> list[Penduduk]:
-    """Warga yang boleh dilihat `user`, sesudah disaring — pintu yang sama untuk
-    daftar maupun ekspor.
-
-    Batas wilayahnya ditegakkan dua lapis: `penduduk_untuk` menentukan warga
-    mana yang terlihat, dan pemeriksaan di bawah menolak permintaan yang
-    menyebut wilayah orang lain secara eksplisit. `kegiatan` cuma mengganti satu
-    kata di pesan galatnya ("mengakses"/"mengekspor").
-    """
+    """Warga yang boleh dilihat `user`, sesudah disaring — pintu yang sama untuk daftar maupun ekspor."""
     if user.role == "RT":
         if f.rw and not _samakan_wilayah(f.rw, user.rw):
             raise HTTPException(
@@ -189,11 +171,7 @@ def ekspor_penduduk(
     f: FilterPenduduk = Depends(),
     user: AuthUser = Depends(current_pengurus),
 ) -> Response:
-    """Ekspor data warga ke file Excel (.xlsx) atau CSV (.csv) sesuai hak akses & filter.
-
-    Filternya `FilterPenduduk` yang sama persis dengan `GET /penduduk`, jadi apa
-    yang terlihat di layar itu juga yang masuk ke berkasnya.
-    """
+    """Ekspor data warga ke file Excel (.xlsx) atau CSV (.csv) sesuai hak akses & filter."""
     hasil = warga_tersaring(user, f, "mengekspor")
 
     tgl = date.today().isoformat()
@@ -223,15 +201,7 @@ def ekspor_penduduk(
 # ber-parameter, kalau tidak "filter-opsi" akan terbaca sebagai sebuah id.
 @router.get("/penduduk/filter-opsi", response_model=FilterOpsi)
 def filter_opsi(user: AuthUser = Depends(current_pengurus)) -> FilterOpsi:
-    """Pilihan filter yang bukan enum — hanya bisa diketahui dari isi data.
-
-    Ikut menyempit sesuai wilayah pemanggilnya: Ketua RT 004 tidak melihat
-    daftar RT lain di dropdown-nya.
-
-    `pekerjaan` teks bebas di Excel, jadi daftarnya ikut kotor kalau pengurus
-    mengetik tidak konsisten. Diterima sadar: daftar pekerjaan satu padukuhan
-    tidak bisa dijadikan enum tertutup dari awal.
-    """
+    """Pilihan filter yang bukan enum — hanya bisa diketahui dari isi data."""
     milik_saya = penduduk_untuk(user)
     warga_aktif = [p for p in milik_saya if p.statusKependudukan == "AKTIF"]
 
@@ -265,8 +235,7 @@ def filter_opsi(user: AuthUser = Depends(current_pengurus)) -> FilterOpsi:
 
 @router.get("/penduduk/{id}", response_model=Penduduk)
 def get_by_id(id: str, user: AuthUser = Depends(current_pengurus)) -> Penduduk:
-    """404 — bukan 403 — untuk warga di luar wilayahnya. 403 memberi tahu bahwa
-    orang itu ada; 404 tidak memberi tahu apa-apa."""
+    """404 — bukan 403 — untuk warga di luar wilayahnya."""
     for p in penduduk_untuk(user):
         if p.id == id:
             return p
@@ -277,8 +246,7 @@ def get_by_id(id: str, user: AuthUser = Depends(current_pengurus)) -> Penduduk:
 def tambah_penduduk(
     payload: PendudukBaru, user: AuthUser = Depends(current_pengurus)
 ) -> Penduduk:
-    """Tambah warga baru di wilayah pengurus ini. Kode Warganya dibangkitkan
-    aplikasi."""
+    """Tambah warga baru di wilayah pengurus ini. Kode Warganya dibangkitkan aplikasi."""
     try:
         return store.tambah_warga(user, payload.model_dump())
     except store.TidakBoleh as e:
@@ -289,11 +257,7 @@ def tambah_penduduk(
 def ubah_penduduk(
     id: str, payload: PendudukUbah, user: AuthUser = Depends(current_pengurus)
 ) -> Penduduk:
-    """Ubah data satu warga. Field yang tidak dikirim tidak disentuh.
-
-    Mengubah RT/RW (memindahkan warga) hanya boleh Dukuh — lihat
-    `app/data/store.py:ubah_warga`.
-    """
+    """Ubah data satu warga. Field yang tidak dikirim tidak disentuh."""
     ubahan = payload.model_dump(exclude_unset=True)
     if "alamat" in ubahan and ubahan["alamat"] is not None:
         ubahan["alamat"] = {

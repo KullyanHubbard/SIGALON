@@ -1,12 +1,6 @@
-"""Jejak perubahan: siapa mengubah apa, kapan, dan dari apa jadi apa.
+"""Jejak perubahan: siapa mengubah apa, kapan, dari apa jadi apa.
 
-Sejak Tahap 3b ini tersimpan permanen di tabel `audit_log`. Sebelumnya cuma
-`print()` ke console dan hilang tiap restart — memadai selagi yang tercatat
-hanya kelola akun, tapi begitu tiga puluh sekian orang bisa mengubah data
-warga, catatan itu berhenti jadi kemewahan.
-
-Tetap ikut dicetak ke console: waktu ada yang aneh, orang membaca log server
-lebih dulu sebelum membuka database.
+Tersimpan permanen di tabel `audit_log`, sekaligus dicetak ke console.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -42,11 +36,7 @@ RETENSI_AUDIT_HARI = 180
 
 
 def _pangkas_audit_lama() -> None:
-    """Buang entri audit_log yang lebih tua dari `RETENSI_AUDIT_HARI`.
-
-    Menumpang di `catat_audit()` — tidak ada penjadwal di aplikasi ini, jadi
-    pembersihan dilakukan setiap kali catatan baru masuk.
-    """
+    """Buang entri audit_log yang lebih tua dari `RETENSI_AUDIT_HARI`."""
     batas = (
         datetime.now(timezone.utc) - timedelta(days=RETENSI_AUDIT_HARI)
     ).isoformat(timespec="seconds")
@@ -63,9 +53,7 @@ def catat_audit(
     sasaran_id: str | None = None,
     perubahan: str = "",
 ) -> None:
-    """`sasaran` = nama atau username yang dikenai tindakan — yang dibaca orang.
-    `sasaran_id` = Kode Warga atau id akun, yang dipakai menyaring per wilayah.
-    """
+    """`sasaran` = nama atau username yang dikenai tindakan — yang dibaca orang."""
     waktu = datetime.now(timezone.utc).isoformat(timespec="seconds")
     with db.koneksi(settings.DATABASE_FILE) as conn:
         with conn:
@@ -80,11 +68,7 @@ def catat_audit(
 
 
 def riwayat(aksi: tuple[str, ...] = (), batas: int = 200) -> list[dict]:
-    """Catatan terbaru lebih dulu, disaring per jenis aksi.
-
-    Penyaringan per WILAYAH tidak dilakukan di sini: itu butuh tahu warga siapa
-    yang boleh dilihat pemanggilnya, dan aturan itu tinggal di `store.py`.
-    """
+    """Catatan terbaru lebih dulu, disaring per jenis aksi."""
     sql = "SELECT * FROM audit_log"
     args: list[object] = []
     if aksi:

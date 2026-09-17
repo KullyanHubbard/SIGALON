@@ -1,20 +1,4 @@
-"""Kelola akun perangkat desa. ADMIN saja.
-
-Yang dikelola adalah **jabatan** (Dukuh, Ketua RW 19, Ketua RT 1, …), bukan
-sekadar daftar akun: satu jabatan dipegang satu orang, dan orangnya berganti
-sewaktu-waktu. Daftar jabatannya diturunkan dari alamat warga di data
-penduduk.
-
-Tidak ada DELETE: akun yang pernah dipakai tidak dihapus, cukup dinonaktifkan
-(`aktif = 0`). Menghapusnya membuat jejak audit menunjuk ke akun yang tidak
-ada lagi.
-
-**Tidak ada cara mengosongkan jabatan dari sini.** Jabatan hanya menjadi
-kosong lewat pergantian yang disetujui (`app/api/routers/pergantian.py`). Kalau
-Admin masih bisa mencabut akses sendiri, ia bisa mengosongkannya lalu mengisi
-langsung — dan seluruh mekanisme persetujuan jadi hiasan yang bisa dilewati
-dalam dua klik.
-"""
+"""Kelola akun perangkat desa. ADMIN saja."""
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -48,11 +32,7 @@ def _keluaran(p: data.Pengurus) -> PengurusOut:
 
 @router.get("", response_model=list[JabatanOut])
 def daftar_jabatan() -> list[JabatanOut]:
-    """Seluruh jabatan padukuhan, terisi maupun kosong.
-
-    Yang dikembalikan jabatan, bukan akun: halaman Admin memang menampilkan
-    jabatan yang ada di padukuhan, termasuk yang belum ada pemegangnya.
-    """
+    """Seluruh jabatan padukuhan, terisi maupun kosong."""
     return [
         JabatanOut(
             kode=j.kode,
@@ -75,8 +55,7 @@ MAKS_HASIL = 20
 
 
 def _warga_untuk_jabatan(warga_id: str, role: str, rw: str | None, rt: str | None):
-    """Warga yang sah memegang jabatan ini, atau `HTTPException` yang
-    menjelaskan kenapa tidak."""
+    """Warga yang sah memegang jabatan ini, atau `HTTPException` yang menjelaskan kenapa tidak."""
     warga = next((w for w in semua_penduduk() if w.id == warga_id), None)
     if warga is None or warga.statusKependudukan != "AKTIF":
         raise HTTPException(404, "Warga tidak ditemukan atau sudah tidak aktif.")
@@ -95,19 +74,13 @@ def cari_warga(
     jabatanKode: str = Query(""),
     _admin: AuthUser = Depends(current_admin),
 ) -> list[WargaPilihan]:
-    """Cari warga untuk dipilih Admin — mengisi jabatan kosong maupun
-    mengajukan pergantian. Nama + RT/RW saja.
+    """Cari warga untuk dipilih Admin. Nama + RT/RW saja.
 
-    `jabatanKode` opsional: kalau diisi, hasilnya cuma warga yang boleh memegang
-    jabatan itu (Ketua RT dari RT-nya, Ketua RW dari RW-nya, Dukuh dari mana
-    pun).
+    `jabatanKode` opsional: menyempitkan ke warga yang boleh memegang
+    jabatan itu.
 
-    Ini satu-satunya celah Admin ke data warga, dan tidak terhindarkan: ia harus
-    bisa menunjuk orang. Yang bisa dilakukan adalah membuatnya sesempit
-    mungkin — tidak ada tanggal lahir, agama, pekerjaan, maupun alamat jalan.
-
-    Ditulis SEBELUM rute ber-parameter mana pun di router ini supaya "warga"
-    tidak terbaca sebagai sebuah id.
+    Satu-satunya celah Admin ke data warga — jangan tambah field.
+    Ditulis SEBELUM rute ber-parameter supaya `warga` tidak terbaca jadi id.
     """
     kata = q.strip().lower()
     if len(kata) < MIN_CARI:

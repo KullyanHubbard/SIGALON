@@ -1,31 +1,4 @@
-"""Isi tabel penduduk dari file Excel hasil pendataan pengurus. Kolomnya
-dibaca lewat app/schemas/penduduk.py, disimpan lewat app/data/db.py (sudah
-tervalidasi self-check-nya sendiri).
-
-Dipakai untuk **mengisi data pertama kali**. Sejak Tahap 3b, sumber kebenaran
-data warga adalah aplikasi — pengurus mengubah dan menambah lewat layar, bukan
-lewat file ini.
-
-Setiap impor MENIMPA seluruh tabel penduduk, jadi skrip ini **menolak jalan
-kalau database sudah berisi** kecuali diberi `--timpa-semua`.
-
-Tidak ada dedup: tanpa NIK tidak ada kunci yang bisa dipercaya untuk mengenali
-orang yang sama antar-impor, dan kandidat penggantinya (nama + tanggal lahir +
-alamat) gagal persis pada kasus yang paling mungkin terjadi di satu padukuhan:
-dua orang senama.
-
-Kolom dicocokkan lewat **nama header**, bukan urutan. Pengurus boleh
-menggeser, jadi mengandalkan urutan berarti data masuk ke kolom yang salah
-tanpa ada yang menyadarinya.
-
-Backend boleh tetap menyala saat skrip ini jalan — SQLite aman ditulis
-sementara proses lain membacanya, dan sejak Tahap 3a tidak ada cache: hasilnya
-langsung kelihatan di API tanpa restart.
-
-Pakai:
-    .venv/bin/pip install openpyxl   # sekali, alat ini saja yang butuh
-    .venv/bin/python -m app.data.impor_excel ../docs/DataPendudukGadingKulon-6-09-2026.xlsx
-"""
+"""Isi tabel penduduk dari file Excel hasil pendataan pengurus."""
 
 from collections import Counter, defaultdict
 from datetime import date, datetime

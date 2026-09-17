@@ -1,12 +1,6 @@
 """Berita padukuhan: dibaca siapa saja, ditulis ADMIN.
 
-Dua kelompok path dalam satu berkas, dan pemisahannya disengaja:
-
-- `/publik/berita*` — tanpa auth, sama seperti `/publik/statistik`. Isinya
-  memang untuk dibaca umum, jadi tidak ada yang perlu disembunyikan di sini.
-- `/berita*` — menulis, menyunting, menghapus. ADMIN saja, dan tiap tindakan
-  masuk log audit: berita adalah wajah padukuhan di luar, jadi harus terlacak
-  siapa menerbitkan apa.
+`/publik/berita*` tanpa auth; `/berita*` ADMIN saja + log audit.
 """
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -53,8 +47,7 @@ def tulis_berita(
 def sunting_berita(
     id: str, payload: BeritaBaru, admin: AuthUser = Depends(current_admin)
 ) -> Berita:
-    """Ganti seluruh isi satu berita — form mengirim semua kolom sekaligus,
-    tidak ada penyuntingan per kolom."""
+    """Ganti seluruh isi satu berita sekaligus."""
     lama = data.by_id(id)
     berita = data.ubah(id, payload)
     if berita is None or lama is None:
@@ -73,8 +66,7 @@ def sunting_berita(
 
 @router.delete("/berita/{id}", status_code=204)
 def hapus_berita(id: str, admin: AuthUser = Depends(current_admin)) -> None:
-    """Berita BOLEH dihapus, beda dari data warga & akun: yang ini isi situs,
-    bukan catatan kependudukan. Jejaknya tetap tertinggal di log audit."""
+    """Hapus berita. Boleh, beda dari data warga & akun: ini isi situs."""
     berita = data.by_id(id)
     if berita is None or not data.hapus(id):
         raise HTTPException(404, "Berita tidak ditemukan.")

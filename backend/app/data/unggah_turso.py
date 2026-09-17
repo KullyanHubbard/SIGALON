@@ -1,25 +1,13 @@
 """Unggah isi database lokal ke Turso. Sekali jalan, bukan sinkronisasi.
 
-Ada karena perkakas resmi Turso **tidak punya versi Windows** — rilisnya cuma
-macOS dan Linux, jadi dokumentasi resminya menyuruh memasang WSL lebih dulu
-sekadar untuk menumpang Linux. Berkas ini menghapus keharusan itu: databasenya
-dibuat lewat browser di dasbor Turso, lalu isinya diunggah dari sini memakai
-`libsql` yang memang sudah ada di `requirements.txt`.
+Ada karena perkakas resmi Turso tidak punya versi Windows.
 
     python -m app.data.unggah_turso                  # dua-duanya
     python -m app.data.unggah_turso kependudukan     # satu saja
-    python -m app.data.unggah_turso portal
     python -m app.data.unggah_turso semua --timpa-semua
 
-**Menolak jalan kalau database tujuan sudah berisi**, kecuali diberi
-`--timpa-semua` yang harus diketik penuh — aturan yang sama dengan
-`impor_excel`, dan alasannya juga sama: perintah yang menimpa data warga tidak
-boleh bisa terjadi karena satu panah atas di riwayat terminal.
-
-Skemanya **disalin dari file sumber**, bukan dari konstanta `db.SKEMA_*`. Yang
-diunggah harus persis apa yang ada sekarang, termasuk indeks dan kolom hasil
-tambalan; konstanta di `db.py` menggambarkan database yang baru dibuat, bukan
-yang sudah jalan berbulan-bulan.
+Menolak jalan kalau database tujuan sudah berisi, kecuali `--timpa-semua`.
+Skemanya disalin dari file sumber, bukan dari konstanta `db.SKEMA_*`.
 """
 
 import sqlite3
@@ -54,16 +42,7 @@ _AWALAN_BUAT = (
 
 
 def _boleh_sudah_ada(sql: str) -> str:
-    """Kembalikan `IF NOT EXISTS` yang dibuang SQLite.
-
-    SQLite menyimpan skema di `sqlite_master` **tanpa** frasa itu, walau aslinya
-    ditulis begitu. Akibatnya memutar ulang skema selalu gagal begitu tabelnya
-    sudah ada — persis yang terjadi saat unggahan diulang dengan
-    `--timpa-semua`.
-
-    Dikembalikan di sini, bukan dengan menelan galat "already exists": menelan
-    galat berarti salah ketik nama tabel pun ikut lewat tanpa bunyi.
-    """
+    """Kembalikan `IF NOT EXISTS` yang dibuang SQLite."""
     for awalan in _AWALAN_BUAT:
         if sql.upper().startswith(awalan):
             if "IF NOT EXISTS" in sql[: len(awalan) + 14].upper():
