@@ -57,7 +57,7 @@ def main() -> int:
         import libsql
     except ModuleNotFoundError:
         print("  Pustaka libsql belum terpasang, data terbaru tidak bisa ditarik.")
-        print("  Jalankan backend\start.bat sekali, lalu ulangi backup ini.")
+        print(r"  Jalankan backend\start.bat sekali, lalu ulangi backup ini.")
         return 1
 
     for nama, berkas, url, token, hitungan in tersambung:

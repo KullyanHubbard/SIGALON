@@ -1,4 +1,4 @@
-import type { AuthUser, Role } from '@/features/auth/types';
+import type { AuthUser, Role } from '@/types/auth';
 
 export interface Pengurus extends AuthUser {
   aktif: boolean;

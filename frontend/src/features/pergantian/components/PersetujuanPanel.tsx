@@ -2,7 +2,7 @@ import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { pesanError } from '@/lib/utils';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { useJawabPengajuan, useMenungguJawaban } from '../hooks/use-pergantian';
 
 function normalisasi(v?: string | null): string {

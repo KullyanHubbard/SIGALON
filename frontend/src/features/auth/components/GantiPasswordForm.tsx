@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/Button';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { pesanError } from '@/lib/utils';
 import { homePathForRole } from '@/routes/role-utils';
-import { useAuth, useGantiPassword, useLogout } from '../hooks/use-auth';
+import { useAuth, useLogout } from '@/hooks/use-auth';
+import { useGantiPassword } from '../hooks/use-auth';
 import { gantiPasswordSchema, type GantiPasswordFormValues } from '../schemas';
 import { AuthLayout } from './AuthLayout';
 

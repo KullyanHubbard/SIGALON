@@ -2,7 +2,7 @@ import type { RefObject } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from '@/components/ui/Logo';
 import { cn } from '@/lib/utils';
-import type { Role } from '@/features/auth/types';
+import type { Role } from '@/types/auth';
 import ikonMenu from '@/assets/icons/nav/menu.svg';
 import ikonUserCircle from '@/assets/icons/nav/user-circle.svg';
 import ikonKeyRound from '@/assets/icons/nav/key-round.svg';

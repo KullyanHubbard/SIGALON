@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { labelWilayah } from '@/features/auth/wilayah';
 import { InfografisView } from '@/features/infografis/components/InfografisView';
 import { useInfografis } from '@/features/infografis/hooks/use-infografis';

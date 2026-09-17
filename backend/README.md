@@ -182,7 +182,7 @@ Excel pendataan:
 ```bash
 ./import-excel.sh
 # atau:
-.venv/bin/python -m app.data.impor_excel ../docs/DataPendudukGadingKulon-6-09-2026.xlsx --timpa-semua
+.venv/bin/python -m app.data.impor_excel ../docs/DataPendudukGadingKulon.xlsx --timpa-semua
 ```
 
 **Setiap impor MENIMPA seluruh tabel penduduk**, jadi skrip ini **menolak jalan

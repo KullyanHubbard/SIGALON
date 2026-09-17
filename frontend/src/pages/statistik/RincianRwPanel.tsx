@@ -1,6 +1,6 @@
-import { PanelDistribusiCard } from '@/components/ui/PanelDistribusiCard';
+import { PanelDistribusiCard } from '@/components/charts/PanelDistribusiCard';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
-import { StatCard } from '@/components/ui/StatCard';
+import { StatCard } from '@/components/charts/StatCard';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { STAT_WARGA } from '@/lib/stat-warga';
 import { cn } from '@/lib/utils';

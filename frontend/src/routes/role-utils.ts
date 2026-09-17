@@ -1,4 +1,4 @@
-import type { Role } from '@/features/auth/types';
+import type { Role } from '@/types/auth';
 import { paths } from './paths';
 
 export function homePathForRole(role: Role | undefined): string {

@@ -115,25 +115,37 @@ NIA-WEB/
 │   └── src/
 │       ├── app/              # provider global (React Query, Router)
 │       ├── components/
+│       │   ├── charts/       # komponen grafik (Distribusi*, StatCard, donut-geometri)
 │       │   ├── layout/       # Sidebar, Navbar, DashboardLayout, PublicShell
 │       │   └── ui/           # primitif UI reusable (Button, Card, Table, …)
 │       ├── config/           # akses env tervalidasi (env.ts)
 │       ├── features/         # kode per-domain (lihat §4)
-│       │   ├── auth/             # login + sesi + ganti password
+│       │   ├── auth/             # form login & ganti password (sesinya di lib/)
 │       │   ├── pengurus/         # jabatan & akun (ADMIN)
 │       │   ├── pergantian/       # pengajuan + persetujuan jabatan
 │       │   ├── audit/            # riwayat perubahan
 │       │   ├── penduduk/         # daftar + filter kategori
+│       │   ├── titik-lokasi/     # titik peta + PetaOpenStreetMap
 │       │   ├── infografis/       # agregat untuk pengurus (di balik login)
 │       │   └── statistik-publik/ # agregat halaman depan (tanpa login)
-│       ├── hooks/            # hook generik lintas fitur (useDebounce, …)
-│       ├── lib/              # klien & util lintas fitur (api-client, utils, query-client)
+│       ├── hooks/            # hook lintas fitur (use-auth, use-padukuhan, use-debounce, …)
+│       ├── lib/              # klien & util lintas fitur (api-client, auth-store, auth-api,
+│       │                     #   token-storage, utils, query-client)
 │       ├── pages/            # komponen halaman (route target)
 │       ├── routes/           # definisi route, guards, paths
 │       ├── styles/           # CSS global + Tailwind
-│       └── types/            # tipe lintas fitur (api.ts)
+│       └── types/            # tipe lintas fitur (api.ts, auth.ts, statistik.ts)
 └── backend/                  # FastAPI (aktif, penduduk di SQLite)
 ```
+
+**Sesi login tinggal di luar `features/auth`, dan itu disengaja.** `Role`,
+`AuthUser`, dan `Session` dibaca `pengurus`, `pergantian`, `penduduk`, guards,
+dan menu sidebar — sementara §4 melarang `features/A` mengimpor internal
+`features/B`. Jadi tipenya di `types/auth.ts`, penyimpanan sesinya di
+`lib/auth-store.ts` + `lib/token-storage.ts` + `lib/auth-api.ts`, dan
+`useAuth`/`useLogout` di `hooks/use-auth.ts`. Yang tertinggal di fiturnya cuma
+yang memang milik layar login: form, skema Zod, `useLoginPetugas`,
+`useGantiPassword`.
 
 ## 4. Arsitektur Berbasis Fitur (feature-first)
 
@@ -198,7 +210,7 @@ Komponen tidak pernah memanggil `apiClient` langsung — selalu lewat `pendudukA
 - `strict` menyala. **Dilarang `any`** — pakai `unknown` + penyempitan tipe bila perlu.
 - Impor tipe pakai `import type { … }`.
 - Enum domain sebagai **union string literal** (`'ISLAM' | 'KRISTEN'`), bukan `enum`. Pasangkan dengan peta label di `labels.ts`.
-- Path alias: selalu `@/…` (mis. `@/features/auth/hooks/use-auth`), hindari `../../../`.
+- Path alias: selalu `@/…` (mis. `@/features/penduduk/hooks/use-penduduk`), hindari `../../../`.
 
 ### Komponen
 
@@ -315,7 +327,7 @@ untuk alasan lengkapnya):**
 
 **Mekanik:**
 
-- Sesi (token + user) disimpan Zustand (`auth-store.ts`) & di-persist ke `localStorage` (`token-storage.ts`).
+- Sesi (token + user) disimpan Zustand (`lib/auth-store.ts`) & di-persist ke `localStorage` (`lib/token-storage.ts`).
 - Proteksi route lewat guard di `routes/guards.tsx`:
   - `RequireAuth` — wajib login.
   - `RequireRole roles={[...]}` — menerima **daftar** peran, bukan satu.

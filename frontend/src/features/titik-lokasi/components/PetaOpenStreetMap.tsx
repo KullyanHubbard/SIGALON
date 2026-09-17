@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ExternalLink, Focus, Maximize2, UserCheck } from 'lucide-react';
-import { useTitikLokasiList } from '@/features/titik-lokasi/hooks/use-titik-lokasi';
-import type { KategoriTitik, TitikLokasi } from '@/features/titik-lokasi/types';
-import { dapatkanTemaTitik } from '@/features/titik-lokasi/warna';
+import { useTitikLokasiList } from '../hooks/use-titik-lokasi';
+import type { KategoriTitik, TitikLokasi } from '../types';
+import { dapatkanTemaTitik } from '../warna';
 import { Modal } from '@/components/ui/Modal';
 import { cn } from '@/lib/utils';
 

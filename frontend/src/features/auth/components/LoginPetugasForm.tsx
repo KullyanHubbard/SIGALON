@@ -5,7 +5,7 @@ import { pesanError } from '@/lib/utils';
 import { useLoginPetugas } from '../hooks/use-auth';
 import { useRedirectAfterLogin } from '../hooks/use-redirect-after-login';
 import { petugasLoginSchema, type PetugasLoginFormValues } from '../schemas';
-import type { Role } from '../types';
+import type { Role } from '@/types/auth';
 import { LoginPetugasFormView } from './LoginPetugasFormView';
 
 export function LoginPetugasForm() {

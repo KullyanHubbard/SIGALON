@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { PersetujuanPanel } from '@/features/pergantian/components/PersetujuanPanel';
 import { paths } from '@/routes/paths';
 import { BarKredit } from './BarKredit';

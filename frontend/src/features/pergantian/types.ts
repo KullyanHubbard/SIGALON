@@ -1,4 +1,4 @@
-import type { Role } from '@/features/auth/types';
+import type { Role } from '@/types/auth';
 
 export type StatusPengajuan = 'MENUNGGU' | 'DISETUJUI' | 'DITOLAK' | 'GUGUR';
 

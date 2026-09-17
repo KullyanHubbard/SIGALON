@@ -1,4 +1,4 @@
-import type { AuthUser } from './types';
+import type { AuthUser } from '@/types/auth';
 
 function normalisasi(v?: string | null): string {
   if (!v) return '';

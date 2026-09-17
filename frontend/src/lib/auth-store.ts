@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AuthUser, Session } from './types';
+import type { AuthUser, Session } from '@/types/auth';
 import { clearSession, getStoredSession, storeSession } from './token-storage';
 
 interface AuthState {

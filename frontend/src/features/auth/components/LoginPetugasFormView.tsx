@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { AuthLayout } from '@/features/auth/components/AuthLayout';
 import type { PetugasLoginFormValues } from '../schemas';
-import type { Role } from '../types';
+import type { Role } from '@/types/auth';
 import { PERAN_LOGIN, PilihanPeranLogin } from './PilihanPeranLogin';
 
 interface LoginPetugasFormViewProps {

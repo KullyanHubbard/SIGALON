@@ -6,7 +6,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { WADAH } from '@/components/layout/wadah';
-import { PetaOpenStreetMap } from '@/components/ui/PetaOpenStreetMap';
+import { PetaOpenStreetMap } from '@/features/titik-lokasi/components/PetaOpenStreetMap';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { usePadukuhan } from '@/hooks/use-padukuhan';

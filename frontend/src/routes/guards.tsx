@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '@/features/auth/hooks/use-auth';
-import type { Role } from '@/features/auth/types';
+import { useAuth } from '@/hooks/use-auth';
+import type { Role } from '@/types/auth';
 import { paths } from './paths';
 import { homePathForRole } from './role-utils';
 

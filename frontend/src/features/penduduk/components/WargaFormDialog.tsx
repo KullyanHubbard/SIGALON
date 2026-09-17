@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { dariTanggalLahirIso, keTanggalLahirIso } from '@/lib/tanggal';
 import { pesanError } from '@/lib/utils';
 import { useTambahPenduduk, useUbahPenduduk } from '../hooks/use-penduduk';

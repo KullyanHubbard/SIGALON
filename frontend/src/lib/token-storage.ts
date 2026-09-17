@@ -1,4 +1,4 @@
-import type { Session } from './types';
+import type { Session } from '@/types/auth';
 
 const STORAGE_KEY = 'nia.session';
 

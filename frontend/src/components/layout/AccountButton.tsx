@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import ikonMasuk from '@/assets/forward-navigasi.svg';
 import ikonUserCircle from '@/assets/icons/nav/user-circle.svg';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { paths } from '@/routes/paths';
 import { homePathForRole } from '@/routes/role-utils';
 

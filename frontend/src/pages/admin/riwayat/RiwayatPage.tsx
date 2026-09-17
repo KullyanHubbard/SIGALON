@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import { RiwayatView } from '@/features/audit/components/RiwayatView';
 import { useRiwayat } from '@/features/audit/hooks/use-audit';
 import { toBarisRiwayat } from '@/features/audit/view-model';

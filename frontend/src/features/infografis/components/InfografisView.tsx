@@ -1,4 +1,4 @@
-import { PanelDistribusiCard } from '@/components/ui/PanelDistribusiCard';
+import { PanelDistribusiCard } from '@/components/charts/PanelDistribusiCard';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import type { PanelDistribusi } from '@/types/statistik';
 

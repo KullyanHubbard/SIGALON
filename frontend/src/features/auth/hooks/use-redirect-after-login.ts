@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { paths } from '@/routes/paths';
 import { homePathForRole } from '@/routes/role-utils';
-import type { Role, Session } from '../types';
+import type { Role, Session } from '@/types/auth';
 
 interface LokasiAsal {
   pathname?: string;

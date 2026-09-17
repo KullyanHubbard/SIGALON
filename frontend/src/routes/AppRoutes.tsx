@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PublicShell } from '@/components/layout/PublicShell';
 import { LoadingBlock } from '@/components/ui/Spinner';
-import { ROLE_PENGURUS } from '@/features/auth/types';
+import { ROLE_PENGURUS } from '@/types/auth';
 import {
   RedirectIfAuthenticated,
   RequireAuth,

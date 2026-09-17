@@ -1,10 +1,5 @@
 import { apiClient } from '@/lib/api-client';
-import type {
-  AuthUser,
-  GantiPassword,
-  PetugasCredentials,
-  Session,
-} from '../types';
+import type { AuthUser, GantiPassword, PetugasCredentials, Session } from '@/types/auth';
 
 export interface AuthApi {
   login(credentials: PetugasCredentials): Promise<Session>;

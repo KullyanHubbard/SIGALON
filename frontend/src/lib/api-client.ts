@@ -4,9 +4,9 @@ import axios, {
 } from 'axios';
 import { env } from '@/config/env';
 import { ApiError } from '@/types/api';
-import { useAuthStore } from '@/features/auth/auth-store';
+import { useAuthStore } from '@/lib/auth-store';
 import { queryClient } from '@/lib/query-client';
-import { getStoredToken } from '@/features/auth/token-storage';
+import { getStoredToken } from '@/lib/token-storage';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: env.apiBaseUrl,

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
-import { DistribusiPieChart } from '@/components/ui/DistribusiPieChart';
-import { DistribusiVerticalBarChart } from '@/components/ui/DistribusiVerticalBarChart';
+import { DistribusiPieChart } from '@/components/charts/DistribusiPieChart';
+import { DistribusiVerticalBarChart } from '@/components/charts/DistribusiVerticalBarChart';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
-import { StatCard } from '@/components/ui/StatCard';
+import { StatCard } from '@/components/charts/StatCard';
 import { CHART_KATEGORI_COLORS } from '@/lib/colors';
 import { STAT_WARGA } from '@/lib/stat-warga';
 import { formatAngka } from '@/lib/utils';

@@ -17,7 +17,7 @@ import {
   statusPerkawinanLabel,
   statusDomisiliLabel,
 } from '../labels';
-import type { Role } from '@/features/auth/types';
+import type { Role } from '@/types/auth';
 import type { WargaFormValues } from '../schemas';
 
 interface WargaFormFieldsProps {

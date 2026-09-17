@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import type { PanelDistribusi } from '@/types/statistik';
-import { Card, CardContent, CardHeader } from './Card';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { DistribusiBarChart } from './DistribusiBarChart';
 import { DistribusiPieChart } from './DistribusiPieChart';
 import { DistribusiVerticalBarChart } from './DistribusiVerticalBarChart';

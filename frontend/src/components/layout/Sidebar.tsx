@@ -2,7 +2,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/ui/Logo';
 import { env } from '@/config/env';
-import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useAuth } from '@/hooks/use-auth';
 import ikonBack from '@/assets/back-navigasi.svg';
 import ikonClose from '@/assets/icons/nav/x-close.svg';
 import { paths } from '@/routes/paths';

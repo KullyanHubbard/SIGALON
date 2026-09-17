@@ -7,7 +7,7 @@ import ikonLokasi from '@/assets/icons/Sidebar-Pengurus/lokasi.png';
 import ikonRiwayatEdit from '@/assets/icons/Sidebar-Pengurus/riwayat_edit.png';
 import ikonRingkasan from '@/assets/icons/Sidebar-Pengurus/ringkasan.png';
 import ikonStatWarga from '@/assets/icons/Sidebar-Pengurus/stat warga.png';
-import type { Role } from '@/features/auth/types';
+import type { Role } from '@/types/auth';
 import { CHART_KATEGORI_COLORS } from '@/lib/colors';
 import { paths } from '@/routes/paths';
 

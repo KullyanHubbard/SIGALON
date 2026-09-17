@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDismissOnOutside } from '@/hooks/use-dismiss-on-outside';
-import { useAuth, useLogout } from '@/features/auth/hooks/use-auth';
+import { useAuth, useLogout } from '@/hooks/use-auth';
 import { paths } from '@/routes/paths';
 import { NavbarView } from './NavbarView';
 
