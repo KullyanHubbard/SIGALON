@@ -8,6 +8,7 @@ Password selalu di-hash bcrypt, tidak pernah polos.
 
 import uuid
 from dataclasses import dataclass
+from typing import Any
 
 from app.core.config import settings
 from app.core.security import hash_rahasia
@@ -22,7 +23,9 @@ ROLE_LPM = "LPM"
 # Penanda "argumen tidak dikirim" untuk `ubah()`, supaya `rw=None` yang berarti
 # "kosongkan" bisa dibedakan dari "jangan sentuh". Bagian dari kontrak modul
 # ini, jadi sengaja publik.
-TETAP = object()
+#: Penanda "jangan sentuh kolom ini", beda dari `None` yang berarti kosongkan.
+#: Bertipe `Any` supaya bisa jadi nilai bawaan parameter `str | None`.
+TETAP: Any = object()
 
 
 @dataclass
@@ -230,8 +233,8 @@ def ubah(
     id: str,
     *,
     nama: str | None = None,
-    rw: object = TETAP,
-    rt: object = TETAP,
+    rw: str | None = TETAP,
+    rt: str | None = TETAP,
     aktif: bool | None = None,
 ) -> Pengurus | None:
     """Field yang tidak dikirim tidak diubah. `None` untuk `rw`/`rt` berarti

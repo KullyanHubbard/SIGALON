@@ -4,10 +4,13 @@
 ditulis perangkat desa dan tidak ada yang menghitungnya.
 """
 
+from typing import Any
+
 from pydantic import BaseModel, Field, field_validator
 
 
-def _kolom(maks: int) -> object:
+# `Any`, sama seperti `Field()` sendiri: hasilnya dipasang ke kolom bertipe `str`.
+def _kolom(maks: int) -> Any:
     return Field(min_length=1, max_length=maks)
 
 

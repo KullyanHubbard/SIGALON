@@ -8,7 +8,6 @@ yang masih berisi data URL.
 import base64
 import io
 import re
-import sqlite3
 import uuid
 from PIL import Image
 
@@ -81,7 +80,7 @@ def ke_slug(judul: str) -> str:
     return re.sub(r"^-+|-+$", "", re.sub(r"[^a-z0-9]+", "-", judul.lower()))
 
 
-def _slug_unik(conn: sqlite3.Connection, judul: str, kecuali_id: str | None) -> str:
+def _slug_unik(conn: db.Koneksi, judul: str, kecuali_id: str | None) -> str:
     """Slug yang belum dipakai berita lain."""
     dasar = ke_slug(judul) or "berita"
     terpakai = {

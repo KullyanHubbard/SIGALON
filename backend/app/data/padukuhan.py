@@ -65,9 +65,10 @@ def demo() -> None:
             # Menyimpan lagi menimpa baris yang sama, bukan menambah baris kedua.
             ubah(contoh(telepon="+62 811-0000-000"))
             with db.koneksi(settings.PORTAL_DATABASE_FILE) as conn:
-                (cacah,) = conn.execute("SELECT COUNT(*) FROM padukuhan").fetchone()
-            assert cacah == 1, cacah
-            assert ambil().telepon == "+62 811-0000-000"
+                baris = conn.execute("SELECT COUNT(*) FROM padukuhan").fetchone()
+            assert baris is not None and baris[0] == 1, baris
+            lagi = ambil()
+            assert lagi is not None and lagi.telepon == "+62 811-0000-000"
 
             for salah in ({"nama": "   "}, {"email": "bukan-surel"}, {"sejarah": "pendek"}):
                 try:

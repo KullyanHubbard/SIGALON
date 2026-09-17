@@ -5,7 +5,15 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Callable, Iterable
 
-from app.schemas.penduduk import Distribusi, Penduduk
+from app.schemas.penduduk import (
+    Agama,
+    Alamat,
+    Distribusi,
+    JenisKelamin,
+    Pendidikan,
+    Penduduk,
+    StatusHubunganKeluarga,
+)
 
 # Urutan tampil kelompok umur, sengaja eksplisit: mengurutkan labelnya sebagai
 # teks menaruh '13-17' sebelum '6-12'.
@@ -181,10 +189,10 @@ if __name__ == "__main__":
 
     def _orang(
         tanggal_lahir: str,
-        agama: str = "ISLAM",
-        pendidikan: str = "SD",
-        jenis_kelamin: str = "LAKI_LAKI",
-        hubungan: str = "ANAK",
+        agama: Agama = "ISLAM",
+        pendidikan: Pendidikan = "SD",
+        jenis_kelamin: JenisKelamin = "LAKI_LAKI",
+        hubungan: StatusHubunganKeluarga = "ANAK",
         bansos: list[str] | None = None,
     ) -> Penduduk:
         return Penduduk(
@@ -201,16 +209,16 @@ if __name__ == "__main__":
             bansos=bansos or [],
             statusHubunganKeluarga=hubungan,
             kewarganegaraan="WNI",
-            alamat={
-                "jalan": "x",
-                "rt": "001",
-                "rw": "019",
-                "desa": "x",
-                "kecamatan": "x",
-                "kabupaten": "x",
-                "provinsi": "x",
-                "kodePos": "00000",
-            },
+            alamat=Alamat(
+                jalan="x",
+                rt="001",
+                rw="019",
+                desa="x",
+                kecamatan="x",
+                kabupaten="x",
+                provinsi="x",
+                kodePos="00000",
+            ),
         )
 
     y = hari_ini.year
