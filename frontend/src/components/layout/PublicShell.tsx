@@ -11,7 +11,7 @@ const JELAJAHI = [
   { label: 'Profil Desa', to: paths.profil },
   { label: 'Infografis', to: paths.infografis },
   { label: 'Berita', to: paths.berita },
-  { label: 'Statistik Warga', to: paths.statistik },
+  { label: 'Statistik', to: paths.statistik },
 ];
 
 export function PublicShell() {

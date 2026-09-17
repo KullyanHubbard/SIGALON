@@ -51,12 +51,21 @@ class Pengurus:
         return kode_jabatan_dari(self.role, self.rw, self.rt)
 
 
+def normalisasi_wilayah(w: str | None) -> str | None:
+    if w is None:
+        return None
+    s = str(w).strip()
+    return s.lstrip("0") or "0" if s.isdigit() else s
+
+
 def jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
     """Label jabatan diturunkan, tidak disimpan — kalau ikut disimpan, ia bisa
     berbeda dari wilayahnya diam-diam saat salah satunya diedit.
 
     Yang menentukan adalah `role`; `rw`/`rt` cuma mengisi nomornya.
     """
+    rw = normalisasi_wilayah(rw)
+    rt = normalisasi_wilayah(rt)
     if role == ROLE_ADMIN:
         return "Admin"
     if role == ROLE_DUKUH:
@@ -81,10 +90,12 @@ def kode_jabatan_dari(role: str, rw: str | None, rt: str | None) -> str:
     "RT 001" tanpa RW bisa menunjuk dua jabatan berbeda begitu padukuhan punya
     dua RW yang sama-sama bernomor RT 001.
     """
+    rw_bersih = normalisasi_wilayah(rw) or ""
+    rt_bersih = normalisasi_wilayah(rt) or ""
     if role == ROLE_RW:
-        return f"RW:{rw or ''}"
+        return f"RW:{rw_bersih}"
     if role == ROLE_RT:
-        return f"RT:{rw or ''}/{rt or ''}"
+        return f"RT:{rw_bersih}/{rt_bersih}"
     if role == ROLE_LPM:
         return "LPM"
     return role
@@ -126,8 +137,8 @@ def _dari_row(row) -> Pengurus:
         username=row["username"],
         nama=row["nama"],
         role=row["role"],
-        rw=row["rw"],
-        rt=row["rt"],
+        rw=normalisasi_wilayah(row["rw"]),
+        rt=normalisasi_wilayah(row["rt"]),
         aktif=bool(row["aktif"]),
         harus_ganti_password=bool(row["harus_ganti_password"]),
         warga_id=row["warga_id"],
@@ -181,8 +192,8 @@ def tambah(
         username=username,
         nama=nama,
         role=role,
-        rw=rw or None,
-        rt=rt or None,
+        rw=normalisasi_wilayah(rw),
+        rt=normalisasi_wilayah(rt),
         aktif=True,
         harus_ganti_password=True,
         warga_id=warga_id or None,
@@ -252,10 +263,10 @@ def ubah(
         nilai.append(nama)
     if rw is not TETAP:
         kolom.append("rw = ?")
-        nilai.append(rw or None)
+        nilai.append(normalisasi_wilayah(rw) if rw else None)
     if rt is not TETAP:
         kolom.append("rt = ?")
-        nilai.append(rt or None)
+        nilai.append(normalisasi_wilayah(rt) if rt else None)
     if aktif is not None:
         kolom.append("aktif = ?")
         nilai.append(1 if aktif else 0)
@@ -405,8 +416,8 @@ def demo() -> None:
 
     assert jabatan_dari(ROLE_ADMIN, None, None) == "Admin"
     assert jabatan_dari(ROLE_DUKUH, None, None) == "Dukuh"
-    assert jabatan_dari(ROLE_RW, "019", None) == "Ketua RW 019"
-    assert jabatan_dari(ROLE_RT, "019", "001") == "Ketua RT 001"
+    assert jabatan_dari(ROLE_RW, "019", None) == "Ketua RW 19"
+    assert jabatan_dari(ROLE_RT, "019", "001") == "Ketua RT 1"
 
     # Nomor RT hanya unik di dalam RW-nya, jadi dua RT bernomor sama di RW
     # berbeda wajib jadi dua jabatan berbeda.
@@ -417,7 +428,7 @@ def demo() -> None:
 
     p = tambah("uji-rt", "rahasia", "Fajar", ROLE_RT, rw="019", rt="001",
                warga_id="W0001")
-    assert p.jabatan == "Ketua RT 001"
+    assert p.jabatan == "Ketua RT 1"
     # Akun baru wajib ganti password: nilainya datang dari tangan Admin.
     assert p.harus_ganti_password is True
     assert cari_by_id(p.id).harus_ganti_password is True  # type: ignore[union-attr]
@@ -448,7 +459,7 @@ def demo() -> None:
     # inilah alasan pemeriksaannya memakai Kode Warga, bukan nama.
     kembar = tambah("uji-kembar", "rahasia", "Fajar", ROLE_RW, rw="020",
                     warga_id="W9999")
-    assert kembar.jabatan == "Ketua RW 020"
+    assert kembar.jabatan == "Ketua RW 20"
     assert kembar.warga_id == "W9999"
 
     # Jabatan yang sama boleh diisi lagi setelah pemegangnya dinonaktifkan —

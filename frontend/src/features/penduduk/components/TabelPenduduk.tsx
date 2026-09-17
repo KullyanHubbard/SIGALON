@@ -1,7 +1,7 @@
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import { Table, Td, Th } from '@/components/ui/Table';
+import { statusDomisiliLabel } from '../labels';
 import type { PendudukRow } from '../view-model';
 
 interface TabelPendudukProps {
@@ -11,24 +11,34 @@ interface TabelPendudukProps {
   onHapus: (row: PendudukRow) => void;
 }
 
-export function TabelPenduduk({ rows, onPilih, onUbah, onHapus }: TabelPendudukProps) {
+export function TabelPenduduk({
+  rows,
+  onPilih,
+  onUbah,
+  onHapus,
+}: TabelPendudukProps) {
   return (
-    <Table className="min-w-[620px]">
+    <Table className="w-full min-w-[720px] table-fixed">
       <thead>
         <tr>
-          <Th>Nama</Th>
-          <Th>L/P</Th>
-          <Th>Umur</Th>
-          <Th>Agama</Th>
-          <Th>RT/RW</Th>
-          <Th>Keterangan</Th>
-          <Th className="text-right">Aksi</Th>
+          <Th className="w-[28%] min-w-[160px]">Nama</Th>
+          <Th className="w-[11%] min-w-[80px]">L/P</Th>
+          <Th className="w-[8%] min-w-[60px]">Umur</Th>
+          <Th className="w-[11%] min-w-[75px]">Agama</Th>
+          <Th className="w-[9%] min-w-[70px]">RT/RW</Th>
+          <Th className="w-[19%] min-w-[125px]">Keterangan</Th>
+          <Th className="w-[14%] min-w-[125px] text-right">Aksi</Th>
         </tr>
       </thead>
       <tbody>
         {rows.map((row) => (
           <tr key={row.id} className="transition-colors hover:bg-slate-50">
-            <Td className="font-medium text-slate-900">{row.nama}</Td>
+            <Td
+              className="truncate font-medium text-slate-900"
+              title={row.nama}
+            >
+              {row.nama}
+            </Td>
             <Td>{row.jenisKelamin}</Td>
             <Td className="tabular-nums">{row.umur}</Td>
             <Td>{row.agama}</Td>
@@ -60,7 +70,7 @@ export function TabelPenduduk({ rows, onPilih, onUbah, onHapus }: TabelPendudukP
                 ) : null}
                 {row.statusDomisili === 'KONTRAK' && (
                   <Badge tone="amber" className="rounded-md font-semibold">
-                    Ngontrak
+                    {statusDomisiliLabel.KONTRAK}
                   </Badge>
                 )}
                 {row.bansos?.map((b) => (
@@ -90,39 +100,36 @@ export function TabelPenduduk({ rows, onPilih, onUbah, onHapus }: TabelPendudukP
                   )}
               </div>
             </Td>
-            {}
+            {/* Aksi */}
             <Td className="text-right">
-              <div className="flex items-center justify-end gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
+              <div className="inline-flex items-center gap-2">
+                <button
+                  type="button"
                   onClick={() => onPilih(row)}
+                  className="shadow-2xs inline-flex cursor-pointer items-center justify-center rounded-lg border-1 border-black bg-white p-1.5 text-slate-900 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95 active:bg-slate-200"
                   title="Lihat detail"
                   aria-label={`Lihat detail ${row.nama}`}
                 >
                   <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0"
+                </button>
+                <button
+                  type="button"
                   onClick={() => onUbah(row.id)}
+                  className="shadow-2xs inline-flex cursor-pointer items-center justify-center rounded-lg border-1 border-black bg-white p-1.5 text-slate-900 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95 active:bg-slate-200"
                   title="Ubah data"
                   aria-label={`Ubah data ${row.nama}`}
                 >
                   <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 w-8 p-0 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                </button>
+                <button
+                  type="button"
                   onClick={() => onHapus(row)}
+                  className="shadow-2xs inline-flex cursor-pointer items-center justify-center rounded-lg border-1 border-black bg-white p-1.5 text-rose-600 transition-all hover:border-black hover:bg-rose-50 hover:text-rose-600 active:scale-95 disabled:opacity-50"
                   title="Hapus warga (salah input)"
                   aria-label={`Hapus warga ${row.nama}`}
                 >
                   <Trash2 className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </Td>
           </tr>

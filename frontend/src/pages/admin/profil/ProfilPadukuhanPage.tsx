@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
@@ -28,7 +27,11 @@ const skema = z.object({
     (v) => v.split('@').length === 2 && !v.startsWith('@') && !v.endsWith('@'),
     'Belum berbentuk alamat surel',
   ),
-  sejarah: z.string().trim().min(20, 'Gambaran umum minimal 20 huruf').max(8000),
+  sejarah: z
+    .string()
+    .trim()
+    .min(20, 'Gambaran umum minimal 20 huruf')
+    .max(8000),
   batasUtara: wajib(150),
   batasTimur: wajib(150),
   batasSelatan: wajib(150),
@@ -57,7 +60,6 @@ export default function ProfilPadukuhanPage() {
   if (isPending || isError) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Profil Padukuhan" />
         {isError ? (
           <Alert tone="error">
             Keterangan padukuhan belum bisa dimuat, jadi formulirnya ditahan:
@@ -77,18 +79,18 @@ export default function ProfilPadukuhanPage() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <PageHeader
-        title="Profil Padukuhan"
-        action={
-          <Button
-            type="submit"
-            isLoading={simpan.isPending}
-            disabled={!isDirty}
-          >
-            Simpan Perubahan
-          </Button>
-        }
-      />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-600">
+          Kelola informasi profil, visi-misi, dan kontak resmi padukuhan.
+        </p>
+        <Button
+          type="submit"
+          isLoading={simpan.isPending}
+          disabled={!isDirty}
+        >
+          Simpan Perubahan
+        </Button>
+      </div>
 
       {simpan.isError && (
         <Alert tone="error">

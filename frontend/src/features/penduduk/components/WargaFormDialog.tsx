@@ -43,6 +43,12 @@ const KOSONG: WargaFormValues = {
   rw: '',
 };
 
+function normalisasiWilayah(v?: string | null): string {
+  if (!v) return '';
+  const s = v.trim();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') || '0' : s;
+}
+
 export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
   const { user } = useAuth();
   const tambah = useTambahPenduduk();
@@ -77,11 +83,15 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
         catatanPerkawinan: warga.catatanPerkawinan ?? '',
         catatanKematian: warga.catatanKematian ?? '',
         jalan: warga.alamat.jalan,
-        rt: warga.alamat.rt,
-        rw: warga.alamat.rw,
+        rt: normalisasiWilayah(warga.alamat.rt),
+        rw: normalisasiWilayah(warga.alamat.rw),
       });
     } else {
-      reset({ ...KOSONG, rt: user?.rt ?? '', rw: user?.rw ?? '' });
+      reset({
+        ...KOSONG,
+        rt: normalisasiWilayah(user?.rt),
+        rw: normalisasiWilayah(user?.rw),
+      });
     }
   }, [target, warga, reset, user]);
 
@@ -94,7 +104,7 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
 
     const catatanKematian =
       v.statusKependudukan === 'MENINGGAL'
-        ? (v.catatanKematian?.trim() || null)
+        ? v.catatanKematian?.trim() || null
         : null;
 
     const inti = {
@@ -114,10 +124,14 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
       catatanPerkawinan: v.catatanPerkawinan?.trim() || null,
       catatanKematian,
     };
-    const rtFinal = user?.role === 'RT' ? (user.rt ?? v.rt) : v.rt;
-    const rwFinal =
+    const rtRaw = user?.role === 'RT' ? (user.rt ?? v.rt) : v.rt;
+    const rwRaw =
       user?.role === 'RW' || user?.role === 'RT' ? (user.rw ?? v.rw) : v.rw;
-    const alamat = { jalan: v.jalan, rt: rtFinal, rw: rwFinal };
+    const alamat = {
+      jalan: v.jalan,
+      rt: normalisasiWilayah(rtRaw),
+      rw: normalisasiWilayah(rwRaw),
+    };
 
     if (menambah) {
       tambah.mutate(
@@ -167,10 +181,6 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
       title={menambah ? 'Tambah Warga' : `Ubah Data ${warga?.nama ?? ''}`}
     >
       <form onSubmit={onSubmit} className="space-y-4">
-        {!menambah && (
-          <p className="text-xs text-slate-500">Kode Warga {warga?.id}</p>
-        )}
-
         <WargaFormFields
           register={register}
           watch={watch}
@@ -178,8 +188,6 @@ export function WargaFormDialog({ target, onClose }: WargaFormDialogProps) {
           menambah={menambah}
           bolehPindahWilayah={bolehPindahWilayah}
           userRole={user?.role}
-          userRw={user?.rw}
-          userRt={user?.rt}
         />
 
         {galat && <Alert tone="error">{galat}</Alert>}

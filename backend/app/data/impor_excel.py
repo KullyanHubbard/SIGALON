@@ -148,12 +148,13 @@ def _bangun_peta_rt_ke_rw(baris_cells: list, peta: dict[str, int]) -> dict[str, 
     for r in baris_cells[1:]:
         r_vals = [c.value for c in r]
         c_status = str(r_vals[idx_status] if len(r_vals) > idx_status else "").strip().lower()
-        if "ngontrak" not in c_status:
+        if "ngontrak" not in c_status and "sementara" not in c_status:
             rt = str(r_vals[idx_rt] if len(r_vals) > idx_rt else "").strip()
             rw = str(r_vals[idx_rw] if len(r_vals) > idx_rw else "").strip()
             if rt and rw and rt != "None" and rw != "None":
                 rt_clean = re.sub(r"^0+", "", rt) or "0"
-                counts[rt_clean][rw] += 1
+                rw_clean = re.sub(r"^0+", "", rw) or "0" if rw.isdigit() else rw
+                counts[rt_clean][rw_clean] += 1
     hasil: dict[str, str] = {}
     for rt, rw_counter in counts.items():
         if rw_counter:
@@ -203,6 +204,8 @@ def baca_xlsx(path: str) -> list[Penduduk]:
                 s = str(val).strip()
                 if field == "tanggalLahir" and (" " in s or "T" in s):
                     s = s.split(" ")[0].split("T")[0]
+                elif field in ("rt", "rw") and s.isdigit():
+                    s = re.sub(r"^0+", "", s) or "0"
                 nilai[field] = s
 
         # Keterangan status tambahan (Pindah, Meninggal, Cerai, RT X (Ngontrak))
@@ -230,16 +233,16 @@ def baca_xlsx(path: str) -> list[Penduduk]:
             status_kependudukan = "AKTIF"
             nilai["statusPerkawinan"] = "CERAI_HIDUP"
             catatan_perkawinan = "Cerai (Belum Update KK)"
-        elif "ngontrak" in c_status_str.lower():
+        elif "ngontrak" in c_status_str.lower() or "sementara" in c_status_str.lower():
             status_kependudukan = "AKTIF"
             status_domisili = "KONTRAK"
             m = re.search(r"RT\s*(\d+)", c_status_str, re.IGNORECASE)
-            kontrak_rt = m.group(1) if m else "1"
-            rt_key = re.sub(r"^0+", "", kontrak_rt) or "0"
+            kontrak_rt = re.sub(r"^0+", "", m.group(1)) or "1" if m else "1"
+            rt_key = kontrak_rt
             kontrak_rw = (
                 peta_rt_rw.get(rt_key)
                 or peta_rt_rw.get(kontrak_rt)
-                or "019"
+                or "19"
             )
             alamat_asal = (
                 f"{nilai.get('jalan', '')}, RT {nilai.get('rt', '')}/RW {nilai.get('rw', '')}, "

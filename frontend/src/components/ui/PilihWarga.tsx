@@ -13,6 +13,12 @@ interface PilihWargaProps {
   hint?: string;
 }
 
+function normalisasi(v?: string | null): string {
+  if (!v) return '';
+  const s = v.trim();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') || '0' : s;
+}
+
 export function PilihWarga({
   label,
   cari,
@@ -39,7 +45,7 @@ export function PilihWarga({
         <p className="text-sm text-slate-700">
           Terpilih: <strong>{terpilih.nama}</strong>{' '}
           <span className="text-xs text-slate-500">
-            (RT {terpilih.rt}/RW {terpilih.rw})
+            (RT {normalisasi(terpilih.rt)}/RW {normalisasi(terpilih.rw)})
           </span>
         </p>
       )}
@@ -66,7 +72,7 @@ export function PilihWarga({
             >
               <span>{w.nama}</span>
               <span className="text-xs text-slate-500">
-                RT {w.rt}/RW {w.rw}
+                RT {normalisasi(w.rt)}/RW {normalisasi(w.rw)}
               </span>
             </button>
           ))}

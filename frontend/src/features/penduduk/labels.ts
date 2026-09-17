@@ -64,14 +64,14 @@ export const statusHubunganLabel: Record<StatusHubunganKeluarga, string> = {
 };
 
 export const statusKependudukanLabel: Record<StatusKependudukan, string> = {
-  AKTIF: 'Hidup',
+  AKTIF: 'Aktif',
   MENINGGAL: 'Meninggal',
   PINDAH: 'Pindah',
 };
 
 export const statusDomisiliLabel: Record<'TETAP' | 'KONTRAK', string> = {
-  TETAP: 'Warga Tetap',
-  KONTRAK: 'Warga Ngontrak',
+  TETAP: 'Domisili Tetap',
+  KONTRAK: 'Domisili Sementara',
 };
 
 export const bansosLabel: Record<string, string> = {

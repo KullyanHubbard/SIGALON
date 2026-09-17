@@ -64,27 +64,6 @@ export default function InfografisPublikPage() {
                 />
               </div>
 
-              <div
-                data-apple-fade
-                className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-4"
-              >
-                <StatCard
-                  label="Total Penerima Bansos"
-                  value={formatAngka(statistik.totalPenerimaBansos ?? 0)}
-                  icon={ikonPenduduk}
-                />
-                <StatCard
-                  label="Bantuan Pangan Non-Tunai (BPNT)"
-                  value={formatAngka(statistik.totalBpnt ?? 0)}
-                  icon={ikonKeluarga}
-                />
-                <StatCard
-                  label="Program Keluarga Harapan (PKH)"
-                  value={formatAngka(statistik.totalPkh ?? 0)}
-                  icon={ikonKeluarga}
-                />
-              </div>
-
               <div className="grid gap-6 lg:grid-cols-2">
                 {toPanelDemografi(statistik).map((panel, idx) => (
                   <div

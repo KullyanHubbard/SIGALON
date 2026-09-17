@@ -3,10 +3,18 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import type { FilterPenduduk } from '../types';
-import { useFilterOpsi, useHapusPenduduk, usePendudukList } from '../hooks/use-penduduk';
+import {
+  useFilterOpsi,
+  useHapusPenduduk,
+  usePendudukList,
+} from '../hooks/use-penduduk';
 import { pendudukApi } from '../api/penduduk-api';
 import type { Penduduk } from '../types';
-import { toPendudukDetail, toPendudukRow, type PendudukRow } from '../view-model';
+import {
+  toPendudukDetail,
+  toPendudukRow,
+  type PendudukRow,
+} from '../view-model';
 import { WargaFormDialog } from './WargaFormDialog';
 import { DaftarPendudukView, type PaginasiView } from './DaftarPendudukView';
 
@@ -141,28 +149,40 @@ export function DaftarPenduduk() {
       >
         {targetHapus && (
           <div className="space-y-4">
-            <div className="rounded-lg bg-amber-50 p-3.5 border border-amber-200 text-sm text-amber-900">
-              <p className="font-semibold mb-1">Khusus Data Salah Input / Fiktif</p>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900">
+              <p className="mb-1 font-semibold">
+                Khusus Data Salah Input / Fiktif
+              </p>
               <p className="text-xs leading-relaxed text-amber-800">
-                Fitur ini <strong>hanya untuk data yang salah dimasukkan</strong> (misal salah ketik nama atau duplikat input). Jika warga{' '}
-                <strong>pindah keluar</strong> atau <strong>meninggal dunia</strong>, jangan dihapus! Gunakan tombol{' '}
-                <strong>Ubah Data</strong> lalu ganti Status Kependudukannya agar tercatat di buku mutasi desa.
+                Fitur ini{' '}
+                <strong>hanya untuk data yang salah dimasukkan</strong> (misal
+                salah ketik nama atau duplikat input). Jika warga{' '}
+                <strong>pindah keluar</strong> atau{' '}
+                <strong>meninggal dunia</strong>, jangan dihapus! Gunakan tombol{' '}
+                <strong>Ubah Data</strong> lalu ganti Status Kependudukannya
+                agar tercatat di buku mutasi desa.
               </p>
             </div>
 
             <p className="text-sm text-slate-700">
               Apakah Anda yakin ingin menghapus data warga{' '}
-              <strong className="text-slate-900 font-semibold">{targetHapus.nama}</strong> ({targetHapus.id}) dari{' '}
-              <strong className="text-slate-900 font-semibold">{targetHapus.rtRw}</strong>?
+              <strong className="font-semibold text-slate-900">
+                {targetHapus.nama}
+              </strong>{' '}
+              ({targetHapus.id}) dari{' '}
+              <strong className="font-semibold text-slate-900">
+                {targetHapus.rtRw}
+              </strong>
+              ?
             </p>
 
             {pesanErrorHapus && (
-              <div className="rounded-md bg-red-50 p-2.5 text-xs font-medium text-red-700 border border-red-200">
+              <div className="rounded-md border border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-700">
                 {pesanErrorHapus}
               </div>
             )}
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+            <div className="flex justify-end gap-2 border-t border-slate-200 pt-3">
               <Button
                 variant="outline"
                 size="sm"
@@ -184,9 +204,14 @@ export function DaftarPenduduk() {
                     setTargetHapus(null);
                     setPesanErrorHapus(null);
                   } catch (err: unknown) {
-                    const axiosErr = err as { response?: { data?: { detail?: string } } };
+                    const axiosErr = err as {
+                      response?: { data?: { detail?: string } };
+                    };
                     const detail = axiosErr?.response?.data?.detail;
-                    setPesanErrorHapus(detail || 'Gagal menghapus data warga. Silakan coba lagi.');
+                    setPesanErrorHapus(
+                      detail ||
+                        'Gagal menghapus data warga. Silakan coba lagi.',
+                    );
                   }
                 }}
               >

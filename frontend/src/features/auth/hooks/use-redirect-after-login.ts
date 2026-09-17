@@ -30,6 +30,11 @@ export function useRedirectAfterLogin(): (session: Session) => void {
           ? `${asal.pathname}${asal.search ?? ''}${asal.hash ?? ''}`
           : beranda;
 
+      if (session.user.harusGantiPassword) {
+        navigate(paths.gantiPassword, { state: { from: tujuan } });
+        return;
+      }
+
       navigate(tujuan, { replace: true });
     },
     [navigate, location.state],

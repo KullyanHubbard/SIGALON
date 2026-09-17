@@ -3,6 +3,7 @@ import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { StatCard } from '@/components/ui/StatCard';
 import { useStatistikPublik } from '@/features/statistik-publik/hooks/use-statistik-publik';
 import { STAT_WARGA } from '@/lib/stat-warga';
+import { cn } from '@/lib/utils';
 import { toRincianRw } from './view-model';
 
 export function RincianRwPanel({
@@ -17,9 +18,15 @@ export function RincianRwPanel({
   periode: string;
 }) {
   const { data, isLoading, isError } = useStatistikPublik(periode);
-  const indukRw = data?.perRw.find((r) => r.label === rw);
+  const cocokWil = (target: string, query: string) => {
+    if (target.toLowerCase() === query.toLowerCase()) return true;
+    const tNum = target.replace(/\D+/g, '').replace(/^0+/, '');
+    const qNum = query.replace(/\D+/g, '').replace(/^0+/, '');
+    return Boolean(tNum && tNum === qNum);
+  };
+  const indukRw = data?.perRw.find((r) => cocokWil(r.label, rw));
   const rincian =
-    rt === null ? indukRw : indukRw?.perRt.find((r) => r.label === rt);
+    rt === null ? indukRw : indukRw?.perRt.find((r) => cocokWil(r.label, rt));
 
   return (
     <div className="w-full">
@@ -53,8 +60,8 @@ export function RincianRwPanel({
                 <div
                   key={panel.id}
                   data-apple-fade
-                  data-apple-delay={idx + 1}
-                  className="h-full"
+                  data-apple-delay={idx + 2}
+                  className={cn('h-full', panel.lebarPenuh && 'xl:col-span-2')}
                 >
                   <PanelDistribusiCard panel={panel} />
                 </div>

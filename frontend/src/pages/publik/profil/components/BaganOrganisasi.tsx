@@ -124,10 +124,20 @@ function PalangKeAnak({ jumlah }: { jumlah: number }) {
   );
 }
 
+function normalisasi(v?: string | null): string {
+  if (!v) return '';
+  const s = v.trim();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') || '0' : s;
+}
+
 function GrupRw({ wilayah }: { wilayah: RwPublik }) {
   return (
     <div className="flex w-full flex-col items-center">
-      <Kotak label={`RW ${wilayah.nomor}`} nama={wilayah.nama} tingkat="rw" />
+      <Kotak
+        label={`RW ${normalisasi(wilayah.nomor)}`}
+        nama={wilayah.nama}
+        tingkat="rw"
+      />
       <Tiang />
       <PalangKeAnak jumlah={wilayah.rt.length} />
       <div
@@ -137,7 +147,7 @@ function GrupRw({ wilayah }: { wilayah: RwPublik }) {
         {wilayah.rt.map((rt) => (
           <Kotak
             key={rt.nomor}
-            label={`RT ${rt.nomor}`}
+            label={`RT ${normalisasi(rt.nomor)}`}
             nama={rt.nama}
             tingkat="rt"
           />

@@ -41,8 +41,8 @@ menjalankannya.
 | ------------ | -------------------- | ------------------------------------------------------------ |
 | **Admin**    | pemegang akun layanan | Membuatkan akun untuk jabatan kosong, reset password, **mengajukan** pergantian. **Tidak bisa melihat data warga, dan tidak bisa menyetujui pergantian apa pun.** |
 | **Dukuh**    | Pak Dukuh            | Melihat seluruh data warga & infografis                       |
-| **Ketua RW** | satu per RW (sekarang RW 019, 020, 021) | sama                       |
-| **Ketua RT** | satu per RT (sekarang RT 001–006)       | sama                       |
+| **Ketua RW** | satu per RW (sekarang RW 19, 20, 21)    | sama                       |
+| **Ketua RT** | satu per RT (sekarang RT 1–6)            | sama                       |
 
 Dua sisi ini **tidak saling menyentuh**, dan itu disengaja:
 
@@ -200,8 +200,8 @@ Jabatan tidak perlu dipilih — sudah ditentukan oleh baris yang diklik.
 Namanya juga tidak diketik: Admin tidak boleh melihat data warga, jadi ia
 memilih dari daftar, bukan mengarang dari ingatan.
 
-**Yang muncul di daftar hanya warga wilayah jabatan itu.** Ketua RT 003 hanya
-bisa diisi warga RT 003, Ketua RW 019 hanya warga RW 019. Pak Dukuh boleh dari
+**Yang muncul di daftar hanya warga wilayah jabatan itu.** Ketua RT 3 hanya
+bisa diisi warga RT 3, Ketua RW 19 hanya warga RW 19. Pak Dukuh boleh dari
 wilayah mana pun di padukuhan. Aturan yang sama berlaku saat mengajukan
 pergantian.
 
@@ -328,7 +328,7 @@ langsung mengisinya lagi — dan seluruh persetujuan ini jadi hiasan yang bisa
 dilewati dalam dua klik.
 
 **Jabatan penyetuju yang sedang kosong dilewati, bukan ditunggu.** Kalau jabatan
-Ketua RW 019 sedang kosong, pergantian Ketua RT di bawahnya cukup disetujui Pak
+Ketua RW 19 sedang kosong, pergantian Ketua RT di bawahnya cukup disetujui Pak
 Dukuh. Tanpa aturan ini satu jabatan kosong akan mengunci pergantian selamanya.
 
 **Kalau tidak ada satu pun yang bisa menyetujui**, pengajuan ditolak dan
@@ -338,8 +338,8 @@ bisa memutuskan sendirian.
 **Warga yang diusulkan tidak boleh sedang menjabat di tempat lain.** Satu orang
 satu jabatan.
 
-**Warga yang diusulkan harus warga wilayah jabatan itu.** Ketua RW 019 harus
-warga RW 019; Ketua RT 003 harus warga RT 003. Pak Dukuh boleh dari mana pun.
+**Warga yang diusulkan harus warga wilayah jabatan itu.** Ketua RW 19 harus
+warga RW 19; Ketua RT 3 harus warga RT 3. Pak Dukuh boleh dari mana pun.
 
 **Pengajuan yang tidak dijawab siapa pun gugur setelah 30 hari**, begitu juga
 kalau warga yang diusulkan ternyata pindah atau meninggal.

@@ -55,8 +55,16 @@ export const wargaSchema = z
     catatanPerkawinan: z.string().optional(),
     catatanKematian: z.string().optional(),
     jalan: z.string().trim().min(1, 'Alamat jalan wajib diisi'),
-    rt: z.string().trim().min(1, 'RT wajib diisi'),
-    rw: z.string().trim().min(1, 'RW wajib diisi'),
+    rt: z
+      .string()
+      .trim()
+      .min(1, 'RT wajib diisi')
+      .transform((v) => (/^\d+$/.test(v) ? v.replace(/^0+/, '') || '0' : v)),
+    rw: z
+      .string()
+      .trim()
+      .min(1, 'RW wajib diisi')
+      .transform((v) => (/^\d+$/.test(v) ? v.replace(/^0+/, '') || '0' : v)),
   })
   .refine((v) => keTanggalLahirIso(v) !== null, {
     message: 'Tanggal itu tidak ada di kalender, atau melewati hari ini',

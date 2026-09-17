@@ -161,64 +161,62 @@ export default function ProfilPage() {
                   Data Wilayah
                 </h3>
               </div>
-              <div className="bg-surface p-3 sm:p-3.5">
-                <dl className="space-y-2">
-                  <BarisKeterangan
-                    icon={
-                      <IkonLuasSolid className="h-4 w-4 shrink-0 text-emerald-600" />
-                    }
-                    label="Luas wilayah"
-                    nilai={padukuhan.luasWilayah}
-                  />
-                  <QueryBoundary
-                    isLoading={statistik.isLoading}
-                    isError={statistik.isError}
-                    data={statistik.data}
-                    loadingLabel="Memuat"
-                    errorMessage="Jumlah penduduk belum bisa ditampilkan."
-                  >
-                    {(data) => (
-                      <>
-                        <BarisKeterangan
-                          icon={
-                            <IkonPopulasiSolid className="h-4 w-4 shrink-0 text-blue-600" />
-                          }
-                          label="Total populasi"
-                          nilai={`${formatAngka(data.totalPenduduk)} jiwa`}
-                        />
-                        <BarisKeterangan
-                          icon={
-                            <IkonRwSolid className="h-4 w-4 shrink-0 text-purple-600" />
-                          }
-                          label="Jumlah RW"
-                          nilai={`${data.perRw.length} RW`}
-                        />
-                        <BarisKeterangan
-                          icon={
-                            <IkonRtSolid className="h-4 w-4 shrink-0 text-amber-500" />
-                          }
-                          label="Jumlah RT"
-                          nilai={`${data.perRw.reduce((n, rw) => n + rw.perRt.length, 0)} RT`}
-                        />
-                      </>
-                    )}
-                  </QueryBoundary>
-                  <BarisKeterangan
-                    icon={
-                      <IkonKalurahanSolid className="h-4 w-4 shrink-0 text-teal-600" />
-                    }
-                    label="Kalurahan"
-                    nilai={padukuhan.desa}
-                  />
-                  <BarisKeterangan
-                    icon={
-                      <IkonKapanewonSolid className="h-4 w-4 shrink-0 text-rose-600" />
-                    }
-                    label="Kapanewon"
-                    nilai={padukuhan.kapanewon}
-                  />
-                </dl>
-              </div>
+              <dl className="divide-y divide-slate-100 bg-white">
+                <BarisKeterangan
+                  icon={
+                    <IkonLuasSolid className="h-4 w-4 shrink-0 text-emerald-600" />
+                  }
+                  label="Luas wilayah"
+                  nilai={padukuhan.luasWilayah}
+                />
+                <QueryBoundary
+                  isLoading={statistik.isLoading}
+                  isError={statistik.isError}
+                  data={statistik.data}
+                  loadingLabel="Memuat"
+                  errorMessage="Jumlah penduduk belum bisa ditampilkan."
+                >
+                  {(data) => (
+                    <>
+                      <BarisKeterangan
+                        icon={
+                          <IkonPopulasiSolid className="h-4 w-4 shrink-0 text-blue-600" />
+                        }
+                        label="Total populasi"
+                        nilai={`${formatAngka(data.totalPenduduk)} jiwa`}
+                      />
+                      <BarisKeterangan
+                        icon={
+                          <IkonRwSolid className="h-4 w-4 shrink-0 text-purple-600" />
+                        }
+                        label="Jumlah RW"
+                        nilai={`${data.perRw.length} RW`}
+                      />
+                      <BarisKeterangan
+                        icon={
+                          <IkonRtSolid className="h-4 w-4 shrink-0 text-amber-500" />
+                        }
+                        label="Jumlah RT"
+                        nilai={`${data.perRw.reduce((n, rw) => n + rw.perRt.length, 0)} RT`}
+                      />
+                    </>
+                  )}
+                </QueryBoundary>
+                <BarisKeterangan
+                  icon={
+                    <IkonKalurahanSolid className="h-4 w-4 shrink-0 text-teal-600" />
+                  }
+                  label="Kalurahan"
+                  nilai={padukuhan.desa}
+                />
+                <BarisKeterangan
+                  icon={
+                    <IkonKapanewonSolid className="h-4 w-4 shrink-0 text-rose-600" />
+                  }
+                  label="Kapanewon"
+                  nilai={padukuhan.kapanewon}
+                />
+              </dl>
             </div>
           </div>
         </div>
@@ -256,39 +254,34 @@ export default function ProfilPage() {
                   Batas Wilayah
                 </h3>
               </div>
-              <div className="bg-surface p-3 sm:p-3.5">
-                <dl className="space-y-2">
-                  {batasWilayah(padukuhan).map((b) => {
-                    const config = ARAH_CONFIG[b.arah];
-                    const IconArah = config.icon;
-                    return (
-                      <BarisKeterangan
-                        key={b.arah}
-                        icon={
-                          <IconArah
-                            className={cn(
-                              'h-4 w-4 shrink-0',
-                              config.colorClass,
-                            )}
-                          />
-                        }
-                        label={`Sebelah ${b.arah}`}
-                        nilai={b.wilayah}
-                      />
-                    );
-                  })}
-                </dl>
-                <div className="mt-4 border-t-1 border-black pt-3.5">
-                  <a
-                    href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-xs font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98] sm:text-sm"
-                  >
-                    <span>Buka di Google Maps</span>
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                </div>
+              <dl className="divide-y divide-slate-100 bg-white">
+                {batasWilayah(padukuhan).map((b) => {
+                  const config = ARAH_CONFIG[b.arah];
+                  const IconArah = config.icon;
+                  return (
+                    <BarisKeterangan
+                      key={b.arah}
+                      icon={
+                        <IconArah
+                          className={cn('h-4 w-4 shrink-0', config.colorClass)}
+                        />
+                      }
+                      label={`Sebelah ${b.arah}`}
+                      nilai={b.wilayah}
+                    />
+                  );
+                })}
+              </dl>
+              <div className="border-t-1 border-black bg-slate-50/70 p-3.5 sm:p-4">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-xs font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98] sm:text-sm"
+                >
+                  <span>Buka di Google Maps</span>
+                  <ExternalLink className="h-4 w-4" />
+                </a>
               </div>
             </div>
           </div>

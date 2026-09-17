@@ -24,6 +24,12 @@ interface DaftarPengajuanViewProps {
   pengajuan: Pengajuan[] | undefined;
 }
 
+function normalisasi(v?: string | null): string {
+  if (!v) return '';
+  const s = v.trim();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') || '0' : s;
+}
+
 export function DaftarPengajuanView({
   isLoading,
   isError,
@@ -49,8 +55,9 @@ export function DaftarPengajuanView({
                     <div>
                       <p className="font-medium text-slate-900">{p.jabatan}</p>
                       <p className="text-sm text-slate-600">
-                        Diusulkan: {p.kandidatNama} · RT {p.kandidatRt}/RW{' '}
-                        {p.kandidatRw}
+                        Diusulkan: {p.kandidatNama} · RT{' '}
+                        {normalisasi(p.kandidatRt)}/RW{' '}
+                        {normalisasi(p.kandidatRw)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

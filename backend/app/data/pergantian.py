@@ -93,7 +93,7 @@ def penyetuju_untuk(role: str, rw: str | None, rt: str | None) -> list[pg.Pengur
     if role == pg.ROLE_RW:
         return dukuh
     if role == pg.ROLE_RT:
-        ketua_rw = [p for p in aktif if p.role == pg.ROLE_RW and p.rw == rw]
+        ketua_rw = [p for p in aktif if p.role == pg.ROLE_RW and pg._samakan_wilayah(p.rw, rw)]
         return ketua_rw + dukuh
     if role == pg.ROLE_LPM:
         return dukuh
@@ -528,7 +528,7 @@ def demo() -> None:
     assert penyetuju_untuk(pg.ROLE_RT, "019", "001") == []
     assert {x.id for x in penyetuju_untuk(pg.ROLE_DUKUH, None, None)} == {rw20.id}
 
-    assert rt1.kode_jabatan == "RT:019/001"
+    assert rt1.kode_jabatan == "RT:19/1"
     print("OK: app/data/pergantian.py")
 
 

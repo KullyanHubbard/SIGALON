@@ -3,6 +3,7 @@ import type { PanelDistribusi } from '@/types/statistik';
 import { Card, CardContent, CardHeader } from './Card';
 import { DistribusiBarChart } from './DistribusiBarChart';
 import { DistribusiPieChart } from './DistribusiPieChart';
+import { DistribusiVerticalBarChart } from './DistribusiVerticalBarChart';
 
 export function PanelDistribusiCard({
   panel,
@@ -23,6 +24,8 @@ export function PanelDistribusiCard({
       <CardContent className="flex flex-1 flex-col justify-center">
         {panel.jenis === 'pie' ? (
           <DistribusiPieChart data={panel.data} />
+        ) : panel.jenis === 'bar-vertical' ? (
+          <DistribusiVerticalBarChart data={panel.data} />
         ) : (
           <DistribusiBarChart data={panel.data} />
         )}

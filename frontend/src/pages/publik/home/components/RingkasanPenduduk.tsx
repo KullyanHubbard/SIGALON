@@ -62,39 +62,12 @@ export function RingkasanPenduduk() {
               </div>
 
               {/* Bilah Proporsi Gender Visual */}
-              <div data-apple-fade className="mt-4 sm:mt-6">
+              <div data-apple-fade className="mt-2.5 sm:mt-4">
                 <ProporsiGenderBar
                   totalLakiLaki={data.totalLakiLaki}
                   totalPerempuan={data.totalPerempuan}
                   totalPenduduk={data.totalPenduduk}
                 />
-              </div>
-
-              {/* Klasifikasi Program Bantuan Sosial (Bansos) */}
-              <div data-apple-fade className="mt-8">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-slate-700 sm:text-base">
-                    Program Bantuan Sosial (Bansos)
-                  </h3>
-                  <span className="text-xs text-slate-500">Agregat Wilayah</span>
-                </div>
-                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-4">
-                  <StatCard
-                    label="Penerima Bansos"
-                    value={formatAngka(data.totalPenerimaBansos ?? 0)}
-                    icon={ikonPenduduk}
-                  />
-                  <StatCard
-                    label="Bantuan Pangan Non-Tunai (BPNT)"
-                    value={formatAngka(data.totalBpnt ?? 0)}
-                    icon={ikonKeluarga}
-                  />
-                  <StatCard
-                    label="Program Keluarga Harapan (PKH)"
-                    value={formatAngka(data.totalPkh ?? 0)}
-                    icon={ikonKeluarga}
-                  />
-                </div>
               </div>
 
               <div data-apple-fade className="mt-8">
@@ -132,7 +105,7 @@ export function RingkasanPenduduk() {
                       to={paths.statistik}
                       className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-[#FACC15] px-6 py-3 text-center text-sm font-bold text-[#4C1D95] shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-yellow-400 hover:shadow-xl active:scale-[0.98] sm:w-auto"
                     >
-                      <span>Jelajahi Statistik Warga</span>
+                      <span>Jelajahi Statistik</span>
                       <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                     </Link>
                   </div>

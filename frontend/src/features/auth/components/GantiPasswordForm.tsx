@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { PasswordInput } from '@/components/ui/PasswordInput';
@@ -14,6 +14,27 @@ export function GantiPasswordForm() {
   const { user, harusGantiPassword } = useAuth();
   const ganti = useGantiPassword();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleKembali = () => {
+    const asal = (
+      location.state as {
+        from?: string | { pathname?: string; search?: string; hash?: string };
+      } | null
+    )?.from;
+
+    if (typeof asal === 'string' && asal) {
+      navigate(asal, { replace: true });
+    } else if (asal && typeof asal === 'object' && asal.pathname) {
+      navigate(`${asal.pathname}${asal.search ?? ''}${asal.hash ?? ''}`, {
+        replace: true,
+      });
+    } else if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate(homePathForRole(user?.role), { replace: true });
+    }
+  };
 
   const {
     register,
@@ -42,9 +63,10 @@ export function GantiPasswordForm() {
       title="Ganti Password"
       description={
         harusGantiPassword
-          ? 'Password Anda masih password awal dari Admin. Ganti dulu dengan password pilihan sendiri sebelum memakai aplikasi.'
+          ? 'Password Anda masih password awal dari Admin. Anda dapat menggantinya sekarang atau kembali ke halaman sebelumnya.'
           : `Masuk sebagai ${user?.nama ?? ''}. Password lama tidak akan berlaku lagi.`
       }
+      onBack={handleKembali}
     >
       <form onSubmit={onSubmit} className="mt-5 space-y-4">
         <PasswordInput

@@ -37,6 +37,12 @@ export interface PendudukRow {
   catatanKematian?: string;
 }
 
+function normWil(v?: string | null): string {
+  if (!v) return '';
+  const s = v.trim();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') || '0' : s;
+}
+
 export function toPendudukRow(p: Penduduk): PendudukRow {
   return {
     id: p.id,
@@ -46,7 +52,7 @@ export function toPendudukRow(p: Penduduk): PendudukRow {
       statusKependudukan: p.statusKependudukan,
     }),
     agama: agamaLabel[p.agama],
-    rtRw: `${p.alamat.rt}/${p.alamat.rw}`,
+    rtRw: `${normWil(p.alamat.rt)}/${normWil(p.alamat.rw)}`,
     keterangan: statusKependudukanLabel[p.statusKependudukan],
     keteranganTone: KETERANGAN_TONE[p.statusKependudukan],
     statusDomisili: p.statusDomisili,
@@ -94,15 +100,16 @@ export function toPendudukDetail(p: Penduduk): PendudukDetailView {
     fields.push({ label: 'Catatan Perkawinan', value: p.catatanPerkawinan });
   }
 
-  if (p.statusKependudukan !== 'AKTIF') {
-    fields.push({
-      label: 'Status Kependudukan',
-      value: statusKependudukanLabel[p.statusKependudukan],
-    });
-  }
+  fields.push({
+    label: 'Status Kependudukan',
+    value: statusKependudukanLabel[p.statusKependudukan],
+  });
 
   if (p.catatanKematian) {
-    fields.push({ label: 'Penyebab / Keterangan Meninggal', value: p.catatanKematian });
+    fields.push({
+      label: 'Penyebab / Keterangan Meninggal',
+      value: p.catatanKematian,
+    });
   }
 
   fields.push(
@@ -133,7 +140,7 @@ export function toPendudukDetail(p: Penduduk): PendudukDetailView {
     hubungan: statusHubunganLabel[p.statusHubunganKeluarga],
     fields,
     alamat:
-      `${alamat.jalan}, RT ${alamat.rt}/RW ${alamat.rw}, Desa ${alamat.desa}, ` +
+      `${alamat.jalan}, RT ${normWil(alamat.rt)}/RW ${normWil(alamat.rw)}, Desa ${alamat.desa}, ` +
       `Kec. ${alamat.kecamatan}, ${alamat.kabupaten}, ${alamat.provinsi} ${alamat.kodePos}`,
   };
 }

@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import { Table, Td, Th } from '@/components/ui/Table';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { BeritaFormDialog } from '@/features/berita/components/BeritaFormDialog';
 import { FotoBerita } from '@/features/berita/components/BeritaCard';
 import {
@@ -27,10 +26,12 @@ export default function KelolaBeritaPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Kelola Berita"
-        action={<Button onClick={() => setTarget('baru')}>Tulis Berita</Button>}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-slate-600">
+          Kelola artikel dan publikasi berita padukuhan.
+        </p>
+        <Button onClick={() => setTarget('baru')}>+ Tulis Berita</Button>
+      </div>
 
       {hapus.isError && (
         <Alert tone="error">
@@ -38,7 +39,7 @@ export default function KelolaBeritaPage() {
         </Alert>
       )}
 
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden shadow-sm">
         <QueryBoundary
           isLoading={isLoading}
           isError={isError}
@@ -50,13 +51,13 @@ export default function KelolaBeritaPage() {
           emptyDescription="Mulai dengan menekan Tulis Berita."
         >
           {(daftar) => (
-            <Table className="min-w-[540px]">
+            <Table className="w-full min-w-[600px]">
               <thead>
                 <tr>
-                  <Th>Berita</Th>
-                  <Th>Tanggal Kejadian</Th>
-                  <Th>Penulis</Th>
-                  <Th className="text-right">Aksi</Th>
+                  <Th className="w-[45%] min-w-[200px]">Berita</Th>
+                  <Th className="w-[20%] min-w-[120px]">Tanggal Kejadian</Th>
+                  <Th className="w-[20%] min-w-[120px]">Penulis</Th>
+                  <Th className="w-[15%] min-w-[100px] text-right">Aksi</Th>
                 </tr>
               </thead>
               <tbody>

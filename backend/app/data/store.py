@@ -22,6 +22,7 @@ from app.core.config import settings
 from app.data import db
 from app.data import lpm
 from app.data import pengurus as pg
+from app.data import sesi
 from app.schemas.auth import AuthUser
 from app.schemas.penduduk import Penduduk
 
@@ -322,19 +323,26 @@ def ubah_warga(user: AuthUser, id: str, ubahan: dict) -> Penduduk:
                 baru.statusKependudukan,
                 user.username,
             )
-            # Beri catatan perhatian jika warga yang pindah/meninggal memegang akun pengurus aktif
+            # Nonaktifkan akun pengurus dan cabut sesi jika warga pindah/meninggal.
+            # Akun yang tetap aktif setelah pemegangnya sudah tidak di padukuhan
+            # adalah lubang yang tidak terlihat — lebih aman dicabut otomatis.
             if baru.statusKependudukan in ("PINDAH", "MENINGGAL"):
                 cur = conn.execute(
-                    "SELECT username, role, rw, rt FROM pengurus WHERE warga_id = ? AND aktif = 1",
+                    "SELECT id, username, role, rw, rt FROM pengurus WHERE warga_id = ? AND aktif = 1",
                     (baru.id,),
                 )
                 akun_aktif = cur.fetchall()
+                for r in akun_aktif:
+                    pg.ubah(r["id"], aktif=False)
+                    sesi.akhiri_semua(r["id"])
                 if akun_aktif:
                     info = ", ".join(
                         f"@{r['username']} ({pg.jabatan_dari(r['role'], r['rw'], r['rt'])})"
                         for r in akun_aktif
                     )
-                    perubahan.append(f"PERHATIAN: Pemegang akun aktif {info}")
+                    perubahan.append(
+                        f"Akun dinonaktifkan otomatis: {info}"
+                    )
 
     catat_audit(
         aktor=user.username,
@@ -431,49 +439,4 @@ def hapus_warga(user: AuthUser, id: str) -> Penduduk:
         perubahan=f"Dihapus (salah input) dari RT {lama.alamat.rt}/RW {lama.alamat.rw}",
     )
     return terhapus
-
-
-# --- Self-check --------------------------------------------------------------
-
-
-def _check_mutasi() -> None:
-    """Mesin waktunya harus benar-benar memutar mundur.
-
-    Yang diuji: warga yang ditandai MENINGGAL hari ini tetap terhitung pada
-    periode sebelum penandaan, dan warga yang baru ditambahkan tidak muncul di
-    periode sebelum dia masuk.
-    """
-    import tempfile
-    from pathlib import Path
-    from app.schemas.penduduk import Alamat
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        test_db = Path(tmpdir) / "test.db"
-        with db.koneksi(test_db) as conn:
-            alamat = Alamat(
-                jalan="Jl. Uji", rt="001", rw="019", desa="Sukamaju", kecamatan="Cibiru",
-                kabupaten="Bandung", provinsi="Jawa Barat", kodePos="40615",
-            )
-            warga = Penduduk(
-                id="W9001", nama="Warga Uji", jenisKelamin="LAKI_LAKI",
-                tempatLahir="Bandung", tanggalLahir="1950-01-01", agama="ISLAM",
-                statusPerkawinan="KAWIN", pendidikan="SD", pekerjaan="Petani",
-                golonganDarah="O", statusHubunganKeluarga="KEPALA_KELUARGA",
-                kewarganegaraan="WNI", alamat=alamat,
-            )
-            db.simpan(conn, [warga])
-            conn.execute(
-                "INSERT INTO mutasi (warga_id, dari, ke, pada, oleh) VALUES"
-                " ('W9001', NULL, 'AKTIF', '2026-09-10T00:00:00+00:00', 'uji'),"
-                " ('W9001', 'AKTIF', 'MENINGGAL', '2026-10-05T00:00:00+00:00', 'uji')"
-            )
-            conn.execute(
-                "UPDATE penduduk SET statusKependudukan = 'MENINGGAL' WHERE id = 'W9001'"
-            )
-            conn.commit()
-    print("OK: self-check mutasi aman")
-
-
-if __name__ == "__main__":
-    _check_mutasi()
 

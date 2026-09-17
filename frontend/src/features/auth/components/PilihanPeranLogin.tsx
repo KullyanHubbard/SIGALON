@@ -21,14 +21,14 @@ export const PERAN_LOGIN = [
     role: 'RW' as Role,
     label: 'Ketua RW',
     judul: 'Masuk sebagai Ketua RW',
-    contoh: 'rw019',
+    contoh: 'rw19',
     catatan: 'Melihat seluruh data warga & infografis padukuhan.',
   },
   {
     role: 'RT' as Role,
     label: 'Ketua RT',
     judul: 'Masuk sebagai Ketua RT',
-    contoh: 'rt001',
+    contoh: 'rt1',
     catatan: 'Melihat seluruh data warga & infografis padukuhan.',
   },
 ] as const;

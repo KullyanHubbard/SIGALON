@@ -7,7 +7,7 @@ aktivasi, maupun kontak di sini.
 
 from typing import Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # Empat peran, dan yang membedakannya bukan tingkat melainkan ARAH kewenangan:
 # ADMIN mengelola akun dan tidak boleh membaca data warga; tiga sisanya membaca
@@ -32,6 +32,16 @@ class AuthUser(BaseModel):
     # Password awal dari Admin masih berlaku: akun belum boleh melakukan apa pun
     # selain menggantinya.
     harusGantiPassword: bool = False
+
+    @field_validator("rt", "rw", mode="before")
+    @classmethod
+    def normalisasi_wilayah(cls, v: object) -> Optional[str]:
+        if v is None:
+            return None
+        s = str(v).strip()
+        if s.isdigit():
+            return s.lstrip("0") or "0"
+        return s
 
 
 class PetugasCredentials(BaseModel):

@@ -28,18 +28,21 @@ export function toPanelInfografis(data: InfografisData): PanelDistribusi[] {
       jenis: 'bar',
       data: relabel(data.perPendidikan, pendidikanLabel),
     },
+    ...(data.perBansos && data.perBansos.length > 0
+      ? [
+          {
+            id: 'bansos',
+            judul: 'Distribusi Program Bantuan Sosial',
+            jenis: 'bar-vertical' as const,
+            data: data.perBansos,
+          },
+        ]
+      : []),
     {
       id: 'perkawinan',
       judul: 'Status Perkawinan',
       jenis: 'pie',
       data: relabel(data.perStatusPerkawinan, statusPerkawinanLabel),
-    },
-    {
-      id: 'dusun',
-      judul: 'Sebaran per RW',
-      jenis: 'bar',
-      data: data.perDusun,
-      lebarPenuh: true,
     },
     {
       id: 'domisili',
@@ -56,15 +59,12 @@ export function toPanelInfografis(data: InfografisData): PanelDistribusi[] {
         },
       ],
     },
-    ...(data.perBansos && data.perBansos.length > 0
-      ? [
-          {
-            id: 'bansos',
-            judul: 'Penerima Bantuan Sosial (Bansos)',
-            jenis: 'bar' as const,
-            data: data.perBansos,
-          },
-        ]
-      : []),
+    {
+      id: 'dusun',
+      judul: 'Sebaran per RW',
+      jenis: 'bar',
+      data: data.perDusun,
+      lebarPenuh: true,
+    },
   ];
 }

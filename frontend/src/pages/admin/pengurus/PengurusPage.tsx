@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { AjukanPergantianDialog } from '@/features/pergantian/components/AjukanPergantianDialog';
 import { DaftarPengajuanView } from '@/features/pergantian/components/DaftarPengajuanView';
 import { usePengajuanList } from '@/features/pergantian/hooks/use-pergantian';
@@ -22,8 +21,6 @@ export default function PengurusPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Kelola Akun" />
-
       <DaftarJabatanView
         isLoading={jabatan.isLoading}
         isError={jabatan.isError}

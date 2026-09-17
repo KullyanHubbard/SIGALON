@@ -19,6 +19,11 @@ export interface RingkasanStatistik {
 
   distribusi: Distribusi[];
   baris: BarisRw[];
+
+  totalPenerimaBansos: number;
+  totalBpnt: number;
+  totalPkh: number;
+  perBansos: Distribusi[];
 }
 
 export interface TujuanWilayah {
@@ -36,10 +41,10 @@ export function toJalurWilayah(
   rwAktif: string | null,
   rtAktif: string | null,
 ): Crumb[] {
-  if (rwAktif === null) return [{ label: 'Dashboard', tujuan: null }];
+  if (rwAktif === null) return [{ label: 'Statistik', tujuan: null }];
 
   const jalur: Crumb[] = [
-    { label: 'Statistik Warga', tujuan: { rw: null, rt: null } },
+    { label: 'Statistik', tujuan: { rw: null, rt: null } },
     {
       label: rwAktif,
       tujuan: rtAktif === null ? null : { rw: rwAktif, rt: null },
@@ -69,5 +74,9 @@ export function toRingkasanStatistik(
       persenTeks:
         total === 0 ? '—' : `${Math.round((d.totalPenduduk / total) * 100)}%`,
     })),
+    totalPenerimaBansos: data.totalPenerimaBansos ?? 0,
+    totalBpnt: data.totalBpnt ?? 0,
+    totalPkh: data.totalPkh ?? 0,
+    perBansos: data.perBansos ?? [],
   };
 }

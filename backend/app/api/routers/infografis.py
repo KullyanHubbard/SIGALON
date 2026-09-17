@@ -22,16 +22,24 @@ async def infografis(user: AuthUser = Depends(current_pengurus)) -> InfografisDa
     Grafik Ketua RT 004 jadi tentang RT 004 saja — termasuk `perDusun`, yang
     karena itu cuma berisi satu batang. Wajar, bukan cacat.
     """
-    # Yang pindah & meninggal tidak ikut dihitung: ini gambaran siapa yang
-    # tinggal di sini sekarang, bukan siapa yang pernah tercatat.
     warga = hanya_aktif(penduduk_untuk(user))
     total_bpnt = sum(1 for p in warga if "BPNT" in getattr(p, "bansos", []))
     total_pkh = sum(1 for p in warga if "PKH" in getattr(p, "bansos", []))
     total_penerima = sum(1 for p in warga if getattr(p, "bansos", []))
     total_ngontrak = sum(1 for p in warga if getattr(p, "statusDomisili", "TETAP") == "KONTRAK")
+    total_bpnt_saja = sum(
+        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" not in getattr(p, "bansos", [])
+    )
+    total_pkh_saja = sum(
+        1 for p in warga if "PKH" in getattr(p, "bansos", []) and "BPNT" not in getattr(p, "bansos", [])
+    )
+    total_ganda = sum(
+        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" in getattr(p, "bansos", [])
+    )
     per_bansos = [
-        Distribusi(label="BPNT", value=total_bpnt),
-        Distribusi(label="PKH", value=total_pkh),
+        Distribusi(label="BPNT", value=total_bpnt_saja),
+        Distribusi(label="PKH", value=total_pkh_saja),
+        Distribusi(label="BPNT & PKH", value=total_ganda),
     ]
     return InfografisData(
         totalPenduduk=len(warga),

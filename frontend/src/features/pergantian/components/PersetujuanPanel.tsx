@@ -5,6 +5,12 @@ import { pesanError } from '@/lib/utils';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useJawabPengajuan, useMenungguJawaban } from '../hooks/use-pergantian';
 
+function normalisasi(v?: string | null): string {
+  if (!v) return '';
+  const s = v.trim();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') || '0' : s;
+}
+
 export function PersetujuanPanel() {
   const { isPengurus } = useAuth();
   const { data } = useMenungguJawaban(isPengurus);
@@ -29,8 +35,8 @@ export function PersetujuanPanel() {
                 Pergantian {p.jabatan}
               </p>
               <p className="text-slate-600">
-                Diusulkan: {p.kandidatNama} · RT {p.kandidatRt}/RW{' '}
-                {p.kandidatRw}
+                Diusulkan: {p.kandidatNama} · RT {normalisasi(p.kandidatRt)}/RW{' '}
+                {normalisasi(p.kandidatRw)}
               </p>
             </div>
             <div className="flex w-full items-center justify-end gap-2 sm:w-auto">

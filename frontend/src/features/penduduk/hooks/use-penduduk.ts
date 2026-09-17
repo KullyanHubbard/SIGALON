@@ -38,6 +38,7 @@ function useSegarkanPenduduk() {
   return () => {
     void queryClient.invalidateQueries({ queryKey: pendudukKeys.all });
     void queryClient.invalidateQueries({ queryKey: ['infografis'] });
+    void queryClient.invalidateQueries({ queryKey: ['statistik-publik'] });
   };
 }
 
@@ -65,4 +66,3 @@ export function useHapusPenduduk() {
     onSuccess: segarkan,
   });
 }
-

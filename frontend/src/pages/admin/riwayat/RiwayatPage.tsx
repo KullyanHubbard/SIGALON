@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { RiwayatView } from '@/features/audit/components/RiwayatView';
 import { useRiwayat } from '@/features/audit/hooks/use-audit';
@@ -13,7 +12,6 @@ export default function RiwayatPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Riwayat Perubahan" />
       <RiwayatView
         isLoading={isLoading}
         isError={isError}

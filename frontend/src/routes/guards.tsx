@@ -24,11 +24,6 @@ export function RequireRole({ roles }: { roles: readonly Role[] }) {
 }
 
 export function RequireGantiPassword() {
-  const { harusGantiPassword } = useAuth();
-
-  if (harusGantiPassword) {
-    return <Navigate to={paths.gantiPassword} replace />;
-  }
   return <Outlet />;
 }
 

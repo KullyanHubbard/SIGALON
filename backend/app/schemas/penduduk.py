@@ -66,6 +66,14 @@ class Alamat(BaseModel):
     provinsi: str
     kodePos: str
 
+    @field_validator("rt", "rw", mode="before")
+    @classmethod
+    def normalisasi_wilayah(cls, v: object) -> str:
+        s = str(v or "").strip()
+        if s.isdigit():
+            return s.lstrip("0") or "0"
+        return s
+
 
 class Penduduk(BaseModel):
     """Satu warga. `id` UUID dibangkitkan saat impor — NIK & Nomor KK tidak
@@ -224,6 +232,10 @@ class RincianRw(BaseModel):
     totalKepalaKeluarga: int
     totalLakiLaki: int
     totalPerempuan: int
+    totalPenerimaBansos: int = 0
+    totalBpnt: int = 0
+    totalPkh: int = 0
+    perBansos: list[Distribusi] = []
     perKelompokUmur: list[Distribusi]
     perPendidikan: list[Distribusi]
     perAgama: list[Distribusi]

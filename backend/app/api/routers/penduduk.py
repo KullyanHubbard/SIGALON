@@ -257,21 +257,32 @@ def filter_opsi(user: AuthUser = Depends(current_pengurus)) -> FilterOpsi:
     tidak bisa dijadikan enum tertutup dari awal.
     """
     milik_saya = penduduk_untuk(user)
+    warga_aktif = [p for p in milik_saya if p.statusKependudukan == "AKTIF"]
 
     def _urut_wilayah(kode: str) -> tuple[int, int | str]:
         angka = "".join(c for c in kode if c.isdigit())
         return (0, int(angka)) if angka else (1, kode)
 
     semua_bansos: set[str] = set()
-    for p in milik_saya:
+    for p in warga_aktif:
         for b in getattr(p, "bansos", []):
             if b and str(b).strip():
                 semua_bansos.add(str(b).strip())
 
+    def _normalisasi(v: str) -> str:
+        s = v.strip()
+        return s.lstrip("0") or "0" if s.isdigit() else s
+
+    # Wilayah (RT & RW) hanya diturunkan dari warga AKTIF padukuhan:
+    # warga yang sudah pindah ke luar padukuhan (mis. tercatat RW tujuannya di luar kota)
+    # tidak boleh memunculkan nomor RW/RT luar di filter padukuhan.
+    # Pekerjaan & bansos juga hanya dari warga AKTIF agar dropdown tidak
+    # menampilkan pekerjaan orang yang sudah pindah/meninggal.
+
     return FilterOpsi(
-        rt=sorted({p.alamat.rt for p in milik_saya if p.alamat.rt}, key=_urut_wilayah),
-        rw=sorted({p.alamat.rw for p in milik_saya if p.alamat.rw}, key=_urut_wilayah),
-        pekerjaan=sorted({p.pekerjaan for p in milik_saya if p.pekerjaan}),
+        rt=sorted({_normalisasi(p.alamat.rt) for p in warga_aktif if p.alamat.rt}, key=_urut_wilayah),
+        rw=sorted({_normalisasi(p.alamat.rw) for p in warga_aktif if p.alamat.rw}, key=_urut_wilayah),
+        pekerjaan=sorted({p.pekerjaan for p in warga_aktif if p.pekerjaan}),
         bansos=sorted(semua_bansos),
     )
 

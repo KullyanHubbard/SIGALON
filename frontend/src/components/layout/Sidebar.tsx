@@ -42,35 +42,37 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        {}
-        <div className="relative flex h-20 shrink-0 items-center justify-center border-b-1 border-black px-5">
-          <Logo className="h-8" />
-          <button
-            className="absolute right-3 rounded-md p-1 text-slate-400 hover:bg-slate-100 lg:hidden"
-            onClick={onClose}
-            aria-label="Tutup menu"
-          >
-            <span
-              aria-hidden
-              className="block h-5 w-5 bg-current"
-              style={{
-                mask: `url("${ikonClose}") center / contain no-repeat`,
-                WebkitMask: `url("${ikonClose}") center / contain no-repeat`,
-              }}
-            />
-          </button>
+        {/* Header sidebar */}
+        <div className="flex h-20 shrink-0 flex-col justify-center border-b-1 border-black px-5">
+          <div className="flex items-center justify-between">
+            <Logo className="h-8" />
+            <button
+              className="rounded-md p-1 text-slate-400 hover:bg-slate-100 lg:hidden"
+              onClick={onClose}
+              aria-label="Tutup menu"
+            >
+              <span
+                aria-hidden
+                className="block h-5 w-5 bg-current"
+                style={{
+                  mask: `url("${ikonClose}") center / contain no-repeat`,
+                  WebkitMask: `url("${ikonClose}") center / contain no-repeat`,
+                }}
+              />
+            </button>
+          </div>
         </div>
 
         {/* Link cepat kembali ke portal publik */}
-        <div className="pt-3">
+        <div className="pt-2">
           <Link
             to={paths.landing}
             onClick={onClose}
-            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:bg-slate-100 hover:text-brand-600 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:transition-none"
+            className="mx-10 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-slate-500 transition-all duration-150 ease-out hover:bg-slate-100 hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 active:scale-95 motion-reduce:transition-none"
           >
             <span
               aria-hidden
-              className="block h-5 w-5 shrink-0 bg-current"
+              className="block h-4 w-4 shrink-0 bg-current"
               style={{
                 mask: `url("${ikonBack}") center / contain no-repeat`,
                 WebkitMask: `url("${ikonBack}") center / contain no-repeat`,
@@ -79,7 +81,10 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             Kembali ke Beranda
           </Link>
           {/* Garis pembatas inset (tidak menyambung sampai pojok) */}
-          <div className="mx-5 my-2.5 border-b-1 border-black" aria-hidden="true" />
+          <div
+            className="mx-10 my-2 border-b-2 border-black"
+            aria-hidden="true"
+          />
         </div>
 
         <nav

@@ -36,6 +36,7 @@ type Opsi = readonly [nilai: string, teks: string];
 
 const LANJUTAN = [
   'statusKependudukan',
+  'statusDomisili',
   'jenisKelamin',
   'kelompokUmur',
   'agama',
@@ -45,7 +46,6 @@ const LANJUTAN = [
   'golonganDarah',
   'pekerjaan',
   'bansos',
-  'statusDomisili',
 ] as const satisfies readonly (keyof FilterPenduduk)[];
 
 interface ToolbarPendudukProps {
@@ -64,6 +64,17 @@ function dariLabel(map: Record<string, string>): Opsi[] {
   return Object.entries(map);
 }
 
+function normalisasiWilayah(v: string | null | undefined): string {
+  if (!v) return '';
+  const bersih = v.trim();
+  return /^\d+$/.test(bersih) ? bersih.replace(/^0+/, '') || '0' : bersih;
+}
+
+function dariWilayah(nilai: string[] | undefined): Opsi[] {
+  const unik = Array.from(new Set((nilai ?? []).map(normalisasiWilayah)));
+  return unik.map((v) => [v, v] as Opsi);
+}
+
 function dariData(nilai: string[] | undefined): Opsi[] {
   return (nilai ?? []).map((v) => [v, v] as Opsi);
 }
@@ -73,11 +84,13 @@ function PilihanRingkas({
   nilai,
   opsi,
   onPilih,
+  className,
 }: {
   label: string;
   nilai: string | undefined;
   opsi: Opsi[];
   onPilih: (v: string) => void;
+  className?: string;
 }) {
   return (
     <select
@@ -89,6 +102,7 @@ function PilihanRingkas({
         nilai
           ? 'border-brand-600 font-medium text-brand-700'
           : 'border-1 border-black text-slate-900 hover:border-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black',
+        className,
       )}
     >
       <option value="">{label}: Semua</option>
@@ -174,71 +188,74 @@ export function ToolbarPenduduk({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <div className="w-full sm:w-auto sm:min-w-[12rem] sm:max-w-xs sm:flex-1">
-          <Input
-            icon={<Search className="h-4 w-4" />}
-            placeholder="Cari nama warga…"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            aria-label="Cari nama warga"
-          />
+      <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+        {/* Sisi Kiri: Search & Filter Wilayah */}
+        <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="w-full sm:w-56 sm:flex-shrink-0 lg:w-64">
+            <Input
+              icon={<Search className="h-4 w-4" />}
+              placeholder="Cari nama warga…"
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              aria-label="Cari nama warga"
+            />
+          </div>
+
+          <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
+            {isRT ? (
+              <>
+                <div
+                  className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
+                  title={`Wilayah Anda: RW ${normalisasiWilayah(user?.rw)}`}
+                >
+                  <span className="mr-1.5 font-normal text-slate-500">RW:</span>
+                  <span>{normalisasiWilayah(user?.rw)}</span>
+                </div>
+                <div
+                  className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
+                  title={`Wilayah Anda: RT ${normalisasiWilayah(user?.rt)}`}
+                >
+                  <span className="mr-1.5 font-normal text-slate-500">RT:</span>
+                  <span>{normalisasiWilayah(user?.rt)}</span>
+                </div>
+              </>
+            ) : isRW ? (
+              <>
+                <div
+                  className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
+                  title={`Wilayah Anda: RW ${normalisasiWilayah(user?.rw)}`}
+                >
+                  <span className="mr-1.5 font-normal text-slate-500">RW:</span>
+                  <span>{normalisasiWilayah(user?.rw)}</span>
+                </div>
+                <PilihanRingkas
+                  label="RT"
+                  nilai={value.rt ? normalisasiWilayah(value.rt) : undefined}
+                  opsi={dariWilayah(opsi?.rt)}
+                  onPilih={(v) => set('rt', v)}
+                />
+              </>
+            ) : (
+              <>
+                <PilihanRingkas
+                  label="RW"
+                  nilai={value.rw ? normalisasiWilayah(value.rw) : undefined}
+                  opsi={dariWilayah(opsi?.rw)}
+                  onPilih={(v) => set('rw', v)}
+                />
+                <PilihanRingkas
+                  label="RT"
+                  nilai={value.rt ? normalisasiWilayah(value.rt) : undefined}
+                  opsi={dariWilayah(opsi?.rt)}
+                  onPilih={(v) => set('rt', v)}
+                />
+              </>
+            )}
+          </div>
         </div>
 
-        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center">
-          {isRT ? (
-            <>
-              <div
-                className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
-                title={`Wilayah Anda: RW ${user?.rw}`}
-              >
-                <span className="mr-1.5 font-normal text-slate-500">RW:</span>
-                <span>{user?.rw}</span>
-              </div>
-              <div
-                className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
-                title={`Wilayah Anda: RT ${user?.rt}`}
-              >
-                <span className="mr-1.5 font-normal text-slate-500">RT:</span>
-                <span>{user?.rt}</span>
-              </div>
-            </>
-          ) : isRW ? (
-            <>
-              <div
-                className="flex h-10 items-center justify-center rounded-lg border-1 border-black bg-slate-100 px-3 text-sm font-semibold text-slate-800 shadow-sm sm:justify-start"
-                title={`Wilayah Anda: RW ${user?.rw}`}
-              >
-                <span className="mr-1.5 font-normal text-slate-500">RW:</span>
-                <span>{user?.rw}</span>
-              </div>
-              <PilihanRingkas
-                label="RT"
-                nilai={value.rt}
-                opsi={dariData(opsi?.rt)}
-                onPilih={(v) => set('rt', v)}
-              />
-            </>
-          ) : (
-            <>
-              <PilihanRingkas
-                label="RW"
-                nilai={value.rw}
-                opsi={dariData(opsi?.rw)}
-                onPilih={(v) => set('rw', v)}
-              />
-              <PilihanRingkas
-                label="RT"
-                nilai={value.rt}
-                opsi={dariData(opsi?.rt)}
-                onPilih={(v) => set('rt', v)}
-              />
-            </>
-          )}
-        </div>
-
-        {}
-        <div className="flex w-full flex-wrap items-center justify-between gap-2 sm:ml-auto sm:w-auto sm:justify-end">
+        {/* Sisi Kanan: Aksi (Ekspor, Filter, Tambah) */}
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
           {onEkspor && (
             <div className="relative" ref={eksporRef}>
               <Button
@@ -358,6 +375,12 @@ export function ToolbarPenduduk({
                     onPilih={set}
                   />
                   <PilihanPanel
+                    field="statusDomisili"
+                    nilai={value.statusDomisili}
+                    opsi={dariLabel(statusDomisiliLabel)}
+                    onPilih={set}
+                  />
+                  <PilihanPanel
                     field="jenisKelamin"
                     nilai={value.jenisKelamin}
                     opsi={dariLabel(jenisKelaminLabel)}
@@ -405,26 +428,22 @@ export function ToolbarPenduduk({
                     opsi={dariData(opsi?.pekerjaan)}
                     onPilih={set}
                   />
-                  <PilihanPanel
-                    field="bansos"
-                    nilai={value.bansos}
-                    opsi={
-                      opsi?.bansos && opsi.bansos.length > 0
-                        ? [
-                            ['SEMUA', 'Semua Penerima Bansos'],
-                            ['TIDAK', 'Bukan Penerima Bansos'],
-                            ...opsi.bansos.map((b) => [b, b] as Opsi),
-                          ]
-                        : dariLabel(bansosLabel)
-                    }
-                    onPilih={set}
-                  />
-                  <PilihanPanel
-                    field="statusDomisili"
-                    nilai={value.statusDomisili}
-                    opsi={dariLabel(statusDomisiliLabel)}
-                    onPilih={set}
-                  />
+                  <div className="sm:col-span-2">
+                    <PilihanPanel
+                      field="bansos"
+                      nilai={value.bansos}
+                      opsi={
+                        opsi?.bansos && opsi.bansos.length > 0
+                          ? [
+                              ['SEMUA', 'Semua Penerima Bansos'],
+                              ['TIDAK', 'Bukan Penerima Bansos'],
+                              ...opsi.bansos.map((b) => [b, b] as Opsi),
+                            ]
+                          : dariLabel(bansosLabel)
+                      }
+                      onPilih={set}
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -433,7 +452,7 @@ export function ToolbarPenduduk({
       </div>
 
       {chips.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 border-t border-slate-200 pt-2">
           {chips.map((chip) => (
             <span
               key={chip.field}

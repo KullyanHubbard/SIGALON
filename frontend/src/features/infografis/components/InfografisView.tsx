@@ -1,4 +1,3 @@
-import { PageHeader } from '@/components/layout/PageHeader';
 import { PanelDistribusiCard } from '@/components/ui/PanelDistribusiCard';
 import { QueryBoundary } from '@/components/ui/QueryBoundary';
 import type { PanelDistribusi } from '@/types/statistik';
@@ -19,8 +18,6 @@ export function InfografisView({
 }: InfografisViewProps) {
   return (
     <div>
-      <PageHeader title="Infografis Kependudukan" />
-
       <QueryBoundary
         isLoading={isLoading}
         isError={isError}

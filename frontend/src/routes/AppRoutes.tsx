@@ -7,7 +7,6 @@ import { ROLE_PENGURUS } from '@/features/auth/types';
 import {
   RedirectIfAuthenticated,
   RequireAuth,
-  RequireGantiPassword,
   RequireRole,
 } from './guards';
 import { paths } from './paths';
@@ -60,40 +59,38 @@ export function AppRoutes() {
           {}
           <Route path={paths.gantiPassword} element={<GantiPasswordPage />} />
 
-          <Route element={<RequireGantiPassword />}>
-            <Route element={<DashboardLayout />}>
-              {}
-              <Route element={<RequireRole roles={ROLE_PENGURUS} />}>
-                <Route
-                  path={paths.admin.root}
-                  element={<AdminDashboardPage />}
-                />
-                <Route path={paths.admin.penduduk} element={<PendudukPage />} />
-                <Route
-                  path={paths.admin.infografis}
-                  element={<InfografisPage />}
-                />
-              </Route>
+          <Route element={<DashboardLayout />}>
+            {}
+            <Route element={<RequireRole roles={ROLE_PENGURUS} />}>
+              <Route
+                path={paths.admin.root}
+                element={<AdminDashboardPage />}
+              />
+              <Route path={paths.admin.penduduk} element={<PendudukPage />} />
+              <Route
+                path={paths.admin.infografis}
+                element={<InfografisPage />}
+              />
+            </Route>
 
-              {}
-              <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
+            {}
+            <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
 
-              {}
-              <Route element={<RequireRole roles={['ADMIN']} />}>
-                <Route path={paths.admin.pengurus} element={<PengurusPage />} />
-                <Route
-                  path={paths.admin.berita}
-                  element={<KelolaBeritaPage />}
-                />
-                <Route
-                  path={paths.admin.profil}
-                  element={<ProfilPadukuhanPage />}
-                />
-                <Route
-                  path={paths.admin.lokasi}
-                  element={<LokasiWilayahPage />}
-                />
-              </Route>
+            {}
+            <Route element={<RequireRole roles={['ADMIN']} />}>
+              <Route path={paths.admin.pengurus} element={<PengurusPage />} />
+              <Route
+                path={paths.admin.berita}
+                element={<KelolaBeritaPage />}
+              />
+              <Route
+                path={paths.admin.profil}
+                element={<ProfilPadukuhanPage />}
+              />
+              <Route
+                path={paths.admin.lokasi}
+                element={<LokasiWilayahPage />}
+              />
             </Route>
           </Route>
         </Route>

@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.schemas.auth import AuthUser, Role
 
@@ -43,6 +43,16 @@ class JabatanOut(BaseModel):
     # Hanya untuk jabatan kosong; diabaikan begitu ada pemegangnya.
     calon: Optional[CalonOut] = None
 
+    @field_validator("rt", "rw", mode="before")
+    @classmethod
+    def normalisasi_wilayah(cls, v: object) -> Optional[str]:
+        if v is None:
+            return None
+        s = str(v).strip()
+        if s.isdigit():
+            return s.lstrip("0") or "0"
+        return s
+
 
 class WargaPilihan(BaseModel):
     """Sepotong data warga sekadar untuk dropdown pemilihan: nama + RT/RW."""
@@ -51,6 +61,14 @@ class WargaPilihan(BaseModel):
     nama: str
     rt: str
     rw: str
+
+    @field_validator("rt", "rw", mode="before")
+    @classmethod
+    def normalisasi_wilayah(cls, v: object) -> str:
+        s = str(v or "").strip()
+        if s.isdigit():
+            return s.lstrip("0") or "0"
+        return s
 
 
 class PengurusBaru(BaseModel):
@@ -67,6 +85,16 @@ class PengurusBaru(BaseModel):
     role: Role
     rw: Optional[str] = None
     rt: Optional[str] = None
+
+    @field_validator("rt", "rw", mode="before")
+    @classmethod
+    def normalisasi_wilayah(cls, v: object) -> Optional[str]:
+        if v is None:
+            return None
+        s = str(v).strip()
+        if s.isdigit():
+            return s.lstrip("0") or "0"
+        return s
 
 
 

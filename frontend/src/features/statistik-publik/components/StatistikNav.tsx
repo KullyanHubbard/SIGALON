@@ -37,7 +37,7 @@ export function StatistikNav({
 
   const toggleRw = (label: string) => {
     setTerbukaRw((prev) => {
-      const isCurrentlyOpen = prev[label] ?? (rwAktif === label);
+      const isCurrentlyOpen = prev[label] ?? rwAktif === label;
       return { ...prev, [label]: !isCurrentlyOpen };
     });
   };
@@ -82,7 +82,7 @@ export function StatistikNav({
 
       <div>
         <p className="px-3 text-sm font-semibold uppercase tracking-widest text-slate-900">
-          Statistik Warga
+          Statistik
         </p>
 
         {data ? (
@@ -117,7 +117,7 @@ export function StatistikNav({
                             ? `Tutup daftar ${rw.label}`
                             : `Buka daftar ${rw.label}`
                         }
-                        className="flex h-10 w-7 shrink-0 items-center justify-center pl-2 transition-transform hover:scale-115 active:scale-95 focus-visible:outline-none"
+                        className="hover:scale-115 flex h-10 w-7 shrink-0 items-center justify-center pl-2 transition-transform focus-visible:outline-none active:scale-95"
                       >
                         <ChevronRight
                           strokeWidth={3}

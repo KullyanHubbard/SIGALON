@@ -41,7 +41,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               'h-10 w-full rounded-lg border-1 border-black bg-surface px-3 text-base text-slate-900 transition-all duration-150 placeholder:text-slate-400 hover:border-black focus:border-black focus:outline-none focus:ring-1 focus:ring-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black sm:text-sm',
               icon && 'pl-10',
               trailing && 'pr-11',
-              error && 'border-red-500 focus:border-red-600 focus:ring-red-500 focus-visible:ring-red-600',
+              error &&
+                'border-red-500 focus:border-red-600 focus:ring-red-500 focus-visible:ring-red-600',
               className,
             )}
             aria-invalid={Boolean(error)}

@@ -79,7 +79,6 @@ async def current_admin(user: AuthUser = Depends(current_user)) -> AuthUser:
     """Kelola akun pengurus. ADMIN saja."""
     if user.role != "ADMIN":
         raise HTTPException(403, "Hanya untuk Admin.")
-    _tolak_kalau_belum_ganti(user)
     return user
 
 
@@ -88,7 +87,6 @@ async def current_pengurus(user: AuthUser = Depends(current_user)) -> AuthUser:
     mengelola akun, bukan membaca isi data penduduk & infografis."""
     if user.role not in ROLE_PENGURUS:
         raise HTTPException(403, "Admin tidak memiliki akses data warga.")
-    _tolak_kalau_belum_ganti(user)
     return user
 
 

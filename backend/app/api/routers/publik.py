@@ -41,6 +41,23 @@ def _kelompokkan(
 def _rincian(
     label: str, warga: list[Penduduk], per_rt: list[RincianRw] | None = None
 ) -> RincianRw:
+    total_bpnt = sum(1 for p in warga if "BPNT" in getattr(p, "bansos", []))
+    total_pkh = sum(1 for p in warga if "PKH" in getattr(p, "bansos", []))
+    total_penerima = sum(1 for p in warga if getattr(p, "bansos", []))
+    total_bpnt_saja = sum(
+        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" not in getattr(p, "bansos", [])
+    )
+    total_pkh_saja = sum(
+        1 for p in warga if "PKH" in getattr(p, "bansos", []) and "BPNT" not in getattr(p, "bansos", [])
+    )
+    total_ganda = sum(
+        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" in getattr(p, "bansos", [])
+    )
+    per_bansos = [
+        Distribusi(label="BPNT", value=total_bpnt_saja),
+        Distribusi(label="PKH", value=total_pkh_saja),
+        Distribusi(label="BPNT & PKH", value=total_ganda),
+    ]
     return RincianRw(
         label=label,
         totalPenduduk=len(warga),
@@ -49,6 +66,10 @@ def _rincian(
         ),
         totalLakiLaki=sum(1 for p in warga if p.jenisKelamin == "LAKI_LAKI"),
         totalPerempuan=sum(1 for p in warga if p.jenisKelamin == "PEREMPUAN"),
+        totalPenerimaBansos=total_penerima,
+        totalBpnt=total_bpnt,
+        totalPkh=total_pkh,
+        perBansos=per_bansos,
         perKelompokUmur=distribusi_kelompok_umur(warga),
         perPendidikan=distribusi_pendidikan(warga),
         perAgama=distribusi_by(warga, lambda p: p.agama),
@@ -62,15 +83,12 @@ def statistik_publik(
     periode: str | None = Query(
         None,
         pattern=r"^\d{4}-(0[1-9]|1[0-2])$",
-        description="Bulan yang diminta, `YYYY-MM`. Kosong = keadaan hari ini.",
+        description="Bulan statistik, format YYYY-MM. Kosongkan untuk data saat ini.",
     ),
 ) -> StatistikPublik:
-    """Cacah saja — tanpa nama atau alamat. Endpoint ini terbuka tanpa
-    autentikasi (lihat CLAUDE.md §11), jadi apa pun yang ditambahkan di sini
-    otomatis jadi konsumsi publik: boleh angka agregat, tidak boleh data orang.
+    """Statistik agregat warga yang aktif pada akhir bulan yang diminta.
 
-    `periode` memutar mundur buku mutasi (`store.penduduk_pada`). Bentuk yang
-    salah ditolak 422 oleh pola di atas, bukan diabaikan diam-diam — pemanggil
+    Format query parameter `YYYY-MM` divalidasi dengan regex — parameter
     yang salah ketik lebih baik tahu daripada dikasih angka bulan lain.
     """
     # Yang pindah & meninggal tidak ikut dihitung — lihat `store.hanya_aktif`.
@@ -78,9 +96,19 @@ def statistik_publik(
     total_bpnt = sum(1 for p in semua if "BPNT" in getattr(p, "bansos", []))
     total_pkh = sum(1 for p in semua if "PKH" in getattr(p, "bansos", []))
     total_penerima = sum(1 for p in semua if getattr(p, "bansos", []))
+    total_bpnt_saja = sum(
+        1 for p in semua if "BPNT" in getattr(p, "bansos", []) and "PKH" not in getattr(p, "bansos", [])
+    )
+    total_pkh_saja = sum(
+        1 for p in semua if "PKH" in getattr(p, "bansos", []) and "BPNT" not in getattr(p, "bansos", [])
+    )
+    total_ganda = sum(
+        1 for p in semua if "BPNT" in getattr(p, "bansos", []) and "PKH" in getattr(p, "bansos", [])
+    )
     per_bansos = [
-        Distribusi(label="BPNT", value=total_bpnt),
-        Distribusi(label="PKH", value=total_pkh),
+        Distribusi(label="BPNT", value=total_bpnt_saja),
+        Distribusi(label="PKH", value=total_pkh_saja),
+        Distribusi(label="BPNT & PKH", value=total_ganda),
     ]
     return StatistikPublik(
         periodeTerawal=periode_terawal(),

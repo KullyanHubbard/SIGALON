@@ -43,10 +43,7 @@ export function LoginPetugasFormView({
           label="Username"
           className="h-[3.25rem] text-base"
           icon={
-            <UserRound
-              className="h-5 w-5 text-slate-800"
-              strokeWidth={2.5}
-            />
+            <UserRound className="h-5 w-5 text-slate-800" strokeWidth={2.5} />
           }
           autoComplete="username"
           placeholder="Masukkan username"

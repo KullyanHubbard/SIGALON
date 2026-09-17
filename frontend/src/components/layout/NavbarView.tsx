@@ -10,6 +10,7 @@ import ikonLogOut from '@/assets/icons/nav/log-out.svg';
 import { paths } from '@/routes/paths';
 
 interface NavbarViewProps {
+  title?: string;
   nama: string;
   peran: string;
   role?: Role;
@@ -22,6 +23,7 @@ interface NavbarViewProps {
 }
 
 export function NavbarView({
+  title,
   nama,
   peran,
   role,
@@ -36,10 +38,11 @@ export function NavbarView({
   const isAdmin = role === 'ADMIN';
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b-1 border-black bg-surface/80 px-4 backdrop-blur sm:h-20 lg:px-6">
-      <div className="flex items-center gap-2 lg:hidden">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b-1 border-black bg-surface px-4 backdrop-blur sm:h-20 sm:px-6 lg:px-8">
+      {/* Mobile bar: Menu + Logo + Title */}
+      <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
         <button
-          className="-ml-1 rounded-md p-2 text-slate-500 hover:bg-slate-100"
+          className="-ml-1 shrink-0 rounded-md p-2 text-slate-500 hover:bg-slate-100"
           onClick={onOpenSidebar}
           aria-label="Buka menu"
         >
@@ -52,8 +55,27 @@ export function NavbarView({
             }}
           />
         </button>
-        <Logo className="h-7" />
+        <Logo className="h-7 shrink-0" />
+        {title && (
+          <>
+            <span className="text-slate-400" aria-hidden>
+              |
+            </span>
+            <span className="truncate text-sm font-semibold text-slate-900">
+              {title}
+            </span>
+          </>
+        )}
       </div>
+
+      {/* Desktop title: adjacent to sidebar's right border with SIGALON logo */}
+      {title && (
+        <div className="hidden items-center lg:flex">
+          <span className="text-base font-semibold text-slate-900">
+            {title}
+          </span>
+        </div>
+      )}
 
       <div className="ml-auto flex items-center gap-3">
         <div className="relative" ref={menuRef}>

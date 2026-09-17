@@ -77,7 +77,7 @@ export function ProporsiGenderBar({
   return (
     <Card
       className={cn(
-        'p-4 sm:p-5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0',
+        'p-4 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-black hover:shadow-md motion-reduce:hover:translate-y-0 sm:p-5',
         className,
       )}
     >
@@ -113,8 +113,8 @@ export function ProporsiGenderBar({
           </div>
         </div>
 
-        {/* Stacked Horizontal Bar Tegas Kotak (Bukan Rounded Pill) */}
-        <div className="flex h-9 w-full overflow-hidden border-1 border-black bg-slate-100 sm:h-10">
+        {/* Stacked Horizontal Bar Tegas Kotak dengan sudut rounded-md di tiap sisi */}
+        <div className="flex h-9 w-full overflow-hidden rounded-md border-1 border-black bg-slate-100 sm:h-10">
           {persenLaki > 0 && (
             <div
               style={{ width: `${persenLaki}%` }}

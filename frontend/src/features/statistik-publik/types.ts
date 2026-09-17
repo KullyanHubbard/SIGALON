@@ -7,6 +7,10 @@ export interface RincianRw {
   totalKepalaKeluarga: number;
   totalLakiLaki: number;
   totalPerempuan: number;
+  totalPenerimaBansos?: number;
+  totalBpnt?: number;
+  totalPkh?: number;
+  perBansos?: Distribusi[];
   perKelompokUmur: Distribusi[];
   perPendidikan: Distribusi[];
   perAgama: Distribusi[];

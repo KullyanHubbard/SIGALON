@@ -555,7 +555,7 @@ def _contoh_penduduk() -> list[Penduduk]:
             pendidikan="SMA", pekerjaan="Petani", golonganDarah="O",
             statusHubunganKeluarga="KEPALA_KELUARGA", kewarganegaraan="WNI",
             alamat=Alamat(
-                jalan="Jl. Uji No. 1", rt="001", rw="019", desa="Sukamaju",
+                jalan="Jl. Uji No. 1", rt="1", rw="19", desa="Sukamaju",
                 kecamatan="Cibiru", kabupaten="Bandung", provinsi="Jawa Barat",
                 kodePos="40615",
             ),
@@ -683,9 +683,9 @@ def _self_check() -> None:
             p.statusKependudukan for p in asli
         }, "statusKependudukan tidak selamat"
 
-        # RT/RW berawalan 0 tidak boleh kehilangan nolnya (sebab semua kolom TEXT).
-        assert all(p.alamat.rt.startswith("0") for p in hasil), (
-            "nol depan RT termakan — kolom kemungkinan jadi INTEGER"
+        # RT/RW konsisten tersimpan sebagai string
+        assert all(p.alamat.rt and p.alamat.rw for p in hasil), (
+            "alamat RT/RW kosong setelah disimpan"
         )
 
         # Impor menimpa: kosongkan harus mengembalikan tabel ke nol baris, dan

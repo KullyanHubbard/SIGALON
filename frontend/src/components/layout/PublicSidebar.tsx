@@ -52,15 +52,15 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
         </div>
 
         {/* Link cepat kembali ke portal publik dengan garis pembatas */}
-        <div className="pt-3">
+        <div className="pt-2">
           <Link
             to={paths.landing}
             onClick={onClose}
-            className="mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 text-base font-medium text-slate-900 transition-all duration-150 ease-out hover:bg-slate-100 hover:text-brand-600 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 motion-reduce:transition-none"
+            className="mx-10 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-normal text-slate-500 transition-all duration-150 ease-out hover:bg-slate-100 hover:text-brand-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 active:scale-95 motion-reduce:transition-none"
           >
             <span
               aria-hidden
-              className="block h-5 w-5 shrink-0 bg-current"
+              className="block h-4 w-4 shrink-0 bg-current"
               style={{
                 mask: `url("${ikonBack}") center / contain no-repeat`,
                 WebkitMask: `url("${ikonBack}") center / contain no-repeat`,
@@ -69,7 +69,10 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
             Kembali ke Beranda
           </Link>
           {/* Garis pembatas inset (tidak menyambung sampai pojok) */}
-          <div className="mx-5 my-2.5 border-b-1 border-black" aria-hidden="true" />
+          <div
+            className="mx-10 my-2 border-b-2 border-black"
+            aria-hidden="true"
+          />
         </div>
 
         {}

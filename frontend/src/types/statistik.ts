@@ -6,7 +6,7 @@ export interface Distribusi {
 export interface PanelDistribusi {
   id: string;
   judul: string;
-  jenis: 'pie' | 'bar';
+  jenis: 'pie' | 'bar' | 'bar-vertical';
   data: Distribusi[];
 
   deskripsi?: string;

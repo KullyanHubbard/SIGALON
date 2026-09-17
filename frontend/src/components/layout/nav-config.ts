@@ -23,7 +23,7 @@ export interface NavItem {
 }
 
 const statistikDesa: NavItem = {
-  label: 'Statistik Warga',
+  label: 'Statistik',
   to: paths.statistik,
   icon: ikonStatWarga,
   aksen: CHART_KATEGORI_COLORS[3],
@@ -31,7 +31,7 @@ const statistikDesa: NavItem = {
 };
 
 const riwayat: NavItem = {
-  label: 'Riwayat Perubahan',
+  label: 'Riwayat',
   to: paths.admin.riwayat,
   icon: ikonRiwayatEdit,
   aksen: CHART_KATEGORI_COLORS[1],

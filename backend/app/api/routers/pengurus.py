@@ -1,6 +1,6 @@
 """Kelola akun perangkat desa. ADMIN saja.
 
-Yang dikelola adalah **jabatan** (Dukuh, Ketua RW 019, Ketua RT 001, …), bukan
+Yang dikelola adalah **jabatan** (Dukuh, Ketua RW 19, Ketua RT 1, …), bukan
 sekadar daftar akun: satu jabatan dipegang satu orang, dan orangnya berganti
 sewaktu-waktu. Daftar jabatannya diturunkan dari alamat warga di data
 penduduk.
