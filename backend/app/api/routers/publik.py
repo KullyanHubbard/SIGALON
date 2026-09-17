@@ -4,11 +4,13 @@ from typing import Callable
 from fastapi import APIRouter, Query
 
 from app.data.agregat import (
+    cacah_dasar,
     distribusi_by,
     distribusi_kelompok_umur,
     distribusi_pendidikan,
     format_rt,
     format_rw,
+    ringkasan_bansos,
 )
 from app.data import lpm as data_lpm
 from app.data import pengurus as data_pengurus
@@ -18,7 +20,7 @@ from app.data.store import (
     periode_terawal,
     semua_penduduk,
 )
-from app.schemas.penduduk import Distribusi, Penduduk, RincianRw, StatistikPublik
+from app.schemas.penduduk import Penduduk, RincianRw, StatistikPublik
 from app.schemas.pengurus import (
     JabatanWilayahPublik,
     RwPublik,
@@ -41,35 +43,18 @@ def _kelompokkan(
 def _rincian(
     label: str, warga: list[Penduduk], per_rt: list[RincianRw] | None = None
 ) -> RincianRw:
-    total_bpnt = sum(1 for p in warga if "BPNT" in getattr(p, "bansos", []))
-    total_pkh = sum(1 for p in warga if "PKH" in getattr(p, "bansos", []))
-    total_penerima = sum(1 for p in warga if getattr(p, "bansos", []))
-    total_bpnt_saja = sum(
-        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" not in getattr(p, "bansos", [])
-    )
-    total_pkh_saja = sum(
-        1 for p in warga if "PKH" in getattr(p, "bansos", []) and "BPNT" not in getattr(p, "bansos", [])
-    )
-    total_ganda = sum(
-        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" in getattr(p, "bansos", [])
-    )
-    per_bansos = [
-        Distribusi(label="BPNT", value=total_bpnt_saja),
-        Distribusi(label="PKH", value=total_pkh_saja),
-        Distribusi(label="BPNT & PKH", value=total_ganda),
-    ]
+    cacah = cacah_dasar(warga)
+    bansos = ringkasan_bansos(warga)
     return RincianRw(
         label=label,
-        totalPenduduk=len(warga),
-        totalKepalaKeluarga=sum(
-            1 for p in warga if p.statusHubunganKeluarga == "KEPALA_KELUARGA"
-        ),
-        totalLakiLaki=sum(1 for p in warga if p.jenisKelamin == "LAKI_LAKI"),
-        totalPerempuan=sum(1 for p in warga if p.jenisKelamin == "PEREMPUAN"),
-        totalPenerimaBansos=total_penerima,
-        totalBpnt=total_bpnt,
-        totalPkh=total_pkh,
-        perBansos=per_bansos,
+        totalPenduduk=cacah.total,
+        totalKepalaKeluarga=cacah.kepalaKeluarga,
+        totalLakiLaki=cacah.lakiLaki,
+        totalPerempuan=cacah.perempuan,
+        totalPenerimaBansos=bansos.totalPenerima,
+        totalBpnt=bansos.totalBpnt,
+        totalPkh=bansos.totalPkh,
+        perBansos=bansos.perBansos,
         perKelompokUmur=distribusi_kelompok_umur(warga),
         perPendidikan=distribusi_pendidikan(warga),
         perAgama=distribusi_by(warga, lambda p: p.agama),
@@ -93,39 +78,18 @@ def statistik_publik(
     """
     # Yang pindah & meninggal tidak ikut dihitung — lihat `store.hanya_aktif`.
     semua = hanya_aktif(penduduk_pada(periode) if periode else semua_penduduk())
-    total_bpnt = sum(1 for p in semua if "BPNT" in getattr(p, "bansos", []))
-    total_pkh = sum(1 for p in semua if "PKH" in getattr(p, "bansos", []))
-    total_penerima = sum(1 for p in semua if getattr(p, "bansos", []))
-    total_bpnt_saja = sum(
-        1 for p in semua if "BPNT" in getattr(p, "bansos", []) and "PKH" not in getattr(p, "bansos", [])
-    )
-    total_pkh_saja = sum(
-        1 for p in semua if "PKH" in getattr(p, "bansos", []) and "BPNT" not in getattr(p, "bansos", [])
-    )
-    total_ganda = sum(
-        1 for p in semua if "BPNT" in getattr(p, "bansos", []) and "PKH" in getattr(p, "bansos", [])
-    )
-    per_bansos = [
-        Distribusi(label="BPNT", value=total_bpnt_saja),
-        Distribusi(label="PKH", value=total_pkh_saja),
-        Distribusi(label="BPNT & PKH", value=total_ganda),
-    ]
+    cacah = cacah_dasar(semua)
+    bansos = ringkasan_bansos(semua)
     return StatistikPublik(
         periodeTerawal=periode_terawal(),
-        totalPenduduk=len(semua),
-        totalLakiLaki=sum(
-            1 for p in semua if p.jenisKelamin == "LAKI_LAKI"
-        ),
-        totalPerempuan=sum(
-            1 for p in semua if p.jenisKelamin == "PEREMPUAN"
-        ),
-        totalKepalaKeluarga=sum(
-            1 for p in semua if p.statusHubunganKeluarga == "KEPALA_KELUARGA"
-        ),
-        totalPenerimaBansos=total_penerima,
-        totalBpnt=total_bpnt,
-        totalPkh=total_pkh,
-        perBansos=per_bansos,
+        totalPenduduk=cacah.total,
+        totalLakiLaki=cacah.lakiLaki,
+        totalPerempuan=cacah.perempuan,
+        totalKepalaKeluarga=cacah.kepalaKeluarga,
+        totalPenerimaBansos=bansos.totalPenerima,
+        totalBpnt=bansos.totalBpnt,
+        totalPkh=bansos.totalPkh,
+        perBansos=bansos.perBansos,
         perPekerjaan=distribusi_by(semua, lambda p: p.pekerjaan)[:10],
         perRw=[
             _rincian(

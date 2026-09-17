@@ -8,7 +8,7 @@ import {
   FotoBerita,
 } from '@/features/berita/components/BeritaCard';
 import { useBerita, useBeritaList } from '@/features/berita/hooks/use-berita';
-import { formatTanggal } from '@/features/berita/utils';
+import { formatTanggal } from '@/lib/tanggal';
 import { paths } from '@/routes/paths';
 import { WADAH } from '@/components/layout/wadah';
 

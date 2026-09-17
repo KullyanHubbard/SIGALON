@@ -1,3 +1,4 @@
+import { toRingkasanBansos, type RingkasanBansos } from '@/lib/bansos';
 import { toStatWarga } from '@/lib/stat-warga';
 import type { StatWarga } from '@/lib/stat-warga';
 import { formatAngka } from '@/lib/utils';
@@ -12,18 +13,13 @@ export interface BarisRw {
   persenTeks: string;
 }
 
-export interface RingkasanStatistik {
+export interface RingkasanStatistik extends RingkasanBansos {
   total: number;
 
   stat: StatWarga[];
 
   distribusi: Distribusi[];
   baris: BarisRw[];
-
-  totalPenerimaBansos: number;
-  totalBpnt: number;
-  totalPkh: number;
-  perBansos: Distribusi[];
 }
 
 export interface TujuanWilayah {
@@ -74,9 +70,6 @@ export function toRingkasanStatistik(
       persenTeks:
         total === 0 ? '—' : `${Math.round((d.totalPenduduk / total) * 100)}%`,
     })),
-    totalPenerimaBansos: data.totalPenerimaBansos ?? 0,
-    totalBpnt: data.totalBpnt ?? 0,
-    totalPkh: data.totalPkh ?? 0,
-    perBansos: data.perBansos ?? [],
+    ...toRingkasanBansos(data),
   };
 }

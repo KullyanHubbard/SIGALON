@@ -58,6 +58,20 @@ export function formatUmur(
   }
 }
 
+/**
+ * `'2026-08-02'` -> `'2 Agustus 2026'`. Satu-satunya pemformat tanggal di
+ * aplikasi ini.
+ *
+ * Dulu ada tiga: yang ini, satu lagi bernama sama persis di
+ * `features/berita/utils.ts`, dan sepasang `Intl.DateTimeFormat` di
+ * `features/audit/view-model.ts`. Keluarannya kebetulan identik, jadi yang
+ * berbahaya bukan tampilannya melainkan namanya — membaca `formatTanggal`
+ * menuntut mengecek dulu berkas mana yang sedang dibuka.
+ *
+ * Menerima tanggal polos (`'2026-08-02'`) maupun waktu lengkap
+ * (`'2026-08-02T03:26:38+00:00'`, dipakai riwayat audit); yang terakhir
+ * ditampilkan menurut zona waktu pembacanya.
+ */
 export function formatTanggal(iso?: string | null): string {
   if (!iso || !iso.trim()) return '-';
   try {
@@ -67,6 +81,22 @@ export function formatTanggal(iso?: string | null): string {
   } catch {
     return iso;
   }
+}
+
+// Sengaja `Intl`, bukan `format(d, 'HH:mm')` dari date-fns: penulisan jam
+// Indonesia memakai titik (`10.26`), sedangkan date-fns memberi titik dua
+// (`10:26`). Memindahkannya ke date-fns demi seragam dengan `formatTanggal`
+// akan mengubah tampilan riwayat tanpa ada yang meminta.
+const FORMAT_JAM = new Intl.DateTimeFormat('id-ID', {
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+/** `'2026-08-02T03:26:38+00:00'` -> `'10.26'` menurut zona waktu pembaca. */
+export function formatJam(iso?: string | null): string {
+  if (!iso || !iso.trim()) return '-';
+  const d = parseISO(iso);
+  return isValid(d) ? FORMAT_JAM.format(d) : '-';
 }
 
 export function periodeBulanIni(): string {

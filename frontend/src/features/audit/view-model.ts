@@ -1,14 +1,5 @@
+import { formatJam, formatTanggal } from '@/lib/tanggal';
 import type { CatatanAudit } from './types';
-
-const TANGGAL = new Intl.DateTimeFormat('id-ID', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
-const JAM = new Intl.DateTimeFormat('id-ID', {
-  hour: '2-digit',
-  minute: '2-digit',
-});
 
 const AKSI_LABEL: Record<string, string> = {
   'ubah-warga': 'Mengubah data',
@@ -66,11 +57,10 @@ export function toBarisRiwayat(c: CatatanAudit): BarisRiwayat {
     }
   }
 
-  const waktu = new Date(c.waktu);
   return {
     id: c.id,
-    waktu: TANGGAL.format(waktu),
-    jam: JAM.format(waktu),
+    waktu: formatTanggal(c.waktu),
+    jam: formatJam(c.waktu),
     aktor: c.aktor,
     aksi: AKSI_LABEL[c.aksi] ?? c.aksi,
     sasaran: c.sasaran,

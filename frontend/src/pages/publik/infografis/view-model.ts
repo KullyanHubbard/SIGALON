@@ -8,6 +8,7 @@ import type {
   RincianRw,
   StatistikPublik,
 } from '@/features/statistik-publik/types';
+import { panelBansos } from '@/lib/bansos';
 import type { Distribusi, PanelDistribusi } from '@/types/statistik';
 
 function gabungDistribusi(
@@ -73,16 +74,6 @@ export function toPanelDemografi(data: StatistikPublik): PanelDistribusi[] {
       ),
       lebarPenuh: true,
     },
-    ...(data.perBansos && data.perBansos.length > 0
-      ? [
-          {
-            id: 'bansos',
-            judul: 'Distribusi Program Bantuan Sosial',
-            jenis: 'bar-vertical' as const,
-            data: data.perBansos,
-            lebarPenuh: true,
-          },
-        ]
-      : []),
+    ...panelBansos(data.perBansos, { lebarPenuh: true }),
   ];
 }

@@ -2,15 +2,16 @@ from fastapi import APIRouter, Depends
 
 from app.api.routers.auth import current_pengurus
 from app.data.agregat import (
+    cacah_dasar,
     distribusi_by,
     distribusi_kelompok_umur,
     distribusi_pendidikan,
     format_rw,
+    ringkasan_bansos,
 )
 from app.data.store import hanya_aktif, penduduk_untuk
 from app.schemas.auth import AuthUser
 from app.schemas.infografis import InfografisData
-from app.schemas.penduduk import Distribusi
 
 router = APIRouter(tags=["infografis"])
 
@@ -23,39 +24,20 @@ async def infografis(user: AuthUser = Depends(current_pengurus)) -> InfografisDa
     karena itu cuma berisi satu batang. Wajar, bukan cacat.
     """
     warga = hanya_aktif(penduduk_untuk(user))
-    total_bpnt = sum(1 for p in warga if "BPNT" in getattr(p, "bansos", []))
-    total_pkh = sum(1 for p in warga if "PKH" in getattr(p, "bansos", []))
-    total_penerima = sum(1 for p in warga if getattr(p, "bansos", []))
-    total_ngontrak = sum(1 for p in warga if getattr(p, "statusDomisili", "TETAP") == "KONTRAK")
-    total_bpnt_saja = sum(
-        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" not in getattr(p, "bansos", [])
+    cacah = cacah_dasar(warga)
+    bansos = ringkasan_bansos(warga)
+    total_ngontrak = sum(
+        1 for p in warga if getattr(p, "statusDomisili", "TETAP") == "KONTRAK"
     )
-    total_pkh_saja = sum(
-        1 for p in warga if "PKH" in getattr(p, "bansos", []) and "BPNT" not in getattr(p, "bansos", [])
-    )
-    total_ganda = sum(
-        1 for p in warga if "BPNT" in getattr(p, "bansos", []) and "PKH" in getattr(p, "bansos", [])
-    )
-    per_bansos = [
-        Distribusi(label="BPNT", value=total_bpnt_saja),
-        Distribusi(label="PKH", value=total_pkh_saja),
-        Distribusi(label="BPNT & PKH", value=total_ganda),
-    ]
     return InfografisData(
-        totalPenduduk=len(warga),
-        totalKepalaKeluarga=sum(
-            1 for p in warga if p.statusHubunganKeluarga == "KEPALA_KELUARGA"
-        ),
-        totalLakiLaki=sum(
-            1 for p in warga if p.jenisKelamin == "LAKI_LAKI"
-        ),
-        totalPerempuan=sum(
-            1 for p in warga if p.jenisKelamin == "PEREMPUAN"
-        ),
-        totalPenerimaBansos=total_penerima,
-        totalBpnt=total_bpnt,
-        totalPkh=total_pkh,
-        perBansos=per_bansos,
+        totalPenduduk=cacah.total,
+        totalKepalaKeluarga=cacah.kepalaKeluarga,
+        totalLakiLaki=cacah.lakiLaki,
+        totalPerempuan=cacah.perempuan,
+        totalPenerimaBansos=bansos.totalPenerima,
+        totalBpnt=bansos.totalBpnt,
+        totalPkh=bansos.totalPkh,
+        perBansos=bansos.perBansos,
         totalNgontrak=total_ngontrak,
         perAgama=distribusi_by(warga, lambda p: p.agama),
         perPendidikan=distribusi_pendidikan(warga),

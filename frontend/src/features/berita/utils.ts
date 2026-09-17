@@ -15,19 +15,6 @@ export function keRingkasan(isi: string): string {
     .trim();
 }
 
-const formatterTanggal = new Intl.DateTimeFormat('id-ID', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
-
-export function formatTanggal(iso: string): string {
-  const tanggal = new Date(`${iso}T00:00:00`);
-  return Number.isNaN(tanggal.getTime())
-    ? iso
-    : formatterTanggal.format(tanggal);
-}
-
 export function bantuFotoUrl(url: string | undefined | null): string {
   if (!url) return '';
   if (

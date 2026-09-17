@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import date
 import io
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
@@ -36,17 +37,35 @@ _FILTER_LANGSUNG = (
 )
 
 
-def saring(
-    daftar: list[Penduduk],
-    *,
-    search: str = "",
-    pekerjaan: str = "",
-    rt: str = "",
-    rw: str = "",
-    kelompokUmur: str = "",
-    bansos: str = "",
-    **enum_filter: str,
-) -> list[Penduduk]:
+@dataclass
+class FilterPenduduk:
+    """Seluruh filter `GET /penduduk`, ditulis SEKALI dan dipakai bersama oleh
+    daftar dan ekspor lewat `Depends()`.
+
+    Dulu keempat belas parameter ini diketik ulang di kedua endpoint. Bahayanya
+    bukan panjangnya, tapi diamnya: satu filter baru yang lupa ditambahkan di
+    sisi ekspor membuat pengurus menyaring di layar, mengunduh, lalu mendapat
+    seluruh warga di dalam filenya — tanpa satu pun pesan salah. Sebagai satu
+    dataclass, menambah filter = menambah satu field, dan dua-duanya ikut.
+    """
+
+    search: str = ""
+    jenisKelamin: str = ""
+    agama: str = ""
+    golonganDarah: str = ""
+    pendidikan: str = ""
+    statusPerkawinan: str = ""
+    statusHubunganKeluarga: str = ""
+    statusKependudukan: str = ""
+    statusDomisili: str = ""
+    pekerjaan: str = ""
+    rt: str = ""
+    rw: str = ""
+    kelompokUmur: str = ""
+    bansos: str = ""
+
+
+def saring(daftar: list[Penduduk], f: FilterPenduduk) -> list[Penduduk]:
     """Semua filter digabung AND; nilai kosong tidak menyaring apa pun.
 
     `search` mencocokkan nama dan Kode Warga (`id`).
@@ -56,27 +75,27 @@ def saring(
     (tidak ada cache sejak Tahap 3a), dan data satu padukuhan muat di RAM.
     Pindah ke WHERE clause kalau datanya nanti puluhan ribu baris.
     """
-    q = search.strip().lower()
+    q = f.search.strip().lower()
     hasil = daftar
     if q:
         hasil = [p for p in hasil if q in p.nama.lower() or q in p.id.lower()]
     for field in _FILTER_LANGSUNG:
-        nilai = enum_filter.get(field, "")
+        nilai = getattr(f, field, "")
         if nilai:
             hasil = [p for p in hasil if getattr(p, field, None) == nilai]
-    if pekerjaan:
-        p_clean = pekerjaan.strip().lower()
+    if f.pekerjaan:
+        p_clean = f.pekerjaan.strip().lower()
         hasil = [p for p in hasil if p.pekerjaan and p.pekerjaan.strip().lower() == p_clean]
-    if rt:
-        hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rt, rt)]
-    if rw:
-        hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rw, rw)]
-    if kelompokUmur:
+    if f.rt:
+        hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rt, f.rt)]
+    if f.rw:
+        hasil = [p for p in hasil if _samakan_wilayah(p.alamat.rw, f.rw)]
+    if f.kelompokUmur:
         hasil = [
-            p for p in hasil if kelompok_umur(umur(p.tanggalLahir)) == kelompokUmur
+            p for p in hasil if kelompok_umur(umur(p.tanggalLahir)) == f.kelompokUmur
         ]
-    if bansos:
-        b_upper = bansos.strip().upper()
+    if f.bansos:
+        b_upper = f.bansos.strip().upper()
         if b_upper in ("SEMUA", "YA", "TERIMA"):
             hasil = [p for p in hasil if len(getattr(p, "bansos", [])) > 0]
         elif b_upper in ("TIDAK", "BUKAN", "NON"):
@@ -91,54 +110,44 @@ def saring(
     return hasil
 
 
+def warga_tersaring(
+    user: AuthUser, f: FilterPenduduk, kegiatan: str
+) -> list[Penduduk]:
+    """Warga yang boleh dilihat `user`, sesudah disaring — pintu yang sama untuk
+    daftar maupun ekspor.
+
+    Batas wilayahnya ditegakkan dua lapis: `penduduk_untuk` menentukan warga
+    mana yang terlihat, dan pemeriksaan di bawah menolak permintaan yang
+    menyebut wilayah orang lain secara eksplisit. `kegiatan` cuma mengganti satu
+    kata di pesan galatnya ("mengakses"/"mengekspor").
+    """
+    if user.role == "RT":
+        if f.rw and not _samakan_wilayah(f.rw, user.rw):
+            raise HTTPException(
+                403, f"Anda hanya berwenang {kegiatan} data wilayah RT Anda sendiri."
+            )
+        if f.rt and not _samakan_wilayah(f.rt, user.rt):
+            raise HTTPException(
+                403, f"Anda hanya berwenang {kegiatan} data wilayah RT Anda sendiri."
+            )
+    elif user.role == "RW":
+        if f.rw and not _samakan_wilayah(f.rw, user.rw):
+            raise HTTPException(
+                403, f"Anda hanya berwenang {kegiatan} data wilayah RW Anda sendiri."
+            )
+    return saring(penduduk_untuk(user), f)
+
+
 @router.get("/penduduk", response_model=PaginatedPenduduk)
 def list_penduduk(
     page: int = Query(1, ge=1),
     pageSize: int = Query(10, ge=1, le=200),
-    search: str = "",
-    jenisKelamin: str = "",
-    agama: str = "",
-    golonganDarah: str = "",
-    pendidikan: str = "",
-    statusPerkawinan: str = "",
-    statusHubunganKeluarga: str = "",
-    statusKependudukan: str = "",
-    pekerjaan: str = "",
-    rt: str = "",
-    rw: str = "",
-    kelompokUmur: str = "",
-    bansos: str = "",
-    statusDomisili: str = "",
     sortBy: str = "",
     sortOrder: str = "asc",
+    f: FilterPenduduk = Depends(),
     user: AuthUser = Depends(current_pengurus),
 ) -> PaginatedPenduduk:
-    if user.role == "RT":
-        if rw and not _samakan_wilayah(rw, user.rw):
-            raise HTTPException(403, "Anda hanya berwenang mengakses data wilayah RT Anda sendiri.")
-        if rt and not _samakan_wilayah(rt, user.rt):
-            raise HTTPException(403, "Anda hanya berwenang mengakses data wilayah RT Anda sendiri.")
-    elif user.role == "RW":
-        if rw and not _samakan_wilayah(rw, user.rw):
-            raise HTTPException(403, "Anda hanya berwenang mengakses data wilayah RW Anda sendiri.")
-
-    hasil = saring(
-        penduduk_untuk(user),
-        search=search,
-        pekerjaan=pekerjaan,
-        rt=rt,
-        rw=rw,
-        kelompokUmur=kelompokUmur,
-        bansos=bansos,
-        statusDomisili=statusDomisili,
-        statusKependudukan=statusKependudukan,
-        jenisKelamin=jenisKelamin,
-        agama=agama,
-        golonganDarah=golonganDarah,
-        pendidikan=pendidikan,
-        statusPerkawinan=statusPerkawinan,
-        statusHubunganKeluarga=statusHubunganKeluarga,
-    )
+    hasil = warga_tersaring(user, f, "mengakses")
 
     if sortBy:
         reverse = sortOrder.lower() == "desc"
@@ -176,50 +185,16 @@ def list_penduduk(
 
 @router.get("/penduduk/ekspor")
 def ekspor_penduduk(
-    search: str = "",
-    jenisKelamin: str = "",
-    agama: str = "",
-    golonganDarah: str = "",
-    pendidikan: str = "",
-    statusPerkawinan: str = "",
-    statusHubunganKeluarga: str = "",
-    statusKependudukan: str = "",
-    pekerjaan: str = "",
-    rt: str = "",
-    rw: str = "",
-    kelompokUmur: str = "",
-    bansos: str = "",
-    statusDomisili: str = "",
     format: str = Query("xlsx", pattern="^(xlsx|csv)$"),
+    f: FilterPenduduk = Depends(),
     user: AuthUser = Depends(current_pengurus),
 ) -> Response:
-    """Ekspor data warga ke file Excel (.xlsx) atau CSV (.csv) sesuai hak akses & filter."""
-    if user.role == "RT":
-        if rw and not _samakan_wilayah(rw, user.rw):
-            raise HTTPException(403, "Anda hanya berwenang mengekspor data wilayah RT Anda sendiri.")
-        if rt and not _samakan_wilayah(rt, user.rt):
-            raise HTTPException(403, "Anda hanya berwenang mengekspor data wilayah RT Anda sendiri.")
-    elif user.role == "RW":
-        if rw and not _samakan_wilayah(rw, user.rw):
-            raise HTTPException(403, "Anda hanya berwenang mengekspor data wilayah RW Anda sendiri.")
+    """Ekspor data warga ke file Excel (.xlsx) atau CSV (.csv) sesuai hak akses & filter.
 
-    hasil = saring(
-        penduduk_untuk(user),
-        search=search,
-        pekerjaan=pekerjaan,
-        rt=rt,
-        rw=rw,
-        kelompokUmur=kelompokUmur,
-        bansos=bansos,
-        statusDomisili=statusDomisili,
-        statusKependudukan=statusKependudukan,
-        jenisKelamin=jenisKelamin,
-        agama=agama,
-        golonganDarah=golonganDarah,
-        pendidikan=pendidikan,
-        statusPerkawinan=statusPerkawinan,
-        statusHubunganKeluarga=statusHubunganKeluarga,
-    )
+    Filternya `FilterPenduduk` yang sama persis dengan `GET /penduduk`, jadi apa
+    yang terlihat di layar itu juga yang masuk ke berkasnya.
+    """
+    hasil = warga_tersaring(user, f, "mengekspor")
 
     tgl = date.today().isoformat()
     padukuhan = ambil_padukuhan()

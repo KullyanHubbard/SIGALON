@@ -6,6 +6,7 @@ import {
   statusPerkawinanLabel,
 } from '@/features/penduduk/labels';
 import type { InfografisData } from '@/features/infografis/types';
+import { panelBansos } from '@/lib/bansos';
 import type { PanelDistribusi } from '@/types/statistik';
 
 export function toPanelInfografis(data: InfografisData): PanelDistribusi[] {
@@ -28,16 +29,7 @@ export function toPanelInfografis(data: InfografisData): PanelDistribusi[] {
       jenis: 'bar',
       data: relabel(data.perPendidikan, pendidikanLabel),
     },
-    ...(data.perBansos && data.perBansos.length > 0
-      ? [
-          {
-            id: 'bansos',
-            judul: 'Distribusi Program Bantuan Sosial',
-            jenis: 'bar-vertical' as const,
-            data: data.perBansos,
-          },
-        ]
-      : []),
+    ...panelBansos(data.perBansos),
     {
       id: 'perkawinan',
       judul: 'Status Perkawinan',

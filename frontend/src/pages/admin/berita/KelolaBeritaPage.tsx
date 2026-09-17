@@ -14,7 +14,7 @@ import {
   useHapusBerita,
 } from '@/features/berita/hooks/use-berita';
 import type { Berita } from '@/features/berita/types';
-import { formatTanggal } from '@/features/berita/utils';
+import { formatTanggal } from '@/lib/tanggal';
 import { cn, pesanError } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 

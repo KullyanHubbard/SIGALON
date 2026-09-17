@@ -6,6 +6,7 @@ kalau batas kelompok umur berubah, dua halaman ikut berubah bersamaan.
 """
 
 from collections import Counter
+from dataclasses import dataclass
 from datetime import date
 from typing import Callable, Iterable
 
@@ -110,6 +111,74 @@ def distribusi_pendidikan(orang: Iterable[Penduduk]) -> list[Distribusi]:
     )
 
 
+@dataclass
+class CacahDasar:
+    """Empat angka kepala yang muncul di tiap halaman statistik."""
+
+    total: int
+    lakiLaki: int
+    perempuan: int
+    kepalaKeluarga: int
+
+
+def cacah_dasar(orang: Iterable[Penduduk]) -> CacahDasar:
+    """Total jiwa, laki-laki, perempuan, dan kepala keluarga dalam satu lintasan.
+
+    `KEPALA_KELUARGA` diturunkan dari `statusHubunganKeluarga` — nomor KK sendiri
+    tidak didata (lihat CLAUDE.md §1).
+    """
+    warga = list(orang)
+    return CacahDasar(
+        total=len(warga),
+        lakiLaki=sum(1 for p in warga if p.jenisKelamin == "LAKI_LAKI"),
+        perempuan=sum(1 for p in warga if p.jenisKelamin == "PEREMPUAN"),
+        kepalaKeluarga=sum(
+            1 for p in warga if p.statusHubunganKeluarga == "KEPALA_KELUARGA"
+        ),
+    )
+
+
+@dataclass
+class RingkasanBansos:
+    """Cacah penerima bantuan sosial, siap dipasang ke skema respons mana pun."""
+
+    totalPenerima: int
+    totalBpnt: int
+    totalPkh: int
+    perBansos: list[Distribusi]
+
+
+def ringkasan_bansos(orang: Iterable[Penduduk]) -> RingkasanBansos:
+    """Cacah penerima BPNT/PKH beserta rinciannya untuk grafik.
+
+    Ditulis di sini, bukan di tiap router: sebelumnya blok yang sama persis
+    berdiri di `infografis.py` dan dua tempat di `publik.py`. Menambah jenis
+    bantuan baru berarti menyuntingnya di tiga tempat, dan yang terlewat tidak
+    memunculkan galat apa pun — angkanya cuma diam-diam berbeda antar halaman.
+
+    `perBansos` sengaja memakai kategori yang SALING LEPAS (BPNT saja, PKH saja,
+    keduanya) supaya jumlah ketiganya sama dengan `totalPenerima` — grafiknya
+    tidak menghitung orang yang sama dua kali. `totalBpnt`/`totalPkh` justru
+    bertumpang tindih, karena itu yang ditanya kalau soalnya "berapa penerima
+    BPNT" tanpa peduli dia juga menerima PKH.
+    """
+    warga = list(orang)
+    punya = [(p, set(getattr(p, "bansos", []) or ())) for p in warga]
+    bpnt_saja = sum(1 for _, b in punya if "BPNT" in b and "PKH" not in b)
+    pkh_saja = sum(1 for _, b in punya if "PKH" in b and "BPNT" not in b)
+    ganda = sum(1 for _, b in punya if "BPNT" in b and "PKH" in b)
+    return RingkasanBansos(
+        totalPenerima=sum(1 for _, b in punya if b),
+        totalBpnt=sum(1 for _, b in punya if "BPNT" in b),
+        totalPkh=sum(1 for _, b in punya if "PKH" in b),
+        perBansos=[
+            Distribusi(label="BPNT", value=bpnt_saja),
+            Distribusi(label="PKH", value=pkh_saja),
+            Distribusi(label="BPNT & PKH", value=ganda),
+        ],
+    )
+
+
 if __name__ == "__main__":
     # Cek mandiri: `python -m app.data.agregat` (tidak butuh pytest).
     assert format_rw("019") == "RW 19"
@@ -137,12 +206,17 @@ if __name__ == "__main__":
     assert umur(lahir.isoformat()) == 29
 
     def _orang(
-        tanggal_lahir: str, agama: str = "ISLAM", pendidikan: str = "SD"
+        tanggal_lahir: str,
+        agama: str = "ISLAM",
+        pendidikan: str = "SD",
+        jenis_kelamin: str = "LAKI_LAKI",
+        hubungan: str = "ANAK",
+        bansos: list[str] | None = None,
     ) -> Penduduk:
         return Penduduk(
             id="uji",
             nama="x",
-            jenisKelamin="LAKI_LAKI",
+            jenisKelamin=jenis_kelamin,
             tempatLahir="x",
             tanggalLahir=tanggal_lahir,
             agama=agama,
@@ -150,7 +224,8 @@ if __name__ == "__main__":
             pendidikan=pendidikan,
             pekerjaan="x",
             golonganDarah="O",
-            statusHubunganKeluarga="ANAK",
+            bansos=bansos or [],
+            statusHubunganKeluarga=hubungan,
             kewarganegaraan="WNI",
             alamat={
                 "jalan": "x",
@@ -192,5 +267,48 @@ if __name__ == "__main__":
         "SD",
         "S1",
     ]
+
+    # --- cacah_dasar ---
+    campur = [
+        _orang(f"{y - 30}-01-01", jenis_kelamin="LAKI_LAKI", hubungan="KEPALA_KELUARGA"),
+        _orang(f"{y - 28}-01-01", jenis_kelamin="PEREMPUAN", hubungan="ISTRI"),
+        _orang(f"{y - 5}-01-01", jenis_kelamin="PEREMPUAN", hubungan="ANAK"),
+    ]
+    dasar = cacah_dasar(campur)
+    assert (dasar.total, dasar.lakiLaki, dasar.perempuan, dasar.kepalaKeluarga) == (
+        3,
+        1,
+        2,
+        1,
+    ), dasar
+    kosong = cacah_dasar([])
+    assert (kosong.total, kosong.lakiLaki, kosong.kepalaKeluarga) == (0, 0, 0)
+
+    # --- ringkasan_bansos ---
+    penerima = [
+        _orang(f"{y - 30}-01-01", bansos=["BPNT"]),
+        _orang(f"{y - 30}-01-01", bansos=["BPNT"]),
+        _orang(f"{y - 30}-01-01", bansos=["PKH"]),
+        _orang(f"{y - 30}-01-01", bansos=["BPNT", "PKH"]),
+        _orang(f"{y - 30}-01-01", bansos=[]),
+    ]
+    b = ringkasan_bansos(penerima)
+    # Tumpang tindih: yang menerima dua-duanya ikut dihitung di kedua angka ini.
+    assert (b.totalBpnt, b.totalPkh) == (3, 2), b
+    # Empat baris punya bansos, satu tidak.
+    assert b.totalPenerima == 4, b
+    assert [(d.label, d.value) for d in b.perBansos] == [
+        ("BPNT", 2),
+        ("PKH", 1),
+        ("BPNT & PKH", 1),
+    ], b.perBansos
+    # Kategori grafik saling lepas, jadi jumlahnya = totalPenerima. Ini yang
+    # menjaga grafik tidak menghitung satu orang dua kali.
+    assert sum(d.value for d in b.perBansos) == b.totalPenerima
+
+    # Tanpa penerima sama sekali: tetap tiga batang bernilai nol, bukan kosong —
+    # frontend yang memutuskan menyembunyikannya.
+    nol = ringkasan_bansos([_orang(f"{y - 30}-01-01")])
+    assert nol.totalPenerima == 0 and len(nol.perBansos) == 3
 
     print("agregat: OK")

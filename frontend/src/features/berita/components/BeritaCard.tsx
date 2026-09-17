@@ -3,7 +3,8 @@ import { Newspaper } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import type { Berita } from '../types';
-import { bantuFotoUrl, formatTanggal, keRingkasan } from '../utils';
+import { formatTanggal } from '@/lib/tanggal';
+import { bantuFotoUrl, keRingkasan } from '../utils';
 
 export function FotoBerita({
   berita,
