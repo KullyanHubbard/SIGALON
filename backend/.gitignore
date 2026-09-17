@@ -14,7 +14,8 @@ __pycache__/
 # alamat, plus hash password akun pengurus dan token sesi yang sedang berjalan.
 # Satu commit menaruh semua itu di riwayat git secara permanen, dan riwayat git
 # tidak bisa dibersihkan setengah-setengah.
-/data/
+/data/*
+!/data/uploads/
 *.db
 *.db-wal
 *.db-shm
