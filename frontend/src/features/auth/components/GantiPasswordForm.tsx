@@ -6,17 +6,27 @@ import { Button } from '@/components/ui/Button';
 import { PasswordInput } from '@/components/ui/PasswordInput';
 import { pesanError } from '@/lib/utils';
 import { homePathForRole } from '@/routes/role-utils';
-import { useAuth, useGantiPassword } from '../hooks/use-auth';
+import { useAuth, useGantiPassword, useLogout } from '../hooks/use-auth';
 import { gantiPasswordSchema, type GantiPasswordFormValues } from '../schemas';
 import { AuthLayout } from './AuthLayout';
 
 export function GantiPasswordForm() {
   const { user, harusGantiPassword } = useAuth();
   const ganti = useGantiPassword();
+  const logout = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleKembali = () => {
+    // Selagi password awal belum diganti, tidak ada halaman yang bisa dituju:
+    // `RequireGantiPassword` menjaga semuanya, jadi "kembali" ke mana pun akan
+    // memantul balik ke sini. Jalan keluarnya mengakhiri sesi — password lama
+    // masih berlaku, jadi orangnya bisa masuk lagi kapan saja.
+    if (harusGantiPassword) {
+      logout();
+      return;
+    }
+
     const asal = (
       location.state as {
         from?: string | { pathname?: string; search?: string; hash?: string };
@@ -63,10 +73,11 @@ export function GantiPasswordForm() {
       title="Ganti Password"
       description={
         harusGantiPassword
-          ? 'Password Anda masih password awal dari Admin. Anda dapat menggantinya sekarang atau kembali ke halaman sebelumnya.'
+          ? 'Password Anda masih password awal dari Admin, dan harus diganti sebelum data warga bisa dibuka. Belum sempat sekarang? Keluar saja — password awal tadi masih bisa dipakai masuk lagi.'
           : `Masuk sebagai ${user?.nama ?? ''}. Password lama tidak akan berlaku lagi.`
       }
       onBack={handleKembali}
+      backLabel={harusGantiPassword ? 'Keluar' : 'Kembali'}
     >
       <form onSubmit={onSubmit} className="mt-5 space-y-4">
         <PasswordInput

@@ -56,6 +56,38 @@ function xyKeLatLon(xVal: number, yVal: number): [number, number] {
   return [Number(latVal.toFixed(6)), Number(lonVal.toFixed(6))];
 }
 
+/**
+ * Alamat Google Maps untuk sepasang koordinat.
+ *
+ * Ditulis sekali supaya polanya tidak diketik ulang di lima tempat — kalau
+ * Google mengganti bentuk tautannya, satu tombol yang terlewat akan membawa ke
+ * halaman kosong sementara yang lain baik-baik saja.
+ *
+ * Nilainya diterima apa adanya (`number` maupun `string` hasil `toFixed`):
+ * tiap pemanggil sudah menentukan sendiri seberapa banyak angka di belakang
+ * koma yang pantas, dan menyeragamkannya di sini akan mengubah tautan yang
+ * sudah tersimpan.
+ */
+function urlGoogleMaps(lat: number | string, lon: number | string): string {
+  return `https://maps.google.com/?q=${lat},${lon}`;
+}
+
+/** Koordinat tersimpan yang betul-betul angka; `null` kalau kosong atau NaN. */
+function angkaSah(nilai: number | null | undefined): number | null {
+  return nilai == null || Number.isNaN(nilai) ? null : nilai;
+}
+
+/**
+ * Koordinat dari kotak isian yang diketik orang; `null` kalau kosong, berisi
+ * spasi saja, atau bukan angka. Sengaja `parseFloat`, bukan `Number`: kotaknya
+ * teks bebas, dan angka berekor (`'-7.65 '`) tetap harus terbaca.
+ */
+function angkaKetikan(teks: string): number | null {
+  if (!teks) return null;
+  const angka = parseFloat(teks);
+  return Number.isNaN(angka) ? null : angka;
+}
+
 function buatMarkerIcon(simbol: string, bgClass: string, ringClass: string) {
   return L.divIcon({
     className: 'sigalon-picker-marker',
@@ -117,20 +149,16 @@ export function DialogUbahTitikLokasi({
       setDeskripsi(titik.deskripsi);
       setX(titik.x);
       setY(titik.y);
-      const titikLat =
-        titik.lat != null && !Number.isNaN(Number(titik.lat))
-          ? Number(titik.lat)
-          : xyKeLatLon(titik.x, titik.y)[0];
-      const titikLon =
-        titik.lon != null && !Number.isNaN(Number(titik.lon))
-          ? Number(titik.lon)
-          : xyKeLatLon(titik.x, titik.y)[1];
+      // Titik lama belum tentu punya lat/lon; yang begitu diturunkan dari x/y.
+      const [latDariXY, lonDariXY] = xyKeLatLon(titik.x, titik.y);
+      const titikLat = angkaSah(titik.lat) ?? latDariXY;
+      const titikLon = angkaSah(titik.lon) ?? lonDariXY;
 
       setLat(titikLat.toFixed(6));
       setLon(titikLon.toFixed(6));
       setGoogleMapsUrl(
         titik.googleMapsUrl ??
-          `https://maps.google.com/?q=${titikLat.toFixed(6)},${titikLon.toFixed(6)}`,
+          urlGoogleMaps(titikLat.toFixed(6), titikLon.toFixed(6)),
       );
       setIkon(titik.ikon);
     } else {
@@ -147,9 +175,7 @@ export function DialogUbahTitikLokasi({
       setY(defaultY);
       setLat(defaultCoord[0].toFixed(6));
       setLon(defaultCoord[1].toFixed(6));
-      setGoogleMapsUrl(
-        `https://maps.google.com/?q=${defaultCoord[0]},${defaultCoord[1]}`,
-      );
+      setGoogleMapsUrl(urlGoogleMaps(defaultCoord[0], defaultCoord[1]));
       setIkon('balai');
     }
     setGalatForm(null);
@@ -161,7 +187,7 @@ export function DialogUbahTitikLokasi({
     const lonFix = Number(lonVal.toFixed(6));
     setLat(String(latFix));
     setLon(String(lonFix));
-    setGoogleMapsUrl(`https://maps.google.com/?q=${latFix},${lonFix}`);
+    setGoogleMapsUrl(urlGoogleMaps(latFix, lonFix));
 
     const { x: hitungX, y: hitungY } = latLonKeXY(latFix, lonFix);
     setX(hitungX);
@@ -179,18 +205,11 @@ export function DialogUbahTitikLokasi({
       markerRef.current = null;
     }
 
+    // Urutan cadangan: yang sedang diketik -> yang tersimpan -> pusat padukuhan.
     const initLat =
-      lat && !Number.isNaN(parseFloat(lat))
-        ? parseFloat(lat)
-        : titik?.lat != null && !Number.isNaN(Number(titik.lat))
-          ? Number(titik.lat)
-          : PUSAT_PADUKUHAN[0];
+      angkaKetikan(lat) ?? angkaSah(titik?.lat) ?? PUSAT_PADUKUHAN[0];
     const initLon =
-      lon && !Number.isNaN(parseFloat(lon))
-        ? parseFloat(lon)
-        : titik?.lon != null && !Number.isNaN(Number(titik.lon))
-          ? Number(titik.lon)
-          : PUSAT_PADUKUHAN[1];
+      angkaKetikan(lon) ?? angkaSah(titik?.lon) ?? PUSAT_PADUKUHAN[1];
 
     const centerCoord: [number, number] = [initLat, initLon];
 
@@ -281,7 +300,7 @@ export function DialogUbahTitikLokasi({
       numLon >= -180 &&
       numLon <= 180
     ) {
-      setGoogleMapsUrl(`https://maps.google.com/?q=${numLat},${numLon}`);
+      setGoogleMapsUrl(urlGoogleMaps(numLat, numLon));
       const { x: hitungX, y: hitungY } = latLonKeXY(numLat, numLon);
       setX(hitungX);
       setY(hitungY);
@@ -315,8 +334,8 @@ export function DialogUbahTitikLokasi({
       return;
     }
 
-    const numLat = lat.trim() ? parseFloat(lat) : null;
-    const numLon = lon.trim() ? parseFloat(lon) : null;
+    const numLat = angkaKetikan(lat);
+    const numLon = angkaKetikan(lon);
 
     const payload: TitikLokasiUbah = {
       nama: nama.trim(),
@@ -330,9 +349,7 @@ export function DialogUbahTitikLokasi({
       lon: numLon,
       googleMapsUrl:
         googleMapsUrl.trim() ||
-        (numLat && numLon
-          ? `https://maps.google.com/?q=${numLat},${numLon}`
-          : null),
+        (numLat && numLon ? urlGoogleMaps(numLat, numLon) : null),
       ikon,
       urutan: titik?.urutan ?? 0,
     };

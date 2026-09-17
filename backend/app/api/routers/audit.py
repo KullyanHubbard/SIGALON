@@ -15,7 +15,7 @@ Yang dilihat mengikuti kewenangan, dan tumpangnya SATU ARAH saja:
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.routers.auth import current_user
+from app.api.routers.auth import current_user, tolak_kalau_belum_ganti
 from app.core import audit
 from app.core.audit import AKSI_AKUN, AKSI_WARGA
 from app.data.store import penduduk_untuk
@@ -44,7 +44,13 @@ def riwayat(user: AuthUser = Depends(current_user)) -> list[CatatanAudit]:
     Sengaja memakai `current_user`, bukan `current_pengurus` atau
     `current_admin`: dua peran memakai endpoint yang sama tapi mendapat isi
     yang berbeda, dan pembagiannya ditentukan di sini.
+
+    Karena itu pemeriksaan "password awal belum diganti" harus dipanggil manual:
+    ia menumpang pada dua dependency yang justru TIDAK dipakai di sini, dan
+    riwayat warga membawa nama orang beserta perubahannya.
     """
+    tolak_kalau_belum_ganti(user)
+
     if user.role == "ADMIN":
         return [_keluaran(r) for r in audit.riwayat(AKSI_AKUN)]
 

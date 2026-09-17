@@ -10,6 +10,9 @@ interface AuthLayoutProps {
   description?: string;
   children: ReactNode;
   onBack?: () => void;
+  /** Tulisan tombol kiri-atas. Ganti kalau tombolnya tidak benar-benar
+   *  mengembalikan ke halaman sebelumnya — mis. saat ia mengakhiri sesi. */
+  backLabel?: string;
   backTo?: string;
 }
 
@@ -18,6 +21,7 @@ export function AuthLayout({
   description,
   children,
   onBack,
+  backLabel = 'Kembali',
   backTo,
 }: AuthLayoutProps) {
   return (
@@ -43,7 +47,7 @@ export function AuthLayout({
                     WebkitMask: `url("${ikonKembali}") center / contain no-repeat`,
                   }}
                 />
-                Kembali
+                {backLabel}
               </button>
             ) : (
               <Link

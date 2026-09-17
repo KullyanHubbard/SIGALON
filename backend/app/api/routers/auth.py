@@ -66,7 +66,7 @@ async def current_user(token: str = Depends(token_sesi)) -> AuthUser:
     return ke_auth_user(p)
 
 
-def _tolak_kalau_belum_ganti(user: AuthUser) -> None:
+def tolak_kalau_belum_ganti(user: AuthUser) -> None:
     """Password awal dari Admin sekali pakai: selama belum diganti, akun tidak
     boleh melakukan apa pun selain menggantinya. Ditegakkan di sini, bukan di
     layar — kalau tidak, password yang sempat diketahui Admin tetap bisa
@@ -77,6 +77,7 @@ def _tolak_kalau_belum_ganti(user: AuthUser) -> None:
 
 async def current_admin(user: AuthUser = Depends(current_user)) -> AuthUser:
     """Kelola akun pengurus. ADMIN saja."""
+    tolak_kalau_belum_ganti(user)
     if user.role != "ADMIN":
         raise HTTPException(403, "Hanya untuk Admin.")
     return user
@@ -85,6 +86,7 @@ async def current_admin(user: AuthUser = Depends(current_user)) -> AuthUser:
 async def current_pengurus(user: AuthUser = Depends(current_user)) -> AuthUser:
     """Baca data warga. Arah kebalikan `current_admin`: ADMIN ditolak — dia
     mengelola akun, bukan membaca isi data penduduk & infografis."""
+    tolak_kalau_belum_ganti(user)
     if user.role not in ROLE_PENGURUS:
         raise HTTPException(403, "Admin tidak memiliki akses data warga.")
     return user

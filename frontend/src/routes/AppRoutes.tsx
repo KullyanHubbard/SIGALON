@@ -4,7 +4,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PublicShell } from '@/components/layout/PublicShell';
 import { LoadingBlock } from '@/components/ui/Spinner';
 import { ROLE_PENGURUS } from '@/features/auth/types';
-import { RedirectIfAuthenticated, RequireAuth, RequireRole } from './guards';
+import {
+  RedirectIfAuthenticated,
+  RequireAuth,
+  RequireGantiPassword,
+  RequireRole,
+} from './guards';
 import { paths } from './paths';
 
 const HomePage = lazy(() => import('@/pages/publik/home/HomePage'));
@@ -52,31 +57,41 @@ export function AppRoutes() {
         </Route>
 
         <Route element={<RequireAuth />}>
+          {/* Di luar `RequireGantiPassword` dengan sengaja — kalau ikut dijaga,
+              pengalihannya akan menunjuk ke halaman ini sendiri. */}
           <Route path={paths.gantiPassword} element={<GantiPasswordPage />} />
 
-          <Route element={<DashboardLayout />}>
-            <Route element={<RequireRole roles={ROLE_PENGURUS} />}>
-              <Route path={paths.admin.root} element={<AdminDashboardPage />} />
-              <Route path={paths.admin.penduduk} element={<PendudukPage />} />
-              <Route
-                path={paths.admin.infografis}
-                element={<InfografisPage />}
-              />
-            </Route>
+          <Route element={<RequireGantiPassword />}>
+            <Route element={<DashboardLayout />}>
+              <Route element={<RequireRole roles={ROLE_PENGURUS} />}>
+                <Route
+                  path={paths.admin.root}
+                  element={<AdminDashboardPage />}
+                />
+                <Route path={paths.admin.penduduk} element={<PendudukPage />} />
+                <Route
+                  path={paths.admin.infografis}
+                  element={<InfografisPage />}
+                />
+              </Route>
 
-            <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
+              <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
 
-            <Route element={<RequireRole roles={['ADMIN']} />}>
-              <Route path={paths.admin.pengurus} element={<PengurusPage />} />
-              <Route path={paths.admin.berita} element={<KelolaBeritaPage />} />
-              <Route
-                path={paths.admin.profil}
-                element={<ProfilPadukuhanPage />}
-              />
-              <Route
-                path={paths.admin.lokasi}
-                element={<LokasiWilayahPage />}
-              />
+              <Route element={<RequireRole roles={['ADMIN']} />}>
+                <Route path={paths.admin.pengurus} element={<PengurusPage />} />
+                <Route
+                  path={paths.admin.berita}
+                  element={<KelolaBeritaPage />}
+                />
+                <Route
+                  path={paths.admin.profil}
+                  element={<ProfilPadukuhanPage />}
+                />
+                <Route
+                  path={paths.admin.lokasi}
+                  element={<LokasiWilayahPage />}
+                />
+              </Route>
             </Route>
           </Route>
         </Route>
