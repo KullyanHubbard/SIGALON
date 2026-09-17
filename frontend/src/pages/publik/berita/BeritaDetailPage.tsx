@@ -89,7 +89,6 @@ export default function BeritaDetailPage() {
           </div>
         </article>
 
-        {}
         {terkini.length > 0 && (
           <aside data-apple-fade className="lg:sticky lg:top-24 lg:h-fit">
             <Card>

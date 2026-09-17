@@ -9,20 +9,17 @@ export function HeroBeranda() {
 
   return (
     <section className="relative isolate overflow-hidden">
-      {}
       <img
         src={latarHero}
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden
       />
-      {}
       <div
         className="absolute inset-0 bg-gradient-to-r from-[#3b1368]/90 via-[#3b1368]/70 to-transparent"
         aria-hidden
       />
 
-      {}
       <div className={`${WADAH} relative py-12 sm:py-20 lg:py-28`}>
         <div className="max-w-2xl text-center lg:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-200 sm:text-sm">
@@ -47,7 +44,7 @@ export function HeroBeranda() {
             </Link>
             <Link
               to={paths.statistik}
-              className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-white/70 bg-transparent px-4 text-sm font-semibold text-white transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-white hover:bg-white/10 hover:shadow-md active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 sm:h-12 sm:w-auto sm:px-6 sm:text-base"
+              className="inline-flex h-10 w-full items-center justify-center rounded-lg border-1 border-white/70 bg-transparent px-4 text-sm font-semibold text-white transition-all duration-150 ease-out hover:-translate-y-0.5 hover:border-white hover:bg-white/10 hover:shadow-md active:translate-y-0 active:scale-[0.98] motion-reduce:hover:translate-y-0 sm:h-12 sm:w-auto sm:px-6 sm:text-base"
             >
               Statistik
             </Link>

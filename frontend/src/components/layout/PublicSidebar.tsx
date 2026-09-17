@@ -30,7 +30,6 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        {}
         <div className="flex h-20 shrink-0 flex-col justify-center border-b-1 border-black px-5">
           <div className="flex items-center justify-between">
             <Logo className="h-8" />
@@ -75,7 +74,6 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
           />
         </div>
 
-        {}
         <div
           className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3 pt-0 [webkit-overflow-scrolling:touch]"
           onClick={(e) => {
@@ -87,7 +85,6 @@ export function PublicSidebar({ nav, open, onClose }: PublicSidebarProps) {
           {nav}
         </div>
 
-        {}
         <p className="flex h-14 min-h-14 shrink-0 items-center truncate border-t-1 border-black px-4 text-xs text-slate-400 sm:text-sm">
           Portal Data Kependudukan Padukuhan
         </p>

@@ -175,7 +175,6 @@ export function BaganOrganisasi() {
               <Kotak label="Dukuh" nama={struktur.dukuh} tingkat="dukuh" />
             </div>
 
-            {}
             <Tiang />
             <div className="relative flex w-full flex-col items-center md:flex-row md:justify-center">
               <span

@@ -21,7 +21,6 @@ export function AccountButton({ className }: AccountButtonProps) {
         className,
       )}
     >
-      {}
       <span
         aria-hidden
         className="h-4 w-4 shrink-0 bg-current"

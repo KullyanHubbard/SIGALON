@@ -102,7 +102,6 @@ export function BeritaFormDialog({ target, onClose }: BeritaFormDialogProps) {
           />
         </div>
 
-        {}
         <FotoBeritaField
           key={target === 'baru' || target === null ? 'baru' : target.id}
           value={foto}

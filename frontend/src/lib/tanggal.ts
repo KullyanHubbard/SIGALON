@@ -8,22 +8,6 @@ import {
 } from 'date-fns';
 import { id as localeId } from 'date-fns/locale';
 
-export function hitungUmur(tanggalLahirIso?: string | null): number {
-  if (!tanggalLahirIso || !tanggalLahirIso.trim()) {
-    return 0;
-  }
-  try {
-    const tglLahir = parseISO(tanggalLahirIso);
-    if (!isValid(tglLahir)) {
-      return 0;
-    }
-    const th = differenceInYears(new Date(), tglLahir);
-    return Math.max(0, isNaN(th) ? 0 : th);
-  } catch {
-    return 0;
-  }
-}
-
 /**
  * Format teks umur yang dinamis, akurat, dan manusiawi:
  * - Warga meninggal: '-'

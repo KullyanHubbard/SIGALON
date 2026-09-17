@@ -101,9 +101,7 @@ export function DistribusiPieChart({
 
   return (
     <>
-      {}
       <div className="relative">
-        {}
         <svg
           viewBox={`0 0 ${sisi} ${sisi}`}
           width="100%"
@@ -147,7 +145,6 @@ export function DistribusiPieChart({
                   )}
                   fill={warna[s.index % warna.length]}
                 >
-                  {}
                   {!labelIrisan && (
                     <title>{`${data[s.index].label}: ${data[s.index].value}`}</title>
                   )}

@@ -27,7 +27,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
   return (
     <>
-      {}
       {open && (
         <div
           className="fixed inset-0 z-30 bg-black/40 lg:hidden"

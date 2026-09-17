@@ -24,20 +24,19 @@ export function DashboardLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Navbar onOpenSidebar={() => setSidebarOpen(true)} />
 
-        {}
         <main ref={konten} className="flex-1 lg:overflow-y-auto">
           <div className="mx-auto w-full max-w-7xl px-3.5 py-4 sm:px-6 sm:py-6 lg:px-8">
-            {}
             <PersetujuanPanel />
 
             {harusGantiPassword && (
-              <div className="mb-6 flex flex-col justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 sm:flex-row sm:items-center">
+              <div className="mb-6 flex flex-col justify-between gap-3 rounded-xl border-1 border-amber-300 bg-amber-50 p-4 sm:flex-row sm:items-center">
                 <div className="text-sm">
                   <p className="font-semibold text-amber-900">
                     Perhatian: Anda masih menggunakan password awal
                   </p>
                   <p className="text-amber-700">
-                    Demi keamanan akun, Anda disarankan untuk segera mengganti password.
+                    Demi keamanan akun, Anda disarankan untuk segera mengganti
+                    password.
                   </p>
                 </div>
                 <Link
@@ -54,7 +53,6 @@ export function DashboardLayout() {
           </div>
         </main>
 
-        {}
         <BarKredit className="min-h-14 shrink-0 px-4 py-1.5 lg:px-8" />
       </div>
     </div>

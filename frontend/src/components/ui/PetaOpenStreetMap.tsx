@@ -22,8 +22,8 @@ function dapatkanKoordinat(item: TitikLokasi): [number, number] {
   if (
     item.lat != null &&
     item.lon != null &&
-    !isNaN(Number(item.lat)) &&
-    !isNaN(Number(item.lon))
+    !Number.isNaN(Number(item.lat)) &&
+    !Number.isNaN(Number(item.lon))
   ) {
     return [Number(item.lat), Number(item.lon)];
   }

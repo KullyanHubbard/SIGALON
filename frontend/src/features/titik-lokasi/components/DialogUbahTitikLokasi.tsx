@@ -118,11 +118,11 @@ export function DialogUbahTitikLokasi({
       setX(titik.x);
       setY(titik.y);
       const titikLat =
-        titik.lat != null && !isNaN(Number(titik.lat))
+        titik.lat != null && !Number.isNaN(Number(titik.lat))
           ? Number(titik.lat)
           : xyKeLatLon(titik.x, titik.y)[0];
       const titikLon =
-        titik.lon != null && !isNaN(Number(titik.lon))
+        titik.lon != null && !Number.isNaN(Number(titik.lon))
           ? Number(titik.lon)
           : xyKeLatLon(titik.x, titik.y)[1];
 
@@ -180,15 +180,15 @@ export function DialogUbahTitikLokasi({
     }
 
     const initLat =
-      lat && !isNaN(parseFloat(lat))
+      lat && !Number.isNaN(parseFloat(lat))
         ? parseFloat(lat)
-        : titik?.lat != null && !isNaN(Number(titik.lat))
+        : titik?.lat != null && !Number.isNaN(Number(titik.lat))
           ? Number(titik.lat)
           : PUSAT_PADUKUHAN[0];
     const initLon =
-      lon && !isNaN(parseFloat(lon))
+      lon && !Number.isNaN(parseFloat(lon))
         ? parseFloat(lon)
-        : titik?.lon != null && !isNaN(Number(titik.lon))
+        : titik?.lon != null && !Number.isNaN(Number(titik.lon))
           ? Number(titik.lon)
           : PUSAT_PADUKUHAN[1];
 
@@ -274,8 +274,8 @@ export function DialogUbahTitikLokasi({
     const numLat = parseFloat(newLatStr);
     const numLon = parseFloat(newLonStr);
     if (
-      !isNaN(numLat) &&
-      !isNaN(numLon) &&
+      !Number.isNaN(numLat) &&
+      !Number.isNaN(numLon) &&
       numLat >= -90 &&
       numLat <= 90 &&
       numLon >= -180 &&
@@ -367,7 +367,7 @@ export function DialogUbahTitikLokasi({
               Pilih Titik pada Peta OpenStreetMap (Klik Langsung atau Seret Pin)
             </label>
             <div className="flex items-center gap-2">
-              <span className="rounded border border-brand-200 bg-brand-50 px-2 py-0.5 font-mono text-[11px] font-medium text-brand-700 sm:text-xs">
+              <span className="rounded border-1 border-brand-200 bg-brand-50 px-2 py-0.5 font-mono text-[11px] font-medium text-brand-700 sm:text-xs">
                 Lat: {lat || '-'} | Lon: {lon || '-'}
               </span>
               <button

@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks/use-debounce';
+import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
+import { pesanError } from '@/lib/utils';
 import type { FilterPenduduk } from '../types';
 import {
   useFilterOpsi,
@@ -28,6 +30,7 @@ export function DaftarPenduduk() {
   const [formTarget, setFormTarget] = useState<Penduduk | 'baru' | null>(null);
   const [targetHapus, setTargetHapus] = useState<PendudukRow | null>(null);
   const [pesanErrorHapus, setPesanErrorHapus] = useState<string | null>(null);
+  const [pesanErrorEkspor, setPesanErrorEkspor] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   const debouncedSearch = useDebounce(search);
@@ -86,6 +89,7 @@ export function DaftarPenduduk() {
   async function handleEkspor(format: 'xlsx' | 'csv') {
     try {
       setIsExporting(true);
+      setPesanErrorEkspor(null);
       const blob = await pendudukApi.ekspor({
         search: debouncedSearch,
         ...filter,
@@ -101,8 +105,9 @@ export function DaftarPenduduk() {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error('Gagal mengekspor data penduduk:', err);
-      alert('Gagal mengekspor data penduduk. Silakan coba lagi.');
+      setPesanErrorEkspor(
+        pesanError(err, 'Gagal mengekspor data penduduk. Silakan coba lagi.'),
+      );
     } finally {
       setIsExporting(false);
     }
@@ -110,6 +115,11 @@ export function DaftarPenduduk() {
 
   return (
     <>
+      {pesanErrorEkspor && (
+        <div className="mb-4">
+          <Alert tone="error">{pesanErrorEkspor}</Alert>
+        </div>
+      )}
       <DaftarPendudukView
         search={search}
         onSearchChange={onSearchChange}
@@ -149,7 +159,7 @@ export function DaftarPenduduk() {
       >
         {targetHapus && (
           <div className="space-y-4">
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900">
+            <div className="rounded-lg border-1 border-amber-200 bg-amber-50 p-3.5 text-sm text-amber-900">
               <p className="mb-1 font-semibold">
                 Khusus Data Salah Input / Fiktif
               </p>
@@ -177,7 +187,7 @@ export function DaftarPenduduk() {
             </p>
 
             {pesanErrorHapus && (
-              <div className="rounded-md border border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-700">
+              <div className="rounded-md border-1 border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-700">
                 {pesanErrorHapus}
               </div>
             )}

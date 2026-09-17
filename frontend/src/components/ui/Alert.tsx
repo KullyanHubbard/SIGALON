@@ -30,7 +30,7 @@ export function Alert({
   return (
     <div
       className={cn(
-        'flex items-start gap-2 rounded-lg border px-3.5 py-2.5 text-sm',
+        'flex items-start gap-2 rounded-lg border-1 px-3.5 py-2.5 text-sm',
         className,
       )}
       role={tone === 'error' ? 'alert' : 'status'}

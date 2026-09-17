@@ -13,7 +13,7 @@ export function Skeleton({
   );
 }
 
-export function StatCardSkeleton() {
+function StatCardSkeleton() {
   return (
     <div className="flex h-full items-center gap-3 rounded-xl border-1 border-black bg-surface p-3 shadow-sm sm:gap-4 sm:p-4">
       <Skeleton className="h-9 w-9 shrink-0 rounded-lg sm:h-12 sm:w-12" />
@@ -35,7 +35,7 @@ export function GridStatSkeleton({ count = 4 }: { count?: number }) {
   );
 }
 
-export function BeritaCardSkeleton() {
+function BeritaCardSkeleton() {
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border-1 border-black bg-surface shadow-sm">
       <Skeleton className="aspect-video w-full rounded-none" />

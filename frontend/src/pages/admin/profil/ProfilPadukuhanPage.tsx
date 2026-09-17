@@ -83,11 +83,7 @@ export default function ProfilPadukuhanPage() {
         <p className="text-sm text-slate-600">
           Kelola informasi profil, visi-misi, dan kontak resmi padukuhan.
         </p>
-        <Button
-          type="submit"
-          isLoading={simpan.isPending}
-          disabled={!isDirty}
-        >
+        <Button type="submit" isLoading={simpan.isPending} disabled={!isDirty}>
           Simpan Perubahan
         </Button>
       </div>

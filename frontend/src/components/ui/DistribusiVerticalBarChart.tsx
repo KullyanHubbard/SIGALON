@@ -58,13 +58,12 @@ export function DistribusiVerticalBarChart({
             const persen = total > 0 ? Math.round((d.value / total) * 100) : 0;
             const warna =
               CHART_KATEGORI_COLORS[i % CHART_KATEGORI_COLORS.length];
-            const tinggi =
-              maks > 0 ? Math.max((d.value / maks) * 100, 10) : 0;
+            const tinggi = maks > 0 ? Math.max((d.value / maks) * 100, 10) : 0;
 
             return (
               <div
                 key={d.label}
-                className="group flex h-full flex-1 max-w-[140px] flex-col items-center justify-end"
+                className="group flex h-full max-w-[140px] flex-1 flex-col items-center justify-end"
               >
                 {/* Nilai & Badge Persentase di Atas Batang */}
                 <div
@@ -78,14 +77,14 @@ export function DistribusiVerticalBarChart({
                   <span className="text-base font-extrabold tabular-nums text-slate-900 sm:text-lg">
                     <BarItemCount value={d.value} />
                   </span>
-                  <span className="inline-flex min-w-[2.75rem] items-center justify-center rounded-md border-1 border-black bg-white px-1.5 py-0.5 text-[11px] font-extrabold tabular-nums text-slate-900 shadow-2xs sm:text-xs">
+                  <span className="shadow-2xs inline-flex min-w-[2.75rem] items-center justify-center rounded-md border-1 border-black bg-white px-1.5 py-0.5 text-[11px] font-extrabold tabular-nums text-slate-900 sm:text-xs">
                     {total === 0 ? '—' : `${persen}%`}
                   </span>
                 </div>
 
                 {/* Batang Vertikal */}
                 <div
-                  className="w-full max-w-[72px] rounded-t transition-all duration-750 ease-out group-hover:brightness-105 motion-reduce:transition-none sm:max-w-[96px]"
+                  className="duration-750 w-full max-w-[72px] rounded-t transition-all ease-out group-hover:brightness-105 motion-reduce:transition-none sm:max-w-[96px]"
                   style={{
                     height: terpasang ? `${tinggi}%` : '0%',
                     transitionDelay: `${Math.min(i * 90, 300)}ms`,
@@ -104,12 +103,11 @@ export function DistribusiVerticalBarChart({
       {/* Label Kategori di Bawah Garis Sumbu */}
       <div className="flex items-center justify-around gap-4 px-4 pt-3 sm:gap-8 sm:px-8">
         {data.map((d, i) => {
-          const warna =
-            CHART_KATEGORI_COLORS[i % CHART_KATEGORI_COLORS.length];
+          const warna = CHART_KATEGORI_COLORS[i % CHART_KATEGORI_COLORS.length];
           return (
             <div
               key={d.label}
-              className="flex flex-1 max-w-[140px] items-center justify-center gap-1.5 sm:gap-2"
+              className="flex max-w-[140px] flex-1 items-center justify-center gap-1.5 sm:gap-2"
             >
               <span
                 className="h-3 w-3 shrink-0 rounded-full border-1 border-black"

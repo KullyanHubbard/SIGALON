@@ -4,11 +4,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PublicShell } from '@/components/layout/PublicShell';
 import { LoadingBlock } from '@/components/ui/Spinner';
 import { ROLE_PENGURUS } from '@/features/auth/types';
-import {
-  RedirectIfAuthenticated,
-  RequireAuth,
-  RequireRole,
-} from './guards';
+import { RedirectIfAuthenticated, RequireAuth, RequireRole } from './guards';
 import { paths } from './paths';
 
 const HomePage = lazy(() => import('@/pages/publik/home/HomePage'));
@@ -56,16 +52,11 @@ export function AppRoutes() {
         </Route>
 
         <Route element={<RequireAuth />}>
-          {}
           <Route path={paths.gantiPassword} element={<GantiPasswordPage />} />
 
           <Route element={<DashboardLayout />}>
-            {}
             <Route element={<RequireRole roles={ROLE_PENGURUS} />}>
-              <Route
-                path={paths.admin.root}
-                element={<AdminDashboardPage />}
-              />
+              <Route path={paths.admin.root} element={<AdminDashboardPage />} />
               <Route path={paths.admin.penduduk} element={<PendudukPage />} />
               <Route
                 path={paths.admin.infografis}
@@ -73,16 +64,11 @@ export function AppRoutes() {
               />
             </Route>
 
-            {}
             <Route path={paths.admin.riwayat} element={<RiwayatPage />} />
 
-            {}
             <Route element={<RequireRole roles={['ADMIN']} />}>
               <Route path={paths.admin.pengurus} element={<PengurusPage />} />
-              <Route
-                path={paths.admin.berita}
-                element={<KelolaBeritaPage />}
-              />
+              <Route path={paths.admin.berita} element={<KelolaBeritaPage />} />
               <Route
                 path={paths.admin.profil}
                 element={<ProfilPadukuhanPage />}
@@ -95,7 +81,6 @@ export function AppRoutes() {
           </Route>
         </Route>
 
-        {}
         <Route element={<PublicShell />}>
           <Route path={paths.landing} element={<HomePage />} />
           <Route path={paths.profil} element={<ProfilPage />} />

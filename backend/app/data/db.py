@@ -463,15 +463,6 @@ def perbarui(conn: sqlite3.Connection, p: Penduduk) -> bool:
     return cur.rowcount > 0
 
 
-def id_terpakai(conn: sqlite3.Connection) -> set[str]:
-    """Seluruh Kode Warga yang sudah ada, termasuk baris ber-`deletedAt`.
-
-    Termasuk yang terhapus: kode milik baris salah input tidak boleh dipakai
-    ulang, kalau tidak riwayat audit menunjuk ke dua orang berbeda.
-    """
-    return {r["id"] for r in conn.execute("SELECT id FROM penduduk")}
-
-
 def muat(conn: sqlite3.Connection) -> list[Penduduk]:
     """Semua baris, termasuk yang ber-`deletedAt`. Penyaringan milik `store.py`.
 

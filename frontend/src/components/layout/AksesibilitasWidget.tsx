@@ -67,7 +67,7 @@ export function AksesibilitasWidget() {
                 onClick={() => pilih(s.persen)}
                 aria-pressed={persen === s.persen}
                 className={cn(
-                  'flex-1 rounded-lg border py-2 font-bold transition-all duration-150 active:scale-95',
+                  'flex-1 rounded-lg border-1 py-2 font-bold transition-all duration-150 active:scale-95',
                   persen === s.persen
                     ? 'border-brand-600 text-brand-600 shadow-sm'
                     : 'border-1 border-black text-slate-700 hover:border-black hover:bg-slate-50',

@@ -51,9 +51,10 @@ def saring(
 
     `search` mencocokkan nama dan Kode Warga (`id`).
 
-    ponytail: disaring di memori atas cache `store.py`, bukan lewat SQL — data
-    satu padukuhan muat di RAM dan sudah dimuat saat start. Pindah ke WHERE
-    clause kalau datanya nanti puluhan ribu baris.
+    ponytail: disaring di memori atas daftar yang dikembalikan `store.py`,
+    bukan lewat SQL — `store.penduduk_untuk()` query database tiap dipanggil
+    (tidak ada cache sejak Tahap 3a), dan data satu padukuhan muat di RAM.
+    Pindah ke WHERE clause kalau datanya nanti puluhan ribu baris.
     """
     q = search.strip().lower()
     hasil = daftar

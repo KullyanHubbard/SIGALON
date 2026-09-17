@@ -78,7 +78,7 @@ export function AjukanPergantianDialog({
         />
 
         {jabatan?.kode === 'LPM' && (
-          <div className="flex flex-col justify-between gap-2.5 rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700 sm:flex-row sm:items-center">
+          <div className="flex flex-col justify-between gap-2.5 rounded-lg border-1 border-amber-200 bg-amber-50/50 p-3 text-xs text-slate-700 sm:flex-row sm:items-center">
             <span>Ingin mencopot Ketua LPM tanpa memilih pengganti?</span>
             <Button
               type="button"

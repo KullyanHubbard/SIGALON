@@ -47,21 +47,11 @@ export function DaftarJabatanView({
           <Table className="w-full min-w-[700px]">
             <thead>
               <tr>
-                <Th className="w-[20%] min-w-[120px]">
-                  Jabatan
-                </Th>
-                <Th className="w-[25%] min-w-[150px]">
-                  Nama
-                </Th>
-                <Th className="w-[20%] min-w-[130px]">
-                  Username
-                </Th>
-                <Th className="w-[18%] min-w-[130px]">
-                  Status
-                </Th>
-                <Th className="w-[17%] min-w-[170px] text-center">
-                  Aksi
-                </Th>
+                <Th className="w-[20%] min-w-[120px]">Jabatan</Th>
+                <Th className="w-[25%] min-w-[150px]">Nama</Th>
+                <Th className="w-[20%] min-w-[130px]">Username</Th>
+                <Th className="w-[18%] min-w-[130px]">Status</Th>
+                <Th className="w-[17%] min-w-[170px] text-center">Aksi</Th>
               </tr>
             </thead>
             <tbody>

@@ -67,7 +67,6 @@ export function PilihanPeranLogin({ dipilih, onPilih }: Props) {
       aria-label="Pilih peran"
       className="relative mt-4 grid grid-cols-4 rounded-xl bg-slate-100 p-1"
     >
-      {}
       <span
         aria-hidden
         className={cn(

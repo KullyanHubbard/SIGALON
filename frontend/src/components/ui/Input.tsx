@@ -24,7 +24,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        {}
         <div className={cn((icon || trailing) && 'relative')}>
           {icon && (
             <span

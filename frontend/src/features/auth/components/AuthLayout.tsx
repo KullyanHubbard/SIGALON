@@ -28,7 +28,6 @@ export function AuthLayout({
 
       <div className="flex flex-1 flex-col px-3.5 py-6 sm:px-6 sm:py-8">
         <div className="my-auto w-full max-w-lg self-center">
-          {}
           <div className="rounded-2xl border-1 border-black bg-surface p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)] sm:p-10">
             {onBack ? (
               <button
@@ -77,7 +76,6 @@ export function AuthLayout({
         </div>
       </div>
 
-      {}
       <BarKredit className="min-h-14 shrink-0 px-4 py-1.5 sm:px-6" />
     </div>
   );

@@ -81,7 +81,6 @@ export function PublicShell() {
         </div>
       </div>
 
-      {}
       <BarKredit className="min-h-14 shrink-0 px-4 py-1.5 sm:px-6 lg:px-8" />
     </div>
   );

@@ -17,7 +17,9 @@ kode agar hasil tetap rapi dan konsisten.
   pengurus** (`backend/app/data/db.py`, file di `settings.DATABASE_PATH`).
   Tidak ada seeding otomatis: data penduduk masuk lewat
   `app/data/impor_excel.py`, akun Dukuh pertama lewat `pengurus.bootstrap()`
-  dari env. **Yang masih di memori:** audit log saja.
+  dari env. Audit log **juga sudah di SQLite** (tabel `audit_log`) sejak
+  Tahap 3b. **Yang masih di memori:** hitungan rate limit login saja
+  (`app/core/ratelimit.py`), dan itu memang hilang tiap restart.
 - **NIK & No. KK tidak disimpan sama sekali** (keputusan desa, 26 Agustus
   2026). Warga tidak punya akun. `id` penduduk = kolom **Kode Warga** di Excel.
 - **Empat peran** (`ADMIN`/`DUKUH`/`RW`/`RT`) dan akun melekat pada **jabatan**.
@@ -113,7 +115,7 @@ NIA-WEB/
 │   └── src/
 │       ├── app/              # provider global (React Query, Router)
 │       ├── components/
-│       │   ├── layout/       # Sidebar, Navbar, DashboardLayout, PageHeader
+│       │   ├── layout/       # Sidebar, Navbar, DashboardLayout, PublicShell
 │       │   └── ui/           # primitif UI reusable (Button, Card, Table, …)
 │       ├── config/           # akses env tervalidasi (env.ts)
 │       ├── features/         # kode per-domain (lihat §4)
@@ -181,7 +183,7 @@ Komponen tidak pernah memanggil `apiClient` langsung — selalu lewat `pendudukA
 ### Penamaan
 
 - Komponen React & tipe: `PascalCase` (`PendudukDetail`, `AuthUser`).
-- Variabel, fungsi, hook: `camelCase` (`hitungUmur`, `usePendudukList`).
+- Variabel, fungsi, hook: `camelCase` (`formatUmur`, `usePendudukList`).
 - File komponen: `PascalCase.tsx`. File non-komponen: `kebab-case.ts` (`use-penduduk.ts`, `api-client.ts`).
 - Konstanta modul: `UPPER_SNAKE_CASE` (`PAGE_SIZE`).
 - **Istilah domain memakai Bahasa Indonesia** (`penduduk`, `pengurus`, `jenisKelamin`) agar selaras dengan data asli.
@@ -210,7 +212,7 @@ Komponen tidak pernah memanggil `apiClient` langsung — selalu lewat `pendudukA
 - Tailwind utility-first. Hindari file CSS terpisah kecuali untuk global (`styles/index.css`).
 - Kelas panjang: urutkan otomatis oleh `prettier-plugin-tailwindcss` (jalankan `npm run format`).
 - **Warna Tegas & Profesional**: Hindari warna fill samar-samar/pastel kusam (seperti `bg-purple-100`, `bg-slate-100` berlebih). Gunakan warna solid, kontras tinggi, dan rapi.
-- **Border**: Hindari `border` telanjang tanpa ukuran karena default Tailwind di proyek ini adalah 4px (`borderWidth: { DEFAULT: '4px' }`). Selalu gunakan `border-1` untuk garis halus 1px atau gunakan tombol borderless.
+- **Border**: selalu tulis lebarnya — `border-1` untuk garis halus 1px — atau pakai tombol borderless. Di `tailwind.config.js` sekarang `borderWidth: { DEFAULT: '1px' }`, jadi `border` telanjang **tidak lagi** merender 4px seperti dulu; aturan ini bertahan demi keseragaman, bukan lagi untuk mencegah garis tebal yang tidak disengaja.
 - **Konvensi Titik Lokasi (`features/titik-lokasi`)**:
   - Warna semantik terpusat di `features/titik-lokasi/warna.ts` (`dapatkanTemaTitik`):
     - Masjid/Ibadah: Emerald Green (`bg-emerald-600` / `bg-emerald-700` / `text-emerald-600`)
@@ -528,7 +530,7 @@ Kontrak endpoint yang **sudah diimplementasikan** (bentuknya sinkron dengan
 | POST   | `/auth/login`                    | pengurus: username + password → `{ token, user }`      |
 | POST   | `/auth/logout`                   | —                                                      |
 | POST   | `/auth/ganti-password`           | ganti password sendiri; satu-satunya pintu yang terbuka selagi `harusGantiPassword` menyala |
-| GET    | `/penduduk`                      | daftar: `page`, `pageSize`, `search` (nama) + 10 filter |
+| GET    | `/penduduk`                      | daftar: `page`, `pageSize`, `search` (nama/Kode Warga) + 14 filter + `sortBy`/`sortOrder` |
 | GET    | `/penduduk/filter-opsi`          | pilihan RT / RW / pekerjaan dari isi data              |
 | GET    | `/penduduk/{id}`                 | detail satu warga (404 kalau di luar wilayah)           |
 | POST   | `/penduduk`                      | tambah warga di wilayah sendiri — PENGURUS              |
@@ -555,8 +557,11 @@ Kontrak endpoint yang **sudah diimplementasikan** (bentuknya sinkron dengan
 
 Filter `GET /penduduk` (semua opsional, digabung AND, disaring di memori oleh
 `penduduk.saring`): `jenisKelamin`, `agama`, `golonganDarah`, `pendidikan`,
-`statusPerkawinan`, `statusHubunganKeluarga`, `pekerjaan`, `rt`, `rw`,
-`kelompokUmur`.
+`statusPerkawinan`, `statusHubunganKeluarga`, `statusKependudukan`,
+`statusDomisili`, `pekerjaan`, `rt`, `rw`, `kelompokUmur`, `bansos`, dan
+`search`. Ditambah `sortBy` (`nama`/`umur`/`tanggalLahir`/`rt`/`rw`/`id`)
+dengan `sortOrder` (`asc`/`desc`). `GET /penduduk/ekspor` menerima daftar
+filter yang sama persis, minus paginasi dan pengurutan.
 
 **Satu orang satu jabatan**, diperiksa lewat kolom `pengurus.warga_id` (Kode
 Warga pemegang jabatan) — bukan lewat nama, karena dua orang yang benar-benar
@@ -668,9 +673,13 @@ tambahan di luar footer statis biasa:
 Kontak (`PADUKUHAN.telepon`/`.email` di `lib/padukuhan.ts`) sudah data asli dari
 desa — bukan placeholder seperti nama di bagan organisasi.
 
-**Fitur bantuan sosial telah dicabut dari `/infografis`** — status penerima
-bantuan tidak didata pada sistem ini sehingga tidak ada data riil yang bisa
-diagregasikan. Halaman infografis kini berfokus penuh pada data demografi riil.
+**Fitur bantuan sosial AKTIF dan terpasang penuh** — kolom `penduduk.bansos`
+(TEXT, dipisah koma), dibaca `impor_excel` dengan mendeteksi kolom ber-label
+"bansos" secara dinamis, disunting lewat centang BPNT/PKH di form warga, bisa
+disaring (`?bansos=`), ikut terekspor, dan diagregasikan jadi panel
+"Distribusi Program Bantuan Sosial" di `/infografis` (pengurus & publik) serta
+`/statistik`. Tagnya tidak dikunci ke BPNT/PKH: penyaringan mencocokkan tag apa
+pun yang ada di data, walau agregasinya masih menghitung BPNT/PKH/keduanya.
 
 **Keterangan padukuhan (nama wilayah, luas, kontak, sejarah, batas) tinggal di
 tabel `padukuhan`** sejak 3 September 2026, disunting ADMIN di `/admin/profil`

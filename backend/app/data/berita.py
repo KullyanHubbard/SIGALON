@@ -247,6 +247,7 @@ def demo() -> None:
 
             # Menyunting tanpa mengganti judul TIDAK menaikkan akhiran slugnya sendiri.
             tetap = ubah(satu.id, contoh("Kerja Bakti", "2026-08-02"))
+            assert tetap is not None and tetap.slug == "kerja-bakti", tetap
             b_satu = by_id(satu.id)
             assert b_satu is not None and b_satu.tanggalTerbit == "2026-08-02"
 

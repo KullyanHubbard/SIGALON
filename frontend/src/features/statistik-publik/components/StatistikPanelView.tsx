@@ -75,7 +75,7 @@ function RwVerticalBarChart({
 
                 {/* Batang grafik berdiri langsung di atas garis sumbu tanpa fill padding */}
                 <div
-                  className="w-10 rounded-t-md transition-all duration-750 ease-out group-hover:brightness-110 motion-reduce:transition-none sm:w-14"
+                  className="duration-750 w-10 rounded-t-md transition-all ease-out group-hover:brightness-110 motion-reduce:transition-none sm:w-14"
                   style={{
                     height: terpasang ? `${tinggi}%` : '0%',
                     transitionDelay: `${Math.min(i * 90, 300)}ms`,
@@ -91,8 +91,7 @@ function RwVerticalBarChart({
       {/* Label Sumbu X (Nama RW) di bawah garis sumbu */}
       <div className="grid w-full grid-cols-3 px-4 pt-3.5">
         {data.distribusi.map((item, i) => {
-          const warna =
-            CHART_KATEGORI_COLORS[i % CHART_KATEGORI_COLORS.length];
+          const warna = CHART_KATEGORI_COLORS[i % CHART_KATEGORI_COLORS.length];
           return (
             <button
               key={item.label}
