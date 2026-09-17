@@ -111,6 +111,9 @@ def demo() -> None:
 
         DATABASE_PATH=/tmp/uji-sesi.db .venv/bin/python -m app.data.sesi
     """
+    # Turso dimatikan dulu: cek mandiri ini menghapus & menimpa isi tabel,
+    # dan itu tidak boleh sampai mengenai database sungguhan di cloud.
+    db.paksa_lokal()
     from app.data import pengurus as pg
 
     a = pg.tambah("uji-a", "rahasia12", "A", pg.ROLE_DUKUH)

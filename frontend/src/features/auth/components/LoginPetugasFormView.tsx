@@ -41,7 +41,7 @@ export function LoginPetugasFormView({
 
         <Input
           label="Username"
-          className="h-[3.25rem] text-base"
+          className="h-12 text-sm"
           icon={
             <UserRound className="h-5 w-5 text-slate-800" strokeWidth={2.5} />
           }
@@ -52,7 +52,7 @@ export function LoginPetugasFormView({
         />
         <PasswordInput
           label="Password"
-          className="h-[3.25rem] text-base"
+          className="h-12 text-sm"
           icon={
             <KeyRound className="h-5 w-5 text-slate-800" strokeWidth={2.5} />
           }
@@ -65,7 +65,7 @@ export function LoginPetugasFormView({
         <Button
           type="submit"
           size="lg"
-          className="mt-1 h-[3.25rem] w-full bg-brand-700 text-base font-semibold hover:bg-brand-800 active:bg-brand-900"
+          className="mt-1 w-full bg-brand-700 text-sm font-semibold hover:bg-brand-800 active:bg-brand-900"
           isLoading={isPending}
         >
           Masuk

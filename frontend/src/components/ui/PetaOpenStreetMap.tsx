@@ -194,7 +194,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               Semua Titik
               <span
                 className={cn(
-                  'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
+                  'py-0.2 ml-1 rounded-full px-1.5 text-2xs font-extrabold',
                   tabAktif === 'semua'
                     ? 'bg-white/25 text-white'
                     : 'bg-slate-200 text-slate-900',
@@ -217,7 +217,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               Fasilitas Umum
               <span
                 className={cn(
-                  'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
+                  'py-0.2 ml-1 rounded-full px-1.5 text-2xs font-extrabold',
                   tabAktif === 'fasilitas'
                     ? 'bg-white/25 text-white'
                     : 'bg-slate-200 text-slate-900',
@@ -240,7 +240,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               Perangkat Desa
               <span
                 className={cn(
-                  'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
+                  'py-0.2 ml-1 rounded-full px-1.5 text-2xs font-extrabold',
                   tabAktif === 'perangkat'
                     ? 'bg-white/25 text-white'
                     : 'bg-slate-200 text-slate-900',
@@ -289,7 +289,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
             </div>
           )}
           {tabAktif === 'perangkat' && jumlahPerangkat === 0 && !isLoading && (
-            <div className="backdrop-blur-xs pointer-events-none absolute left-1/2 top-3 z-[400] flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1.5 text-[11px] font-medium text-white shadow-md">
+            <div className="backdrop-blur-xs pointer-events-none absolute left-1/2 top-3 z-[400] flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-slate-900/80 px-3 py-1.5 text-2xs font-medium text-white shadow-md">
               <UserCheck className="h-3.5 w-3.5 text-purple-300" />
               <span>Belum ada data kediaman perangkat desa terdaftar</span>
             </div>

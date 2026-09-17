@@ -33,7 +33,7 @@ export function PetaPadukuhan({ className }: { className?: string }) {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="absolute left-2.5 top-2.5 z-10 flex items-center gap-1 rounded-lg border-1 border-black bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-slate-800 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:text-brand-600 hover:shadow-md sm:left-3 sm:top-3 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs"
+          className="absolute left-2.5 top-2.5 z-10 flex items-center gap-1 rounded-lg border-1 border-black bg-white/95 px-2.5 py-1 text-2xs font-semibold text-slate-800 shadow-sm backdrop-blur-md transition-all hover:bg-white hover:text-brand-600 hover:shadow-md sm:left-3 sm:top-3 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs"
           title="Buka lokasi di Google Maps"
         >
           <MapPin className="h-3 w-3 shrink-0 text-rose-500 sm:h-3.5 sm:w-3.5" />
@@ -49,7 +49,7 @@ export function PetaPadukuhan({ className }: { className?: string }) {
             e.stopPropagation();
             setModalOpen(true);
           }}
-          className="pointer-events-auto absolute bottom-2.5 right-2.5 z-10 flex cursor-pointer items-center gap-1 rounded-lg bg-black/75 px-2.5 py-1 text-[10px] font-medium text-white shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-black/90 active:scale-95 sm:bottom-3 sm:right-3 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs"
+          className="pointer-events-auto absolute bottom-2.5 right-2.5 z-10 flex cursor-pointer items-center gap-1 rounded-lg bg-black/75 px-2.5 py-1 text-2xs font-medium text-white shadow-sm backdrop-blur-sm transition-all hover:scale-105 hover:bg-black/90 active:scale-95 sm:bottom-3 sm:right-3 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-xs"
           title="Buka denah peta ukuran penuh"
         >
           <Maximize2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />

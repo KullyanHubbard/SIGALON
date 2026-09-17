@@ -27,7 +27,7 @@ export function BadgeStatusPortal({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-2 rounded-lg border-1 border-brand-600 bg-brand-700 px-2.5 py-1 text-[11px] font-medium text-white shadow-sm transition-colors sm:text-xs',
+        'inline-flex items-center gap-2 rounded-lg border-1 border-brand-600 bg-brand-700 px-2.5 py-1 text-2xs font-medium text-white shadow-sm transition-colors sm:text-xs',
         className,
       )}
       aria-label={`Status: Portal Resmi Aktif pada ${jam} WIB`}

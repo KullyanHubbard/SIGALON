@@ -31,13 +31,13 @@ export function AuthLayout({
       </header>
 
       <div className="flex flex-1 flex-col px-3.5 py-6 sm:px-6 sm:py-8">
-        <div className="my-auto w-full max-w-lg self-center">
-          <div className="rounded-2xl border-1 border-black bg-surface p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)] sm:p-10">
+        <div className="my-auto w-full max-w-md self-center">
+          <div className="rounded-2xl border-1 border-black bg-surface p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(15,23,42,0.12)] sm:p-8">
             {onBack ? (
               <button
                 type="button"
                 onClick={onBack}
-                className="focus-ring -ml-3 mb-2 inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-base font-medium text-slate-900 transition-colors hover:bg-slate-100 hover:text-brand-700"
+                className="focus-ring -ml-3 mb-2 inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 hover:text-brand-700"
               >
                 <span
                   aria-hidden
@@ -52,7 +52,7 @@ export function AuthLayout({
             ) : (
               <Link
                 to={backTo ?? paths.landing}
-                className="focus-ring -ml-3 mb-2 inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-base font-medium text-slate-900 transition-colors hover:bg-slate-100 hover:text-brand-700"
+                className="focus-ring -ml-3 mb-2 inline-flex w-fit items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-slate-100 hover:text-brand-700"
               >
                 <span
                   aria-hidden

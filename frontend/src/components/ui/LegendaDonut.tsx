@@ -60,7 +60,7 @@ export function LegendaDonut({
               <span className="min-w-[1.75rem] text-right text-xs font-bold tabular-nums text-slate-900 sm:text-sm">
                 {formatAngka(d.value)}
               </span>
-              <span className="inline-flex min-w-[2.85rem] items-center justify-center rounded-md border-1 border-black bg-transparent px-1.5 py-0.5 text-[11px] font-extrabold tabular-nums text-slate-900 sm:text-xs">
+              <span className="inline-flex min-w-[2.85rem] items-center justify-center rounded-md border-1 border-black bg-transparent px-1.5 py-0.5 text-2xs font-extrabold tabular-nums text-slate-900 sm:text-xs">
                 {total === 0 ? '—' : `${persen}%`}
               </span>
             </div>

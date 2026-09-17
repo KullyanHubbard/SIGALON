@@ -68,6 +68,10 @@ berhenti jadi contoh dan berubah jadi password Admin yang sungguhan.
 | `DATABASE_PATH` | — | Path file SQLite data penduduk & pengurus, relatif dari `backend/`. Bawaan `./data/sigalon.db`. |
 | `PORTAL_DATABASE_PATH` | — | Path file SQLite portal publik (berita, padukuhan, lpm), relatif dari `backend/`. Bawaan `./data/portal.db`. |
 | `SESI_TTL_JAM` | — | Umur sesi login. Bawaan 12. |
+| `TURSO_DATABASE_URL` | — | Alamat database kependudukan di Turso (`libsql://…`). Kosong = tetap pakai file lokal. |
+| `TURSO_AUTH_TOKEN` | — | Token database itu. **Setara password.** Wajib berpasangan dengan baris di atas. |
+| `TURSO_PORTAL_DATABASE_URL` | — | Alamat database portal publik di Turso. |
+| `TURSO_PORTAL_AUTH_TOKEN` | — | Token database portal. |
 | `CORS_ORIGINS` | — | Asal yang boleh memanggil API, dipisah koma. Tidak terpakai kalau frontend diproksikan lewat Vite (`/api`). |
 
 Berkas itu **tidak ikut repo** (`.gitignore`). Definisi yang berlaku ada di
@@ -91,6 +95,84 @@ bootstrap ini tidak dituntut ganti password: nilainya datang dari environment
 server, bukan dari tangan orang lain.
 
 Docs interaktif: http://localhost:8000/docs
+
+## Pindah ke Turso (opsional)
+
+Turso itu SQLite yang sama, filenya saja yang tinggal di cloud. Berguna kalau
+backend dijalankan di hosting yang menghapus isi diska tiap kali aplikasinya
+diperbarui — di situ file `.db` lokal tidak bertahan.
+
+**Tanpa `TURSO_*` di `.env`, tidak ada yang berubah**: backend tetap memakai
+`sqlite3` stdlib dan file lokal, dan pustaka `libsql` tidak pernah disentuh.
+
+Dua database dipisah, sama seperti dua filenya. Pemisahan itu disengaja:
+`portal` isinya memang untuk dibaca publik, `sigalon` isinya data
+kependudukan — satu token bocor tidak boleh otomatis membuka dua-duanya.
+
+### Di Windows (tanpa WSL)
+
+Perkakas `turso` **tidak punya rilis Windows** — hanya macOS dan Linux. Jadi
+dua langkah yang biasanya dikerjakan CLI dipindah: databasenya dibuat lewat
+browser, isinya diunggah lewat skrip di repo ini.
+
+1. Di dasbor Turso, buat **dua database kosong** (mis. `sigalon` dan
+   `sigalon-portal`), lalu salin URL + token masing-masing.
+2. Isi empat variabel `TURSO_*` di `backend/.env`.
+3. Unggah isinya:
+
+```bash
+.venv/bin/python -m app.data.unggah_turso            # dua-duanya
+.venv/bin/python -m app.data.unggah_turso portal     # satu saja
+```
+
+Skripnya **menolak jalan kalau database tujuan sudah berisi**, kecuali diberi
+`--timpa-semua`. Selesai mengunggah, jumlah baris tiap tabel dibandingkan
+lokal lawan Turso — unggahan yang putus di tengah tidak menimbulkan galat
+apa pun, jadi kecocokannya diperiksa, bukan diasumsikan.
+
+### Di macOS / Linux
+
+Perkakas resminya bisa sekalian membuat database dari file yang sudah ada:
+
+```bash
+turso db create sigalon --from-file ./data/sigalon.db
+turso db create sigalon-portal --from-file ./data/portal.db
+
+turso db show sigalon           # salin URL-nya
+turso db tokens create sigalon  # salin tokennya
+```
+
+Lalu isi empat variabel `TURSO_*` di `backend/.env`.
+
+**Yang perlu diketahui sesudah pindah:**
+
+- **Ada dua file lokal sekarang, jangan tertukar.** `data/sigalon.db` adalah
+  file lama dari sebelum pindah — **beku, tidak lagi diperbarui**.
+  `data/sigalon.replika.db` (+ berkas `-info`/`-wal`/`-shm` di sebelahnya)
+  adalah salinan hidup dari Turso. Dipisah karena libsql menolak memakai file
+  bikinan `sqlite3` sebagai salinan; yang lama sengaja dibiarkan utuh, bukan
+  ditimpa.
+- **Cara backup berganti.** Di macOS/Linux: `turso db dump sigalon > cadangan.db`.
+  Di Windows, salin **`data/sigalon.replika.db`** — bukan `sigalon.db`, yang
+  isinya sudah tertinggal di hari pindah. Isinya sebatas penyelarasan terakhir,
+  bukan detik ini.
+- **Mundur ke file lokal gampang:** kosongkan empat `TURSO_*` di `.env`, dan
+  backend kembali memakai `data/sigalon.db` seperti sebelumnya. Perlu diingat
+  isinya adalah keadaan saat pindah — perubahan sesudah itu ada di Turso.
+- **Baca tetap cepat.** Aplikasi membaca dari salinan lokal; tulisan dikirim ke
+  cloud lalu ikut diterapkan ke salinan itu.
+- **Satu backend saja.** Salinan lokal disegarkan sekali tiap proses mulai.
+  Kalau backendnya nanti dijalankan lebih dari satu sekaligus, yang satu tidak
+  akan melihat tulisan yang lain sampai prosesnya diulang — lihat catatan
+  `ponytail:` di `app/data/db.py`.
+- **Koneksinya dipakai bersama dan digilir** (`db.koneksi`). Sebabnya diukur:
+  `PRAGMA foreign_keys = ON` memakan ~850 ms lewat Turso karena diteruskan ke
+  server, sementara membuka salinan lokal cuma 3 ms dan query-nya 0 ms.
+  Menjalankannya tiap operasi membuat satu halaman jadi 1–2 detik; dengan
+  koneksi bersama, kembali ke belasan milidetik.
+- **Cek mandiri selalu memakai file lokal**, tidak peduli `.env`-nya. Itu
+  disengaja: cek mandiri memanggil `kosongkan()`, dan satu kesalahan routing
+  berarti data warga di cloud lenyap tanpa sempat ditanya.
 
 ## Isi data penduduk
 
@@ -199,7 +281,8 @@ dipakai. Uji ujung-ke-ujung: jalankan uvicorn di port lain dengan
 `DATABASE_PATH` sementara, lalu panggil pakai `urllib` stdlib.
 
 File `data/sigalon.db` dan `data/portal.db` di-gitignore — **jangan pernah di-commit.** Backup-nya
-menyalin file, bukan commit.
+menyalin file, bukan commit. Kalau sudah pindah ke Turso, file lokalnya cuma
+salinan — sumber kebenarannya di cloud. Lihat "Pindah ke Turso" di atas.
 
 **Audit log tersimpan permanen** di tabel `audit_log` — siapa mengubah apa,
 kapan, dan nilai sebelum → sesudah tiap kolom. Dibaca lewat `GET /audit`, dan

@@ -105,7 +105,7 @@ export function KelolaTitikLokasiSection() {
             Semua Titik
             <span
               className={cn(
-                'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
+                'py-0.2 ml-1 rounded-full px-1.5 text-2xs font-extrabold',
                 tabAktif === 'semua'
                   ? 'bg-white/25 text-white'
                   : 'bg-slate-200 text-slate-900',
@@ -128,7 +128,7 @@ export function KelolaTitikLokasiSection() {
             Fasilitas Umum
             <span
               className={cn(
-                'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
+                'py-0.2 ml-1 rounded-full px-1.5 text-2xs font-extrabold',
                 tabAktif === 'fasilitas'
                   ? 'bg-white/25 text-white'
                   : 'bg-slate-200 text-slate-900',
@@ -151,7 +151,7 @@ export function KelolaTitikLokasiSection() {
             Perangkat Desa
             <span
               className={cn(
-                'py-0.2 ml-1 rounded-full px-1.5 text-[10px] font-extrabold',
+                'py-0.2 ml-1 rounded-full px-1.5 text-2xs font-extrabold',
                 tabAktif === 'perangkat'
                   ? 'bg-white/25 text-white'
                   : 'bg-slate-200 text-slate-900',
@@ -213,14 +213,14 @@ export function KelolaTitikLokasiSection() {
                     </span>
                     <span
                       className={cn(
-                        'shadow-2xs rounded px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white',
+                        'shadow-2xs rounded px-2 py-0.5 text-2xs font-extrabold uppercase tracking-wider text-white',
                         dapatkanTemaTitik(item).bgBadge,
                       )}
                     >
                       {item.kategoriLabel}
                     </span>
                     {item.peran && (
-                      <span className="rounded bg-slate-900 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-white">
+                      <span className="rounded bg-slate-900 px-2 py-0.5 font-mono text-2xs font-bold tracking-wider text-white">
                         {item.peran}
                       </span>
                     )}

@@ -85,7 +85,7 @@ export function TabelPenduduk({
                 {row.catatanPerkawinan && (
                   <Badge
                     tone="red"
-                    className="rounded-md text-[11px] font-medium"
+                    className="rounded-md text-2xs font-medium"
                     title={row.catatanPerkawinan}
                   >
                     {row.catatanPerkawinan}

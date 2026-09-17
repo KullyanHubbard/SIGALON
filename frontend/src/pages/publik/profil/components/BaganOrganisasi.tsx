@@ -83,15 +83,6 @@ function Tiang({ className }: { className?: string }) {
   );
 }
 
-function TiangPanah({ className }: { className?: string }) {
-  return (
-    <span aria-hidden className={cn('flex flex-col items-center', className)}>
-      <span className={cn('block h-6 w-px', GARIS)} />
-      <span className={PANAH} />
-    </span>
-  );
-}
-
 function PalangKeAnak({ jumlah }: { jumlah: number }) {
   return (
     <div

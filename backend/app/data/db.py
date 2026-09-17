@@ -25,7 +25,10 @@ Baris ber-`deletedAt` **tetap disimpan** — sebabnya ada di `store.py`:
 penyaringan itu keputusan baca, bukan alasan membuang data.
 """
 
+import re
 import sqlite3
+import threading
+from collections.abc import Mapping
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -271,38 +274,385 @@ CREATE TABLE IF NOT EXISTS berita (
 SKEMA = SKEMA_KEPENDUDUKAN + "\n" + SKEMA_PORTAL
 
 
-def buka(path: Path) -> sqlite3.Connection:
-    """Buka koneksi, bikin file & skema kalau belum ada."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path)
-    conn.row_factory = sqlite3.Row
-    # Tanpa ini SQLite mengabaikan FOREIGN KEY diam-diam.
-    conn.execute("PRAGMA foreign_keys = ON")
+# ---------------------------------------------------------------------------
+# Turso: SQLite yang sama, filenya saja yang tinggal di cloud.
+#
+# Yang dipakai mode "salinan lokal": aplikasi membaca dari file `.db` di mesin
+# ini, tulisan dikirim ke cloud lalu ikut diterapkan ke salinan lokalnya. Baca
+# tetap secepat file lokal — kalau tiap klik harus menembak internet, membuka
+# daftar ratusan warga langsung terasa berat.
+#
+# SQL-nya tidak disentuh sedikit pun: Turso memang SQLite, jadi tidak ada
+# dialek yang perlu dipetakan. Yang berbeda cuma satu hal, dan itulah seluruh
+# isi bagian ini: `sqlite3` stdlib bisa disuruh mengembalikan baris yang dibaca
+# lewat NAMA kolom (`row["nama"]`), pustaka Turso mengembalikan tuple polos.
+# Modul-modul `app/data/` membaca lewat nama di puluhan tempat, dan menomori
+# ulang semuanya jadi `row[7]` berarti tiap kolom baru yang disisipkan di
+# tengah skema diam-diam menggeser pembacaan yang lain.
+# ---------------------------------------------------------------------------
 
-    is_portal = False
+
+class _Baris:
+    """Baris hasil query yang bisa dibaca lewat nama kolom.
+
+    Meniru `sqlite3.Row` sebatas yang dipakai di sini: `baris["nama"]`,
+    `baris[0]`, `dict(baris)`, dan nama kolom yang tidak peduli besar-kecil
+    huruf (SQLite sendiri begitu, dan skema ini memakai `camelCase`).
+    """
+
+    __slots__ = ("_kolom", "_indeks", "_nilai")
+
+    def __init__(
+        self, kolom: tuple[str, ...], indeks: dict[str, int], nilai: tuple
+    ) -> None:
+        self._kolom = kolom
+        self._indeks = indeks
+        self._nilai = nilai
+
+    def __getitem__(self, kunci: str | int):
+        if isinstance(kunci, str):
+            posisi = self._indeks.get(kunci.lower())
+            if posisi is None:
+                # `sqlite3.Row` juga melempar IndexError, bukan KeyError.
+                raise IndexError(f"kolom tidak ada: {kunci}")
+            return self._nilai[posisi]
+        return self._nilai[kunci]
+
+    # `dict(baris)` memakai pasangan keys() + __getitem__ ini.
+    def keys(self) -> list[str]:
+        return list(self._kolom)
+
+    def __len__(self) -> int:
+        return len(self._nilai)
+
+    def __iter__(self):
+        # Seperti `sqlite3.Row`: yang diiterasi nilainya, bukan nama kolomnya.
+        return iter(self._nilai)
+
+    def __repr__(self) -> str:
+        return f"_Baris({dict(zip(self._kolom, self._nilai))!r})"
+
+
+class _KursorTurso:
+    """Kursor Turso yang membungkus tiap baris jadi `_Baris`."""
+
+    def __init__(self, kursor) -> None:
+        self._kursor = kursor
+        self._kolom: tuple[str, ...] | None = None
+        self._indeks: dict[str, int] = {}
+
+    def _siapkan(self) -> None:
+        # Nama kolom dibaca saat baris pertama diambil, bukan saat dibungkus:
+        # kursor dari `cursor()` belum menjalankan apa pun, jadi `description`
+        # -nya masih kosong pada saat itu.
+        if self._kolom is None:
+            deskripsi = self._kursor.description
+            self._kolom = tuple(d[0] for d in deskripsi) if deskripsi else ()
+            self._indeks = {n.lower(): i for i, n in enumerate(self._kolom)}
+
+    def _bungkus(self, nilai):
+        if nilai is None:
+            return None
+        self._siapkan()
+        assert self._kolom is not None
+        return _Baris(self._kolom, self._indeks, nilai)
+
+    def execute(self, sql: str, parameter=()) -> "_KursorTurso":
+        self._kursor.execute(sql, parameter)
+        self._kolom = None
+        return self
+
+    def executemany(self, sql: str, parameter) -> "_KursorTurso":
+        self._kursor.executemany(sql, parameter)
+        self._kolom = None
+        return self
+
+    def fetchone(self):
+        return self._bungkus(self._kursor.fetchone())
+
+    def fetchall(self) -> list:
+        return [self._bungkus(n) for n in self._kursor.fetchall()]
+
+    def fetchmany(self, ukuran: int = 1) -> list:
+        return [self._bungkus(n) for n in self._kursor.fetchmany(ukuran)]
+
+    def __iter__(self):
+        # Kursor libsql TIDAK bisa diiterasi langsung, beda dari `sqlite3` —
+        # sementara `for r in conn.execute(...)` dipakai di banyak tempat,
+        # termasuk di dalam `buka()` sendiri. Jadi diambil sekaligus.
+        #
+        # ponytail: berarti seluruh hasil masuk memori dulu. Tidak masalah untuk
+        # query di modul ini (paling besar satu padukuhan); pindah ke
+        # `fetchmany()` berulang kalau nanti ada query yang benar-benar besar.
+        return iter(self.fetchall())
+
+    def __getattr__(self, nama: str):
+        # `rowcount`, `lastrowid`, `description` diteruskan apa adanya. Nama
+        # berawalan garis bawah sengaja ditolak, kalau tidak pencarian atribut
+        # internal berputar tanpa henti sebelum `_kursor` sempat terpasang.
+        if nama.startswith("_"):
+            raise AttributeError(nama)
+        return getattr(self._kursor, nama)
+
+
+_NAMA_PARAM = re.compile(r"[A-Za-z_]\w*")
+
+
+def _ke_parameter_berurutan(sql: str) -> tuple[str, list[str]]:
+    """Ubah parameter bernama (`:kolom`) jadi berurutan (`?`).
+
+    libsql tidak mengenal bentuk bernama sama sekali, sementara `simpan`,
+    `perbarui`, `berita.py`, dan `lokasi.py` memakainya — justru pada query
+    yang dirakit dari daftar nama kolom, bentuk yang paling gampang salah urut
+    kalau ditulis berurutan dengan tangan. Jadi yang mengalah penerjemahnya,
+    bukan query-nya.
+
+    Isi tanda kutip dilewati, jadi `WHERE nama = ':bukan_parameter'` tetap utuh.
+    """
+    keluar: list[str] = []
+    urutan: list[str] = []
+    i, n = 0, len(sql)
+    while i < n:
+        c = sql[i]
+        if c == "'":  # literal teks; `''` di dalamnya berarti satu kutip
+            j = i + 1
+            while j < n:
+                if sql[j] == "'":
+                    if j + 1 < n and sql[j + 1] == "'":
+                        j += 2
+                        continue
+                    break
+                j += 1
+            keluar.append(sql[i : j + 1])
+            i = j + 1
+        elif c == '"':  # nama kolom/tabel yang dikutip
+            j = sql.find('"', i + 1)
+            j = n - 1 if j == -1 else j
+            keluar.append(sql[i : j + 1])
+            i = j + 1
+        elif c == ":" and (cocok := _NAMA_PARAM.match(sql, i + 1)):
+            urutan.append(cocok.group(0))
+            keluar.append("?")
+            i = cocok.end()
+        else:
+            keluar.append(c)
+            i += 1
+    return "".join(keluar), urutan
+
+
+class _KoneksiTurso:
+    """Koneksi Turso, sejauh yang dipakai modul-modul `app/data/`."""
+
+    def __init__(self, mentah) -> None:
+        self._mentah = mentah
+
+    def execute(self, sql: str, parameter=()) -> _KursorTurso:
+        if isinstance(parameter, Mapping):
+            sql, urutan = _ke_parameter_berurutan(sql)
+            parameter = tuple(parameter[nama] for nama in urutan)
+        return _KursorTurso(self._mentah.execute(sql, parameter))
+
+    def executemany(self, sql: str, parameter) -> _KursorTurso:
+        # libsql menolak generator, jadi dibulatkan jadi list lebih dulu.
+        baris = list(parameter)
+        if baris and isinstance(baris[0], Mapping):
+            sql, urutan = _ke_parameter_berurutan(sql)
+            baris = [tuple(b[nama] for nama in urutan) for b in baris]
+        else:
+            baris = [tuple(b) for b in baris]
+        return _KursorTurso(self._mentah.executemany(sql, baris))
+
+    def cursor(self) -> _KursorTurso:
+        return _KursorTurso(self._mentah.cursor())
+
+    # `with conn:` dipakai sebagai blok transaksi di 18 tempat (`sesi.py`,
+    # `pengurus.py`, `pergantian.py`, `audit.py`, dan modul ini). Aturannya
+    # ditiru persis dari `sqlite3`: selesai mulus → commit, ada galat →
+    # rollback, dan galatnya TIDAK ditelan.
+    def __enter__(self) -> "_KoneksiTurso":
+        return self
+
+    def __exit__(self, jenis, nilai, jejak) -> bool:
+        if jenis is None:
+            self._mentah.commit()
+        else:
+            self._mentah.rollback()
+        return False
+
+    def __getattr__(self, nama: str):
+        # `commit`, `rollback`, `close`, `sync`.
+        if nama.startswith("_"):
+            raise AttributeError(nama)
+        return getattr(self._mentah, nama)
+
+
+# Dipakai di anotasi supaya jelas bahwa `conn` bisa datang dari dua dunia.
+# Keduanya berperilaku sama sejauh SQL yang ditulis modul ini.
+Koneksi = sqlite3.Connection | _KoneksiTurso
+Baris = sqlite3.Row | _Baris
+
+
+def _kunci_path(path: Path) -> str:
+    """Bentuk path yang bisa dibandingkan. Windows tidak peduli besar-kecil."""
     try:
-        is_portal = (
+        return str(path.resolve()).lower()
+    except OSError:
+        return str(path).lower()
+
+
+def _path_replika(path: Path) -> Path:
+    """Berkas salinan lokal untuk mode Turso — `sigalon.db` → `sigalon.replika.db`.
+
+    Dipisah dari file SQLite biasa, dan itu bukan soal kerapian: libsql MENOLAK
+    membuka file bikinan `sqlite3` sebagai salinan ("db file exists but metadata
+    file does not"), karena salinan butuh berkas penanda di sebelahnya. Jalan
+    keluar yang lebih pendek — menghapus file lamanya supaya libsql bisa mulai
+    dari nol — berarti satu-satunya salinan lokal data warga dibuang demi
+    kenyamanan. Nama tersendiri membuat keduanya hidup berdampingan, dan yang
+    lama tetap bisa dibuka kapan pun dengan mengosongkan `TURSO_*` di `.env`.
+    """
+    return path.with_name(f"{path.stem}.replika{path.suffix}")
+
+
+def _tujuan_turso() -> dict[str, tuple[str, str]]:
+    """Path mana yang dilayani Turso, dikunci SEKALI saat modul diimpor.
+
+    Sengaja tidak dihitung ulang tiap `buka()`: beberapa cek mandiri menimpa
+    `settings.*_DATABASE_PATH` ke folder sementara di tengah jalan, dan kalau
+    routing-nya ikut berpindah, file uji itu justru menunjuk ke database
+    sungguhan di cloud.
+    """
+    pasangan = (
+        (
+            settings.DATABASE_FILE,
+            settings.TURSO_DATABASE_URL,
+            settings.TURSO_AUTH_TOKEN,
+        ),
+        (
+            settings.PORTAL_DATABASE_FILE,
+            settings.TURSO_PORTAL_DATABASE_URL,
+            settings.TURSO_PORTAL_AUTH_TOKEN,
+        ),
+    )
+    return {
+        _kunci_path(file): (url, token) for file, url, token in pasangan if url and token
+    }
+
+
+_TUJUAN_TURSO = _tujuan_turso()
+_SUDAH_SINKRON: set[str] = set()
+_MODE_LOKAL = False
+
+
+def paksa_lokal() -> None:
+    """Matikan Turso untuk sisa proses ini.
+
+    Dipanggil di awal setiap cek mandiri, dan itu bukan kehati-hatian
+    berlebihan: cek mandiri memanggil `kosongkan()`. Satu kesalahan routing
+    berarti `python -m app.data.db` menghapus seluruh data warga di cloud tanpa
+    sempat bertanya lebih dulu.
+    """
+    global _MODE_LOKAL
+    _MODE_LOKAL = True
+
+
+def turso_aktif() -> bool:
+    """Ada database yang dilayani Turso? Dipakai log startup & `backend/README.md`."""
+    return bool(_TUJUAN_TURSO) and not _MODE_LOKAL
+
+
+def _tujuan_untuk(path: Path) -> tuple[str, str] | None:
+    """URL + token Turso untuk file ini, atau None kalau memang lokal."""
+    return None if _MODE_LOKAL else _TUJUAN_TURSO.get(_kunci_path(path))
+
+
+def _sambung(path: Path) -> Koneksi:
+    tujuan = _tujuan_untuk(path)
+    if tujuan is None:
+        conn = sqlite3.connect(path)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    url, token = tujuan
+    try:
+        import libsql
+    except ModuleNotFoundError as e:  # pragma: no cover - salah pasang, bukan alur
+        raise RuntimeError(
+            "Turso disetel di .env tapi pustakanya belum terpasang. "
+            "Jalankan: pip install -r requirements.txt"
+        ) from e
+
+    mentah = libsql.connect(str(_path_replika(path)), sync_url=url, auth_token=token)
+
+    # Tarik isi terbaru sekali saja per proses. Sesudah itu salinan lokalnya
+    # tetap mutakhir dengan sendirinya — tulisan kita sendiri yang
+    # memperbaruinya, dan backend ini satu-satunya yang menulis.
+    #
+    # ponytail: begitu backendnya dijalankan lebih dari satu sekaligus, yang
+    # satu tidak akan melihat tulisan yang lain sampai prosesnya diulang. Saat
+    # itu tiba, pindahkan ke `sync_interval` milik libsql.
+    kunci = _kunci_path(path)
+    if kunci not in _SUDAH_SINKRON:
+        mentah.sync()
+        _SUDAH_SINKRON.add(kunci)
+
+    return _KoneksiTurso(mentah)
+
+
+def _adalah_portal(path: Path) -> bool:
+    try:
+        return (
             path.resolve() == settings.PORTAL_DATABASE_FILE.resolve()
             or "portal" in path.stem.lower()
         )
     except Exception:
-        is_portal = "portal" in str(path).lower()
+        return "portal" in str(path).lower()
 
+
+def _pasang_skema(conn: Koneksi, is_portal: bool) -> None:
     if is_portal:
         conn.executescript(SKEMA_PORTAL)
-    else:
-        # Penggantian nama kolom WAJIB sebelum `SKEMA`: skema baru memasang indeks
-        # di atas nama kolom yang baru, dan itu gagal selama kolomnya masih bernama
-        # lama di instalasi yang sudah jalan.
-        _ganti_nama_kolom(conn)
-        conn.executescript(SKEMA_KEPENDUDUKAN)
-        _tambal_kolom(conn)
-        _migrasi_data(conn)
+        conn.commit()
+        return
+    # Penggantian nama kolom WAJIB sebelum `SKEMA`: skema baru memasang indeks
+    # di atas nama kolom yang baru, dan itu gagal selama kolomnya masih bernama
+    # lama di instalasi yang sudah jalan.
+    _ganti_nama_kolom(conn)
+    conn.executescript(SKEMA_KEPENDUDUKAN)
+    # Ditutup di sini, tidak dibiarkan menggantung sampai akhir: lewat Turso tiap
+    # perintah adalah satu perjalanan ke server, dan transaksi yang dibiarkan
+    # terbuka selama belasan perjalanan akan dibatalkan sepihak karena dianggap
+    # menganggur terlalu lama.
+    conn.commit()
+    _tambal_kolom(conn)
+    _migrasi_data(conn)
+
+
+# Path yang skemanya sudah dipastikan pada proses ini.
+_SKEMA_SIAP: set[str] = set()
+
+
+def buka(path: Path) -> Koneksi:
+    """Buka koneksi, bikin file & skema kalau belum ada."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    conn = _sambung(path)
+    # Tanpa ini SQLite mengabaikan FOREIGN KEY diam-diam. Per koneksi, jadi
+    # tidak ikut dilewati oleh penjagaan di bawah.
+    conn.execute("PRAGMA foreign_keys = ON")
+
+    # Skema dipasang SEKALI per proses, bukan tiap koneksi dibuka. Di file lokal
+    # bedanya tidak terasa, tapi `koneksi()` membuka-menutup tiap operasi — lewat
+    # Turso itu berarti dua puluhan perjalanan ke server mengulang `CREATE TABLE
+    # IF NOT EXISTS` yang sama pada SETIAP permintaan halaman.
+    kunci = _kunci_path(path)
+    if kunci not in _SKEMA_SIAP:
+        _pasang_skema(conn, _adalah_portal(path))
+        _SKEMA_SIAP.add(kunci)
 
     return conn
 
 
-def _migrasi_data(conn: sqlite3.Connection) -> None:
+def _migrasi_data(conn: Koneksi) -> None:
     """Migrasi nilai data lama yang berubah di skema baru."""
     ada = {r["name"] for r in conn.execute("PRAGMA table_info(penduduk)")}
     if "pendidikan" in ada:
@@ -334,7 +684,7 @@ _TAMBALAN: list[tuple[str, str, str]] = [
 ]
 
 
-def _tambal_kolom(conn: sqlite3.Connection) -> None:
+def _tambal_kolom(conn: Koneksi) -> None:
     for tabel, kolom, tipe in _TAMBALAN:
         ada = {r["name"] for r in conn.execute(f"PRAGMA table_info({tabel})")}
         if ada and kolom not in ada:
@@ -360,7 +710,7 @@ _GANTI_NAMA: list[tuple[str, str, str]] = [
 _INDEKS_USANG = ["idx_pengajuan_kursi"]
 
 
-def _ganti_nama_kolom(conn: sqlite3.Connection) -> None:
+def _ganti_nama_kolom(conn: Koneksi) -> None:
     for tabel, lama, baru in _GANTI_NAMA:
         kolom = {r["name"] for r in conn.execute(f"PRAGMA table_info({tabel})")}
         # Tabel belum ada (DB baru) atau sudah pernah diganti — dua-duanya
@@ -374,15 +724,44 @@ def _ganti_nama_kolom(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
-@contextmanager
-def koneksi(path: Path) -> Iterator[sqlite3.Connection]:
-    """Koneksi sekali pakai untuk satu operasi.
+# Koneksi Turso yang dipakai bersama, satu per database, beserta gemboknya.
+_KONEKSI_BERSAMA: dict[str, Koneksi] = {}
+_GEMBOK = threading.RLock()
 
-    ponytail: buka-tutup tiap panggilan, bukan satu koneksi berumur panjang.
-    Harganya tidak terasa pada beban satu padukuhan, dan menghapus seluruh
-    urusan thread-safety `sqlite3` (endpoint sync FastAPI jalan di threadpool).
-    Pindah ke satu koneksi bersama kalau profiling nanti menunjuk ke sini.
+
+@contextmanager
+def koneksi(path: Path) -> Iterator[Koneksi]:
+    """Koneksi untuk satu operasi.
+
+    **File lokal:** buka-tutup tiap panggilan. Harganya tidak terasa, dan itu
+    menghapus seluruh urusan thread-safety `sqlite3` (endpoint sync FastAPI
+    jalan di threadpool).
+
+    **Turso:** satu koneksi dipakai bersama, digilir lewat gembok. Ini bukan
+    optimasi yang dicari-cari — diukur: membuka salinan lokalnya 3 ms dan
+    query-nya 0 ms, tapi `PRAGMA foreign_keys = ON` yang dijalankan tiap
+    koneksi dibuka memakan **850 ms**, karena perintah itu diteruskan ke server
+    di Tokyo. Dikali tiap operasi, satu halaman jadi hitungan detik.
+
+    Gemboknya menggilir, jadi permintaan yang datang bersamaan dilayani
+    bergantian, bukan berbarengan. Itu keputusan sadar: `with conn:` dipakai
+    sebagai blok transaksi di 18 tempat, dan dua thread yang menyelinap di
+    tengah blok yang sama akan mencampur dua transaksi jadi satu.
+
+    ponytail: giliran itu cukup untuk satu padukuhan — beberapa perangkat desa,
+    bukan ribuan pengunjung serentak. Kalau nanti terasa antre, yang dibutuhkan
+    kumpulan koneksi (satu per thread), bukan menghapus gemboknya.
     """
+    if _tujuan_untuk(path) is not None:
+        with _GEMBOK:
+            kunci = _kunci_path(path)
+            conn = _KONEKSI_BERSAMA.get(kunci)
+            if conn is None:
+                conn = buka(path)
+                _KONEKSI_BERSAMA[kunci] = conn
+            yield conn
+        return
+
     conn = buka(path)
     try:
         yield conn
@@ -390,7 +769,7 @@ def koneksi(path: Path) -> Iterator[sqlite3.Connection]:
         conn.close()
 
 
-def kosong(conn: sqlite3.Connection) -> bool:
+def kosong(conn: Koneksi) -> bool:
     return conn.execute("SELECT 1 FROM penduduk LIMIT 1").fetchone() is None
 
 
@@ -403,7 +782,7 @@ def _ke_row(p: Penduduk) -> dict[str, object]:
     return data
 
 
-def _ke_penduduk(row: sqlite3.Row) -> Penduduk:
+def _ke_penduduk(row: Baris) -> Penduduk:
     data = dict(row)
     alamat = {
         k.removeprefix(_PREFIKS_ALAMAT): v
@@ -421,7 +800,7 @@ def _ke_penduduk(row: sqlite3.Row) -> Penduduk:
     return Penduduk(**inti, alamat=Alamat(**alamat))
 
 
-def simpan(conn: sqlite3.Connection, daftar: Iterable[Penduduk]) -> int:
+def simpan(conn: Koneksi, daftar: Iterable[Penduduk]) -> int:
     """Sisipkan penduduk. Mengembalikan jumlah baris yang masuk.
 
     Tidak ada pemeriksaan duplikat di sini: impor selalu mengosongkan tabel
@@ -438,7 +817,7 @@ def simpan(conn: sqlite3.Connection, daftar: Iterable[Penduduk]) -> int:
     return len(rows)
 
 
-def kosongkan(conn: sqlite3.Connection) -> int:
+def kosongkan(conn: Koneksi) -> int:
     """Hapus seluruh baris penduduk, kembalikan jumlah yang terhapus.
 
     Dipakai impor: Excel adalah sumber kebenaran tunggal, jadi tiap impor
@@ -451,7 +830,7 @@ def kosongkan(conn: sqlite3.Connection) -> int:
     return int(jumlah)
 
 
-def perbarui(conn: sqlite3.Connection, p: Penduduk) -> bool:
+def perbarui(conn: Koneksi, p: Penduduk) -> bool:
     """Timpa satu baris penduduk. `False` kalau `id`-nya tidak ada."""
     row = _ke_row(p)
     id_ = row.pop("id")
@@ -463,7 +842,7 @@ def perbarui(conn: sqlite3.Connection, p: Penduduk) -> bool:
     return cur.rowcount > 0
 
 
-def muat(conn: sqlite3.Connection) -> list[Penduduk]:
+def muat(conn: Koneksi) -> list[Penduduk]:
     """Semua baris, termasuk yang ber-`deletedAt`. Penyaringan milik `store.py`.
 
     `ORDER BY rowid` = urutan penyisipan, jadi daftar penduduk muncul dalam
@@ -482,7 +861,7 @@ def muat(conn: sqlite3.Connection) -> list[Penduduk]:
 RETENSI_MUTASI_HARI = 365
 
 
-def _pangkas_mutasi_lama(conn: sqlite3.Connection) -> None:
+def _pangkas_mutasi_lama(conn: Koneksi) -> None:
     """Buang baris mutasi yang lebih tua dari `RETENSI_MUTASI_HARI`.
 
     Menumpang di `catat_mutasi()` — dipanggil setiap kali status warga berubah
@@ -498,7 +877,7 @@ def _pangkas_mutasi_lama(conn: sqlite3.Connection) -> None:
 
 
 def catat_mutasi(
-    conn: sqlite3.Connection, warga_id: str, dari: str | None, ke: str, oleh: str
+    conn: Koneksi, warga_id: str, dari: str | None, ke: str, oleh: str
 ) -> None:
     """Tulis satu baris buku mutasi. `dari=None` untuk warga yang baru masuk."""
     conn.execute(
@@ -509,7 +888,7 @@ def catat_mutasi(
     _pangkas_mutasi_lama(conn)
 
 
-def mutasi_sejak(conn: sqlite3.Connection, batas: str) -> list[sqlite3.Row]:
+def mutasi_sejak(conn: Koneksi, batas: str) -> list[Baris]:
     """Mutasi yang tercatat pada atau sesudah `batas` (ISO), TERBARU DULU.
 
     Urutannya menentukan kebenaran: pemutar mundur di `store.penduduk_pada`
@@ -524,7 +903,7 @@ def mutasi_sejak(conn: sqlite3.Connection, batas: str) -> list[sqlite3.Row]:
     )
 
 
-def mutasi_terawal(conn: sqlite3.Connection) -> str | None:
+def mutasi_terawal(conn: Koneksi) -> str | None:
     """Waktu mutasi paling lama, atau None kalau bukunya masih kosong."""
     baris = conn.execute("SELECT MIN(pada) AS pada FROM mutasi").fetchone()
     return baris["pada"] if baris and baris["pada"] else None
@@ -638,10 +1017,118 @@ def _check_migrasi_jabatan() -> None:
     print("OK: DB lama (kolom `kursi`) terangkat ke `jabatan_kode`")
 
 
+def _check_jembatan_turso() -> None:
+    """Jembatan baris Turso diuji beneran, dan tanpa menyentuh jaringan.
+
+    Yang diuji bukan Turso-nya — itu SQLite yang sama, dan mengujinya berarti
+    menguji punya orang lain. Yang diuji satu-satunya bagian yang ditulis
+    sendiri: penerjemah baris tuple jadi baris yang bisa dibaca lewat nama
+    kolom. Kalau ini meleset, seluruh `app/data/` ikut buta — dan gagalnya baru
+    kelihatan setelah backend terlanjur dipindah ke cloud, saat cek mandiri
+    lokal sudah lama hijau semua.
+    """
+    global _MODE_LOKAL
+
+    try:
+        import libsql
+    except ModuleNotFoundError:
+        print("LEWAT: pustaka `libsql` belum terpasang, jembatan Turso tidak diuji")
+        return
+
+    import tempfile
+
+    mode_asli, connect_asli = _MODE_LOKAL, libsql.connect
+
+    def _connect_tanpa_jaringan(nama, sync_url=None, auth_token=None):
+        return connect_asli(nama)
+
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+        path = Path(tmp) / "turso_uji.db"
+        kunci = _kunci_path(path)
+        conn: _KoneksiTurso | None = None
+
+        libsql.connect = _connect_tanpa_jaringan
+        _TUJUAN_TURSO[kunci] = ("libsql://uji.invalid", "token-uji")
+        _SUDAH_SINKRON.add(kunci)  # jangan panggil .sync(): tidak ada lawan bicara
+        _MODE_LOKAL = False
+        try:
+            conn = buka(path)
+            assert isinstance(conn, _KoneksiTurso), "routing Turso tidak kena"
+
+            # Skema, tambal kolom, dan ganti nama kolom semuanya membaca
+            # `PRAGMA table_info` lewat nama kolom — itu sudah jalan kalau
+            # `buka()` di atas tidak melempar.
+            kolom = {r["name"] for r in conn.execute("PRAGMA table_info(penduduk)")}
+            assert "jenisKelamin" in kolom, "nama kolom tidak terbaca dari PRAGMA"
+
+            asli = _contoh_penduduk()
+            assert kosong(conn), "DB baru harus kosong"
+            assert simpan(conn, asli) == len(asli), "jumlah baris tersimpan meleset"
+
+            hasil = {p.id: p for p in muat(conn)}
+            assert set(hasil) == {p.id for p in asli}, "id hilang/berubah"
+            for p in asli:
+                assert hasil[p.id] == p, f"baris {p.id} berubah setelah roundtrip"
+
+            baris = conn.execute(
+                "SELECT id, nama FROM penduduk ORDER BY id"
+            ).fetchone()
+            assert baris["nama"] == baris[1], "baca lewat nama != baca lewat nomor"
+            assert baris["NAMA"] == baris["nama"], "nama kolom harus abai besar-kecil"
+            assert dict(baris).keys() == {"id", "nama"}, "dict(baris) tidak utuh"
+            assert len(baris) == 2, "panjang baris meleset"
+
+            kosong_hasil = conn.execute(
+                "SELECT id FROM penduduk WHERE id = 'tidak-ada'"
+            ).fetchone()
+            assert kosong_hasil is None, "baris kosong harus None, bukan pembungkus"
+
+            try:
+                baris["kolomNgawur"]
+            except IndexError:
+                pass
+            else:
+                raise AssertionError("kolom tidak dikenal harus melempar IndexError")
+
+            # `perbarui` merakit klausa SET dari nama kolom, jadi ia satu-satunya
+            # yang menguji penerjemah parameter bernama pada UPDATE — sekaligus
+            # `rowcount`, yang dipakai untuk membedakan "id tidak ada" dari
+            # "tidak ada yang berubah".
+            diubah = asli[0].model_copy(update={"pekerjaan": "PETANI TURSO"})
+            assert perbarui(conn, diubah) is True, "perbarui gagal"
+            sesudah = {p.id: p for p in muat(conn)}[diubah.id]
+            assert sesudah.pekerjaan == "PETANI TURSO", "nilai baru tidak tersimpan"
+            assert sesudah.nama == asli[0].nama, "kolom lain ikut berubah"
+
+            hantu = diubah.model_copy(update={"id": "tidak-ada-kode-ini"})
+            assert perbarui(conn, hantu) is False, "id asing harus mengembalikan False"
+
+            # Buku mutasi: dipakai statistik bulan lampau, dan menulisnya lewat
+            # jalur yang sama.
+            catat_mutasi(conn, diubah.id, "AKTIF", "PINDAH", "uji")
+            assert mutasi_terawal(conn) is not None, "mutasi tidak tercatat"
+
+            assert kosongkan(conn) == len(asli), "kosongkan salah menghitung"
+        finally:
+            if conn is not None:
+                conn.close()
+            libsql.connect = connect_asli
+            _TUJUAN_TURSO.pop(kunci, None)
+            _SUDAH_SINKRON.discard(kunci)
+            _MODE_LOKAL = mode_asli
+
+    print("OK: jembatan baris Turso (nama kolom, dict(), PRAGMA) utuh")
+
+
 def _self_check() -> None:
     import tempfile
 
+    # Turso dimatikan dulu: di bawah ini ada `kosongkan()`, yang mengosongkan
+    # tabel penduduk. Salah routing sekali saja = data warga di cloud lenyap.
+    paksa_lokal()
+
     _check_migrasi_jabatan()
+    _check_jembatan_turso()
 
     asli = _contoh_penduduk()
     with tempfile.TemporaryDirectory() as tmp:

@@ -33,8 +33,27 @@ class Settings(BaseSettings):
     # Path file SQLite, bukan URL — yang membacanya `sqlite3` stdlib, dan itu
     # cuma mau path. Relatif dihitung dari `backend/`, jadi hasilnya sama dari
     # direktori kerja mana pun uvicorn dijalankan; lihat `DATABASE_FILE`.
+    #
+    # Tetap terpakai walau Turso menyala: di mode itu file ini jadi salinan
+    # lokal yang dibaca aplikasi, bukan sumber kebenarannya.
     DATABASE_PATH: str = "./data/sigalon.db"
     PORTAL_DATABASE_PATH: str = "./data/portal.db"
+
+    # --- Turso (SQLite yang sama, tapi tinggal di cloud) --------------------
+    # Kosong = seluruhnya tetap di file lokal, dan itu yang dipakai saat
+    # ngoding. Diisi hanya pada instalasi yang sudah dipindahkan; cara
+    # mendapatkannya ada di `backend/README.md`.
+    #
+    # Dua database dipisah persis seperti dua filenya, dan pemisahan itu bukan
+    # kerapian belaka: `portal` isinya memang untuk dibaca publik, `sigalon`
+    # isinya data kependudukan. Satu token bocor tidak boleh otomatis membuka
+    # dua-duanya.
+    #
+    # Token = setara password. Tempatnya `backend/.env`, yang sudah di-gitignore.
+    TURSO_DATABASE_URL: str = ""
+    TURSO_AUTH_TOKEN: str = ""
+    TURSO_PORTAL_DATABASE_URL: str = ""
+    TURSO_PORTAL_AUTH_TOKEN: str = ""
     # Umur sesi login. Tidak ada rahasia yang perlu dipasang: sejak sesi
     # tersimpan di server, token cuma nomor acak dan tidak ada yang
     # ditandatangani — jadi tidak ada nilai bawaan yang bisa salah terpakai.

@@ -77,7 +77,7 @@ export function DistribusiVerticalBarChart({
                   <span className="text-base font-extrabold tabular-nums text-slate-900 sm:text-lg">
                     <BarItemCount value={d.value} />
                   </span>
-                  <span className="shadow-2xs inline-flex min-w-[2.75rem] items-center justify-center rounded-md border-1 border-black bg-white px-1.5 py-0.5 text-[11px] font-extrabold tabular-nums text-slate-900 sm:text-xs">
+                  <span className="shadow-2xs inline-flex min-w-[2.75rem] items-center justify-center rounded-md border-1 border-black bg-white px-1.5 py-0.5 text-2xs font-extrabold tabular-nums text-slate-900 sm:text-xs">
                     {total === 0 ? '—' : `${persen}%`}
                   </span>
                 </div>

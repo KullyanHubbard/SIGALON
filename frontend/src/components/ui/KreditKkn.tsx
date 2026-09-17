@@ -18,7 +18,7 @@ export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
       <div className="hidden sm:flex sm:w-auto sm:items-center sm:justify-start">
         {kiri}
       </div>
-      <p className="text-center text-[13px] font-medium text-slate-600 sm:flex-1 sm:text-[15px]">
+      <p className="text-center text-xs font-medium text-slate-600 sm:flex-1 sm:text-sm">
         Dikembangkan oleh{' '}
         <span className="font-bold text-slate-900">Tim KKNM-29228 UNY</span> ·{' '}
         {new Date().getFullYear()}

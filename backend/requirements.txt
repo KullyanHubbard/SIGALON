@@ -14,3 +14,8 @@ nh3==0.3.7
 # Pemrosesan dan kompresi gambar/foto berita ke webp di disk server
 Pillow>=10.0.0
 
+
+# Turso — SQLite yang sama, filenya saja yang tinggal di cloud. Dipakai HANYA
+# kalau `TURSO_*` di `.env` diisi; tanpa itu backend tetap memakai `sqlite3`
+# stdlib dan pustaka ini tidak pernah disentuh. Lihat `app/data/db.py`.
+libsql==0.1.11

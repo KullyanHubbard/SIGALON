@@ -407,6 +407,9 @@ def demo() -> None:
 
         DATABASE_PATH=/tmp/uji-pengurus.db .venv/bin/python -m app.data.pengurus
     """
+    # Turso dimatikan dulu: cek mandiri ini menghapus & menimpa isi tabel,
+    # dan itu tidak boleh sampai mengenai database sungguhan di cloud.
+    db.paksa_lokal()
     assert cocok_wilayah(ROLE_RT, "019", "001", "019", "001") is True
     assert cocok_wilayah(ROLE_RT, "019", "001", "019", "002") is False
     assert cocok_wilayah(ROLE_RW, "019", None, "019", "005") is True

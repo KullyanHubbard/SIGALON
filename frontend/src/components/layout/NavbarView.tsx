@@ -94,7 +94,7 @@ export function NavbarView({
             <div className="text-left leading-tight sm:text-right">
               <span className="block text-sm font-bold text-white">{nama}</span>
               {!samaPeran && (
-                <span className="block text-[11px] font-medium text-white/90">
+                <span className="block text-2xs font-medium text-white/90">
                   {peran}
                 </span>
               )}

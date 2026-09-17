@@ -55,6 +55,9 @@ def ubah(nama_baru: str, warga_id_baru: str | None = None) -> str:
 
 def demo() -> None:
     """Self-check menggunakan DB sementara yang terisolasi."""
+    # Turso dimatikan dulu: cek mandiri ini menghapus & menimpa isi tabel,
+    # dan itu tidak boleh sampai mengenai database sungguhan di cloud.
+    db.paksa_lokal()
     import tempfile
     from pathlib import Path
 

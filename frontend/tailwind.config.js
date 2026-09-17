@@ -52,6 +52,9 @@ export default {
       },
 
       fontSize: {
+        // 11px — label padat: sumbu grafik, pin peta, badge dalam pil sempit.
+        // Bukan untuk teks yang dibaca mengalir.
+        '2xs': ['0.6875rem', { lineHeight: '1rem' }], // 11px
         xs: ['0.8125rem', { lineHeight: '1.125rem' }], // 13px
         sm: ['0.9375rem', { lineHeight: '1.375rem' }], // 15px
         base: ['1.0625rem', { lineHeight: '1.625rem' }], // 17px

@@ -384,13 +384,13 @@ export function DialogUbahTitikLokasi({
               Pilih Titik pada Peta OpenStreetMap (Klik Langsung atau Seret Pin)
             </label>
             <div className="flex items-center gap-2">
-              <span className="rounded border-1 border-brand-200 bg-brand-50 px-2 py-0.5 font-mono text-[11px] font-medium text-brand-700 sm:text-xs">
+              <span className="rounded border-1 border-brand-200 bg-brand-50 px-2 py-0.5 font-mono text-2xs font-medium text-brand-700 sm:text-xs">
                 Lat: {lat || '-'} | Lon: {lon || '-'}
               </span>
               <button
                 type="button"
                 onClick={fokusPusatWilayah}
-                className="inline-flex cursor-pointer items-center gap-1 rounded border-1 border-black bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-brand-600"
+                className="inline-flex cursor-pointer items-center gap-1 rounded border-1 border-black bg-slate-100 px-2 py-0.5 text-2xs font-medium text-slate-600 transition-colors hover:bg-slate-200 hover:text-brand-600"
                 title="Pusatkan peta ke Balai Padukuhan"
               >
                 <Focus className="h-3 w-3" />
@@ -410,7 +410,7 @@ export function DialogUbahTitikLokasi({
               ref={mapContainerRef}
               className="z-0 h-[280px] w-full cursor-crosshair sm:h-[360px]"
             />
-            <div className="backdrop-blur-xs pointer-events-none absolute bottom-2 left-2 z-[400] rounded-md bg-slate-900/80 px-2.5 py-1 text-[10px] text-white">
+            <div className="backdrop-blur-xs pointer-events-none absolute bottom-2 left-2 z-[400] rounded-md bg-slate-900/80 px-2.5 py-1 text-2xs text-white">
               <span>
                 💡 Klik pada peta jalan atau seret pin untuk memindahkan titik
               </span>
@@ -425,7 +425,7 @@ export function DialogUbahTitikLokasi({
               <MapPin className="h-4 w-4 text-brand-600" />
               Koordinat GPS (Otomatis Terisi dari Klik Peta)
             </span>
-            <span className="rounded border-1 border-black bg-white px-2 py-0.5 font-mono text-[11px] font-semibold text-slate-700">
+            <span className="rounded border-1 border-black bg-white px-2 py-0.5 font-mono text-2xs font-semibold text-slate-700">
               Posisi Peta: X {x}% | Y {y}%
             </span>
           </div>

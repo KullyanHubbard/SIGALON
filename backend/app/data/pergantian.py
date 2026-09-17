@@ -499,6 +499,9 @@ def demo() -> None:
 
         DATABASE_PATH=/tmp/uji-pergantian.db .venv/bin/python -m app.data.pergantian
     """
+    # Turso dimatikan dulu: cek mandiri ini menghapus & menimpa isi tabel,
+    # dan itu tidak boleh sampai mengenai database sungguhan di cloud.
+    db.paksa_lokal()
     import os
     db_path = str(settings.DATABASE_FILE)
     if "/tmp/" in db_path and os.path.exists(db_path):

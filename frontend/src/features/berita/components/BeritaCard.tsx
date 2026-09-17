@@ -60,7 +60,7 @@ export function BeritaCard({
         />
       </div>
       <div className="flex flex-1 flex-col p-3.5 sm:p-5">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-600 sm:text-xs">
+        <p className="text-2xs font-semibold uppercase tracking-wide text-brand-600 sm:text-xs">
           {formatTanggal(berita.tanggalTerbit)}
         </p>
         <h3 className="mt-1 text-base font-bold leading-snug text-slate-900 group-hover:text-brand-600 sm:mt-2 sm:text-lg">
@@ -71,7 +71,7 @@ export function BeritaCard({
             {pembuka}
           </p>
         )}
-        <p className="mt-auto pt-2.5 text-[11px] font-semibold text-slate-900 sm:pt-4 sm:text-xs">
+        <p className="mt-auto pt-2.5 text-2xs font-semibold text-slate-900 sm:pt-4 sm:text-xs">
           Oleh {berita.penulis}
         </p>
       </div>
