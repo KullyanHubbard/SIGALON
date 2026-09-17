@@ -22,7 +22,10 @@ export function BeritaTerkini() {
             aksi={
               <Link
                 to={paths.berita}
-                className={buttonClass({ variant: 'primary' })}
+                className={buttonClass({
+                  variant: 'primary',
+                  className: 'hidden sm:inline-flex',
+                })}
               >
                 Lihat Semua Berita
               </Link>
@@ -41,18 +44,29 @@ export function BeritaTerkini() {
           emptyDescription="Kabar kegiatan padukuhan akan muncul di sini."
         >
           {(daftar) => (
-            <div className="grid gap-6 md:grid-cols-3">
-              {daftar.slice(0, CACAH_TAMPIL).map((b, idx) => (
-                <div
-                  key={b.id}
-                  data-apple-fade
-                  data-apple-delay={idx + 1}
-                  className="flex h-full flex-col"
+            <>
+              <div className="grid gap-6 md:grid-cols-3">
+                {daftar.slice(0, CACAH_TAMPIL).map((b, idx) => (
+                  <div
+                    key={b.id}
+                    data-apple-fade
+                    data-apple-delay={idx + 1}
+                    className="flex h-full flex-col"
+                  >
+                    <BeritaCard berita={b} />
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-6 flex justify-end sm:hidden">
+                <Link
+                  to={paths.berita}
+                  className={buttonClass({ variant: 'primary' })}
                 >
-                  <BeritaCard berita={b} />
-                </div>
-              ))}
-            </div>
+                  Lihat Semua Berita
+                </Link>
+              </div>
+            </>
           )}
         </QueryBoundary>
       </div>

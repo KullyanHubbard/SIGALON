@@ -11,13 +11,12 @@ export function KreditKkn({ className, kiri, kanan }: KreditKknProps) {
   return (
     <footer
       className={cn(
-        'sticky bottom-0 z-30 flex w-full flex-col items-center justify-between gap-2 border-t-1 border-black bg-surface px-4 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-slate-600 [transform:translate3d(0,0,0)] sm:flex-row sm:gap-3 sm:py-2 sm:pb-2',
+        'sticky bottom-0 z-30 flex w-full flex-col items-center justify-center border-t-1 border-black bg-surface px-4 py-3.5 text-slate-600 [transform:translate3d(0,0,0)] sm:flex-row sm:justify-between sm:gap-3 sm:py-2',
         className,
       )}
     >
-      <div className="flex w-full items-center justify-between gap-2 sm:w-auto">
+      <div className="hidden sm:flex sm:w-auto sm:items-center sm:justify-start">
         {kiri}
-        <div className="flex items-center gap-2 sm:hidden">{kanan}</div>
       </div>
       <p className="text-center text-[13px] font-medium text-slate-600 sm:flex-1 sm:text-[15px]">
         Dikembangkan oleh{' '}

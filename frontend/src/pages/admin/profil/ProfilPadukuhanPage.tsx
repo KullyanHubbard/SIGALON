@@ -79,10 +79,7 @@ export default function ProfilPadukuhanPage() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-600">
-          Kelola informasi profil, visi-misi, dan kontak resmi padukuhan.
-        </p>
+      <div className="flex justify-end">
         <Button type="submit" isLoading={simpan.isPending} disabled={!isDirty}>
           Simpan Perubahan
         </Button>

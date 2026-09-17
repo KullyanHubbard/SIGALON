@@ -155,7 +155,7 @@ export default function ProfilPage() {
           </div>
 
           <div data-apple-fade data-apple-delay="1">
-            <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm">
+            <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md">
               <div className="border-b-1 border-black bg-[#7C3AED] px-4 py-3 sm:px-5 sm:py-3.5">
                 <h3 className="text-base font-bold text-white sm:text-lg">
                   Data Wilayah
@@ -248,7 +248,7 @@ export default function ProfilPage() {
           </div>
 
           <div data-apple-fade data-apple-delay="1">
-            <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm">
+            <div className="h-fit overflow-hidden rounded-xl border-1 border-black bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md">
               <div className="border-b-1 border-black bg-[#7C3AED] px-4 py-3 sm:px-5 sm:py-3.5">
                 <h3 className="text-base font-bold text-white sm:text-lg">
                   Batas Wilayah
@@ -277,7 +277,7 @@ export default function ProfilPage() {
                   href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-xs font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98] sm:text-sm"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FACC15] px-4 py-2.5 text-xs font-bold text-blue-900 shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98] sm:text-sm"
                 >
                   <span>Buka di Google Maps</span>
                   <ExternalLink className="h-4 w-4" />

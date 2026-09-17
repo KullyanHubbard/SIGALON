@@ -96,7 +96,7 @@ function PalangKeAnak({ jumlah }: { jumlah: number }) {
   return (
     <div
       aria-hidden
-      className="grid w-full gap-x-2 [grid-template-columns:repeat(var(--n),minmax(0,1fr))] sm:gap-x-4"
+      className="grid w-full gap-x-3 sm:gap-x-4 [grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
       style={{ '--n': jumlah } as CSSProperties}
     >
       {Array.from({ length: jumlah }, (_, i) => (
@@ -141,7 +141,7 @@ function GrupRw({ wilayah }: { wilayah: RwPublik }) {
       <Tiang />
       <PalangKeAnak jumlah={wilayah.rt.length} />
       <div
-        className="grid w-full gap-x-2 [grid-template-columns:repeat(var(--n),minmax(0,1fr))] sm:gap-x-4"
+        className="grid w-full gap-x-3 sm:gap-x-4 [grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
         style={{ '--n': wilayah.rt.length } as CSSProperties}
       >
         {wilayah.rt.map((rt) => (
@@ -169,35 +169,31 @@ export function BaganOrganisasi() {
       errorMessage="Struktur organisasi belum bisa ditampilkan."
     >
       {(struktur) => (
-        <figure className="m-0 overflow-x-auto pb-2 [webkit-overflow-scrolling:touch]">
-          <div className="mx-auto flex min-w-[320px] max-w-5xl flex-col items-center">
+        <figure className="m-0 overflow-x-auto pb-6 [webkit-overflow-scrolling:touch]">
+          <div className="mx-auto flex w-max min-w-full flex-col items-center px-4 md:w-full">
             <div className="w-48 sm:w-64">
               <Kotak label="Dukuh" nama={struktur.dukuh} tingkat="dukuh" />
             </div>
 
             <Tiang />
-            <div className="relative flex w-full flex-col items-center md:flex-row md:justify-center">
+            <div className="relative flex w-full flex-row justify-center">
               <span
                 aria-hidden
                 className={cn(
-                  'absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 md:block',
+                  'absolute left-1/2 top-0 h-full w-px -translate-x-1/2',
                   GARIS,
                 )}
               />
-              <span
-                aria-hidden
-                className={cn('block h-5 w-px md:hidden', GARIS)}
-              />
-              <div className="hidden flex-1 md:block" />
-              <div className="flex w-full items-center justify-center md:w-1/2 md:justify-start">
+              <div className="flex-1" />
+              <div className="flex w-1/2 items-center justify-start">
                 <span
                   aria-hidden
-                  className={cn('hidden h-px flex-1 md:block', GARIS)}
+                  className={cn('h-px flex-1', GARIS)}
                 />
                 <div className="w-44 sm:w-56">
                   <Kotak label="Ketua LPM" nama={struktur.lpm} tingkat="lpm" />
                 </div>
-                <span aria-hidden className="hidden flex-1 md:block" />
+                <span aria-hidden className="flex-1" />
               </div>
             </div>
             {struktur.rw.length === 0 ? (
@@ -211,17 +207,16 @@ export function BaganOrganisasi() {
               <>
                 <Tiang />
 
-                <div className="hidden w-full md:block">
+                <div className="w-full">
                   <PalangKeAnak jumlah={struktur.rw.length} />
                 </div>
 
                 <div
-                  className="grid w-full grid-cols-1 gap-x-3 gap-y-3 sm:gap-x-4 md:[grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
+                  className="grid w-full gap-x-3 sm:gap-x-4 [grid-template-columns:repeat(var(--n),minmax(0,1fr))]"
                   style={{ '--n': struktur.rw.length } as CSSProperties}
                 >
                   {struktur.rw.map((w) => (
-                    <div key={w.nomor} className="flex flex-col items-center">
-                      <TiangPanah className="md:hidden" />
+                    <div key={w.nomor} className="flex min-w-[200px] flex-col items-center md:min-w-0">
                       <GrupRw wilayah={w} />
                     </div>
                   ))}

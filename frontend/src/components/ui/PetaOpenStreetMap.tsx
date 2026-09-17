@@ -324,7 +324,7 @@ export function PetaOpenStreetMap({ className }: { className?: string }) {
               href="https://www.google.com/maps/search/?api=1&query=-7.656826,110.363111"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#FACC15] px-4 py-2 text-xs font-bold text-[#4C1D95] shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98]"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#FACC15] px-4 py-2 text-xs font-bold text-blue-900 shadow-sm transition-all hover:bg-yellow-400 hover:shadow-md active:scale-[0.98]"
             >
               <span>Buka di Google Maps</span>
               <ExternalLink className="h-3.5 w-3.5" />

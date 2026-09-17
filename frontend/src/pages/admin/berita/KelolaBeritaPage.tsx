@@ -26,10 +26,7 @@ export default function KelolaBeritaPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-slate-600">
-          Kelola artikel dan publikasi berita padukuhan.
-        </p>
+      <div className="flex justify-end">
         <Button onClick={() => setTarget('baru')}>+ Tulis Berita</Button>
       </div>
 
